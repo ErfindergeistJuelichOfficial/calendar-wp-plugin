@@ -30,10 +30,12 @@ function egj_calendar_plugin_options() {
     wp_die( __( 'You do not have sufficient permissions to access this page.' ) );
 	}
 
-	echo '<div class="wrap">';
-	echo '<h2>Erfindergeist</h2>';
-  echo '<p>Use Submenus for Options</p>';
-	echo '</div>';
+  ?>
+    <div>
+      <h3>Erfindergeist</h3>
+      <p>Please use Submenus for Options</p>
+    </div>
+  <?php
 }
 
 function egj_calendar_settings_page() {
