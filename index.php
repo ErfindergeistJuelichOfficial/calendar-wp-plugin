@@ -23,7 +23,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 require_once 'styles.php';
 require_once 'apis.php';
 
-function erfindergeist_plugin_options() {
+function egj_calendar_plugin_options() {
 
   //must check that the user has the required capability
 	if ( !current_user_can( 'manage_options' ) )  {
@@ -36,7 +36,7 @@ function erfindergeist_plugin_options() {
 	echo '</div>';
 }
 
-function g_calendar_settings_page() {
+function egj_calendar_settings_page() {
 
 
   //must check that the user has the required capability
@@ -124,7 +124,7 @@ function g_calendar_settings_page() {
     add_submenu_page(
       'erfindergeist',
       'Calendar',
-      'Calendar Settings ddd',
+      'Calendar Settings',
       'manage_options',
       'egj-calendar-submenu-handle',
       'egj_calendar_settings_page'
