@@ -1,0 +1,33 @@
+name: 🚀 Deploy TEST Stage calendar-wp-plugin
+
+on:
+  push:
+    branches:  
+      - "feature/**"
+
+jobs:
+  web-deploy:
+    name: 🎉 Deploy at https://spielwiese.erfindergeist.org/
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: 🚚 Get latest code
+      uses: actions/checkout@v4
+
+    - name: 📂 Sync files
+      uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+      with:
+        server: erfindergeist.org
+        username: ${{ secrets.FTP_USERNAME_TEST }}
+        password: ${{ secrets.FTP_PASSWORD_TEST }}
+        local-dir: ./
+        protocol: ftps
+        state-name: .ftp-deploy-test-stage-calendar-wp-plugin-state.json
+        exclude: |
+          **/.git*
+          **/.git*/**
+          **/.github*
+          **/test*
+          **/test*/**
+          **/docs*
+          **/docs*/**

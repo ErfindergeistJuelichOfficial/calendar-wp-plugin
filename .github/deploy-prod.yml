@@ -1,0 +1,33 @@
+name: 🚀 Deploy PROD Stage calendar-wp-plugin
+
+on:
+  push:
+    branches:    
+      - 'main' 
+
+jobs:
+  web-deploy:
+    name: 🎉 Deploy at https://erfindergeist.org/
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: 🚚 Get latest code
+      uses: actions/checkout@v4
+
+    - name: 📂 Sync files
+      uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+      with:
+        server: erfindergeist.org
+        username: ${{ secrets.FTP_USERNAME_PROD }}
+        password: ${{ secrets.FTP_PASSWORD_PROD }}
+        local-dir: ./
+        protocol: ftps
+        state-name: .ftp-deploy-prod-stage-calendar-wp-plugin-state.json
+        exclude: |
+          **/.git*
+          **/.git*/**
+          **/.github*
+          **/test*
+          **/test*/**
+          **/docs*
+          **/docs*/**
