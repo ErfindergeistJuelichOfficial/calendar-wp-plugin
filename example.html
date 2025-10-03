@@ -1,0 +1,113 @@
+<script id="gcalendarTemplate" type="text/x-handlebars-template">
+  <div class="container text-dark p-0">
+    {{#each items}}
+      {{#if (isOdd @index)}} 
+        <div class="container text-dark bd-container-even"> 
+      {{/if}}
+      {{#if (isEven @index)}} 
+        <div class="container text-dark bd-container-even" > 
+      {{/if}}
+        <div class="row">
+          <div class="col">
+            <h4 class="m-0"> {{summary}}          </h4>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col">
+            {{#if sameDay}}
+              <span>
+                📅 {{startDate}}
+              </span>
+              <span>
+                🕑 {{startTime}} - {{endTime}}
+              <span>
+            {{/if}}
+            {{#if location}}
+              <span>
+                📍 {{location}}
+                <a href='https://maps.google.com/?q={{location}}' target='_blank'>google</a> 
+                <a href='https://maps.apple.com/?q={{location}}' target='_blank'>apple</a> 
+                <a href='https://bing.com/maps/default.aspx?where1={{location}}' target='_blank'>bing</a> 
+                <a href='https://waze.com/ul?q={{location}}' target='_blank'>waze</a>
+            </span>
+            {{/if}}
+          </div>
+        </div>
+        <!-- <div class="row">
+          <div class="col">
+            {{description}}
+          </div>
+        </div> -->
+        {{#if (include tags "KreativTag")}}
+        <div class="row">
+          <div class="col">
+    
+              Alle Informationen zum Kreativ-Tag findest du auf der <a href="https://erfindergeist.org/angebote/kreativ-tag/">Kreativ-Tag Seite</a>.
+    
+          </div>
+        </div>
+      {{/if}}
+        {{#if (include tags "OffeneWerkstatt")}}
+          <div class="row">
+            <div class="col">
+              
+                Alle Informationen zu Werkstatt findest du auf der <a href="https://werkstatt.erfindergeist.org/">Werkstatt Seite</a>.
+              
+            </div>
+          </div>
+        {{/if}}
+        {{#if (include tags "Stadtbücherei")}}
+          <div class="row">
+            <div class="col">
+              <div class="bd-callout">
+                Achtung! heute findest Du uns in der  <a href="https://buecherei.juelich.de/">Stadtbücherei Jülich</a>.
+              </div>
+            </div>
+          </div>
+        {{/if}}
+        {{#if (include tags "Repaircafe")}}
+        <div class="row">
+          <div class="col">
+            
+              Alle Informationen zum Repair Cafe findest du auf der  <a href="https://repaircafe.erfindergeist.org/">Repair Cafe Seite</a>.
+            
+          </div>
+        </div>
+        {{/if}}
+        <div class="row">
+          <div class="col">
+            {{#each tags as | tag |}}
+              <span class="badge text-bg-primary">{{tag}}</span>
+            {{/each}}
+          </div> 
+        </div>
+      </div>
+    {{/each}}
+  </div>
+</script>
+
+
+<div
+  style="margin-left: auto; margin-right: auto; max-width: 1312px; width: 90vw"
+  id="gcalendarList"
+>
+  <div class="shimmerBG content-line"></div>
+  <div class="shimmerBG content-line"></div>
+  <div class="shimmerBG content-line end"></div>
+  <hr />
+  <div class="shimmerBG content-line"></div>
+  <div class="shimmerBG content-line"></div>
+  <div class="shimmerBG content-line end"></div>
+  <hr />
+  <div class="shimmerBG content-line"></div>
+  <div class="shimmerBG content-line"></div>
+  <div class="shimmerBG content-line end"></div>
+  <hr />
+  <div class="shimmerBG content-line"></div>
+  <div class="shimmerBG content-line"></div>
+  <div class="shimmerBG content-line end"></div>
+  <hr />
+  <div class="shimmerBG content-line"></div>
+  <div class="shimmerBG content-line"></div>
+  <div class="shimmerBG content-line end"></div>
+</div>
