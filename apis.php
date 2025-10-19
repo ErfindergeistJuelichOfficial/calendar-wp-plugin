@@ -4,7 +4,26 @@ if ( ! defined( 'ABSPATH' ) ) {
   exit;
 }
 
+require_once 'ICal.php';
+use ICal\ICal;
 
+function getEvents($request)
+{
+ 
+
+  try {
+      $ical = new ICal();
+      // $ical->initFile('ICal.ics');
+      $ical->initUrl('https://cloud.erfindergeist.org/remote.php/dav/public-calendars/6SBnaNb727Wqwmdn?export');
+
+      $response = new WP_REST_Response($ical->cal);
+      $response->set_status(200);
+
+      return $response;
+  } catch (\Exception $e) {
+      die($e);
+  }
+}
 
 function gcalendar($request)
 {
@@ -82,11 +101,18 @@ function getNextEvent($request)
 }
 
 // CUSTOM APIS
-// https://egj.vreezy.de/wp-json/erfindergeist/v1/gcalendar
+// https://<DOMAIN>/wp-json/erfindergeist/v1/gcalendar
 add_action('rest_api_init', function () {
   register_rest_route('erfindergeist/v1', '/gcalendar', array(
     'methods'  => 'GET',
     'callback' => 'getCalendar'
+  ));
+});
+
+add_action('rest_api_init', function () {
+  register_rest_route('erfindergeist/v1', '/events', array(
+    'methods'  => 'GET',
+    'callback' => 'getEvents'
   ));
 });
 

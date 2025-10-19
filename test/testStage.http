@@ -1,2 +1,6 @@
 ### 
 GET https://spielwiese.erfindergeist.org/wp-json/erfindergeist/v1/nextevent
+
+### events with ical
+GET GET https://spielwiese.erfindergeist.org/wp-json/erfindergeist/v1/events
+// https://<DOMAIN>/wp-json/erfindergeist/v1/gcalendar
