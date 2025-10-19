@@ -23,8 +23,8 @@ function erfindergeist_styles()
   );
 
   wp_enqueue_style(
-    'gcalender-style',
-    plugins_url( '/', __FILE__ ) . 'gcalender.css',
+    'calender-style',
+    plugins_url( '/', __FILE__ ) . 'calender.css',
     array('bootstrap'),
     "1.4"
   );
@@ -37,10 +37,10 @@ function erfindergeist_styles()
   );
 
   wp_enqueue_script(
-    'gcalendar-script',
-    plugins_url( '/', __FILE__ ) . 'gcalendar.js',
+    'calendar-script',
+    plugins_url( '/', __FILE__ ) . 'calendar.js',
     array('jquery', 'handlebars'),
-    "1.4"
+    "1.5"
   );
 }
 

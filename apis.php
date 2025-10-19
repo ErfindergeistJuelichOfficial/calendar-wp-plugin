@@ -4,19 +4,45 @@ if ( ! defined( 'ABSPATH' ) ) {
   exit;
 }
 
+// 'https://cloud.erfindergeist.org/remote.php/dav/public-calendars/6SBnaNb727Wqwmdn?export'
 require_once 'ICal.php';
+require_once 'vars.php';
 use ICal\ICal;
 
-function getEvents($request)
+
+function getFeature()
 {
- 
+
+  $erfindergeist_feature_switch_option_name = $_SESSION['erfindergeist_feature_switch_option_name'];
+  if(!get_option( $erfindergeist_feature_switch_option_name )) {
+    return new WP_Error('rest_custom_error', 'Erfindergeist ICS Url is not set', array('status' => 400));
+  }
+
+  $erfindergeist_feature_switch = get_option( $erfindergeist_feature_switch_option_name );
+
+  $obj = new StdClass();
+  $obj->feature = $erfindergeist_feature_switch;
+    
+  $response = new WP_REST_Response($obj);
+  $response->set_status(200);
+  return $response;
+}
+
+function getEvents() // $request
+{
+ $erfindergeist_ics_url_option_name = $_SESSION['erfindergeist_ics_url_option_name'];
+
+  if(!get_option( $erfindergeist_ics_url_option_name )) {
+    return new WP_Error('rest_custom_error', 'Erfindergeist ICS Url is not set', array('status' => 400));
+  }
+
+  $erfindergeist_ics_url = get_option( $erfindergeist_ics_url_option_name );
 
   try {
-      $ical = new ICal();
-      // $ical->initFile('ICal.ics');
-      $ical->initUrl('https://cloud.erfindergeist.org/remote.php/dav/public-calendars/6SBnaNb727Wqwmdn?export');
+      $iCal = new ICal();
+      $iCal->initUrl($erfindergeist_ics_url);
 
-      $response = new WP_REST_Response($ical->cal);
+      $response = new WP_REST_Response($iCal->cal);
       $response->set_status(200);
 
       return $response;
@@ -49,10 +75,6 @@ function gcalendar($request)
   $content = file_get_contents($url);
  
   return $content;
-  // $response = new WP_REST_Response(json_decode($content, true));
-  // $response->set_status(200);
-
-  // return $response;
 }
 
 function getCalendar($request)
@@ -113,6 +135,13 @@ add_action('rest_api_init', function () {
   register_rest_route('erfindergeist/v1', '/events', array(
     'methods'  => 'GET',
     'callback' => 'getEvents'
+  ));
+});
+
+add_action('rest_api_init', function () {
+  register_rest_route('erfindergeist/v1', '/feature', array(
+    'methods'  => 'GET',
+    'callback' => 'getFeature'
   ));
 });
 

@@ -1,4 +1,4 @@
-(function (gCalendar, $, undefined) {
+(function (erfindergeistCalendar, $, undefined) {
   const days = ["So", "Mo", "Di", "Mi", "Do", "Fr", "Sa"];
 
   function getGermanDateString(date) {
@@ -13,7 +13,7 @@
   }
 
   // expose
-  gCalendar.getGermanDateString = getGermanDateString;
+  erfindergeistCalendar.getGermanDateString = getGermanDateString;
 
   function getGermanDateDayString(date) {
     const event = new Date(date);
@@ -43,22 +43,45 @@
   }
 
   function getData(renderType) {
-    $.getJSON("https://erfindergeist.org/wp-json/erfindergeist/v1/gcalendar")
-      .done(function (json) {
-        switch (renderType) {
-          case "gcalendarList":
-            renderNormal(json);
-            break;
-          case "gcalendarListShort":
-            renderShort(json);
-            break;
+    $.getJSON(`https://${location.hostname}/wp-json/erfindergeist/v1/feature`)
+      .done(function (feature) {
+        if( feature && feature.feature === "google") {
+          $.getJSON(`https://${location.hostname}/wp-json/erfindergeist/v1/gcalendar`)
+            .done(function (json) {
+              switch (renderType) {
+                case "gcalendarList":
+                  renderNormal(json);
+                  break;
+                case "gcalendarListShort":
+                  renderShort(json);
+                  break;
+              }
+            })
+            .fail(function (jqxhr, textStatus, error) {
+              const err = textStatus + ", " + error;
+              console.log("Request Failed: " + err);
+              renderError(renderType);
+            });
         }
-      })
-      .fail(function (jqxhr, textStatus, error) {
-        const err = textStatus + ", " + error;
-        console.log("Request Failed: " + err);
-        renderError(renderType);
-      });
+
+        if( feature && feature.feature === "nextcloud") {
+          $.getJSON(`https://${location.hostname}/wp-json/erfindergeist/v1/events`)
+            .done(function (json) {
+              switch (renderType) {
+                case "gcalendarList":
+                  renderNormal(json, feature.feature);
+                  break;
+                 }
+            })
+            .fail(function (jqxhr, textStatus, error) {
+              const err = textStatus + ", " + error;
+              console.log("Request Failed: " + err);
+              renderError(renderType);
+            });
+        }
+      }
+    )
+
   }
 
   function renderError(renderType) {
@@ -68,6 +91,49 @@
       </div>
    `;
     $(`#${renderType}`).html(html);
+  }
+
+  function transformICal(data) {
+    const newItems = data.VEVENT.map((item) => {
+      const patern = /#[a-zA-Z0-9äüö]*/g;
+      const tags = item.DESCRIPTION.match(patern) ?? [];
+
+      let filteredDescription = item.DESCRIPTION;
+      tags.forEach((tag) => {
+        filteredDescription = filteredDescription.replace(tag, "");
+      });
+
+      return {
+      summary: item.SUMMARY ?? "",
+      description: filteredDescription ?? "",
+      location: item.LOCATION ?? "",
+      startDateDay: item.DTSTART_array
+        ? getGermanDateDayString(item.DTSTART_array[2])
+        : "",
+      endDateDay: item.DTEND_array
+        ? getGermanDateDayString(item.DTEND_array[2])
+        : "",
+      startTime: item.DTSTART_array
+        ? getGermanTimeString(item.DTSTART_array[2])
+        : "",
+      endTime: item.DTEND_array
+        ? getGermanTimeString(item.DTEND_array[2])
+        : "",
+      weekDayShort: item.DTSTART_array
+        ? getGermanWeekDayShortString(item.DTSTART_array[2])
+        : "",
+      tags:
+        tags && Array.isArray(tags) && tags.length > 0
+          ? tags.map((tag) => tag.substring(1))
+          : [],
+      };
+    });
+
+    const newData = {
+      items: newItems,
+    };
+
+    return newData;
   }
 
   function transform(data) {
@@ -168,7 +234,7 @@
     }
   }
 
-  function renderNormal(data) {
+  function renderNormal(data, feature) {
     let calenderTemplate = "";
 
     const fallbackCalenderTemplate = `
@@ -198,7 +264,12 @@
 
     const template = Handlebars.compile(calenderTemplate);
 
-    $("#gcalendarList").html(template(transform(data)));
+    if(feature && feature === "nextcloud") {
+      $("#gcalendarList").html(template(transformICal(data)));
+    } else {
+      $("#gcalendarList").html(template(transform(data)));
+    }
+    
 
     jQuery("#gcalendarPrintButton").click(function (event) {
       event.preventDefault();
@@ -208,7 +279,7 @@
     });
   }
 
-  gCalendar.init = function () {
+  erfindergeistCalendar.init = function () {
     if (document.getElementById("gcalendarList")) {
       getData("gcalendarList");
     }
@@ -217,7 +288,7 @@
       getData("gcalendarListShort");
     }
   };
-})((window.gCalendar = window.gCalendar || {}), jQuery);
+})((window.erfindergeistCalendar = window.erfindergeistCalendar || {}), jQuery);
 
 jQuery(document).ready(function () {
  
@@ -253,35 +324,6 @@ jQuery(document).ready(function () {
     return gCalendar.getGermanDateString(new Date())
   });
 
-  gCalendar.init();
+  erfindergeistCalendar.init();
 });
 
-// created: "2022-03-17T11:43:50.000Z"
-// creator:
-// email: "erfindergeistjuelich@gmail.com"
-// [[Prototype]]: Object
-// description: "Öffentliches Treffen, kleine Mitgliederversammlung, bei dem allgemeine Punkte besprochen werden. \n\nDie Veranstaltung, ist manchmal auch Online, über Discord (https://discord.com/invite/ye5bfzEd7D) könnt ihr uns schreiben, falls ihr mehr wissen wollt. "
-// end:
-// dateTime: "2022-03-19T14:00:00+01:00"
-// timeZone: "Europe/Berlin"
-// [[Prototype]]: Object
-// etag: "\"3295034861140000\""
-// eventType: "default"
-// htmlLink: "https://www.google.com/calendar/event?eid=MDVkZzU2c2xoNjZpNWVhYmwzMDBsa2UxaXQgMDdpb2k1bjk0YWk1Mmk4NjJhZ2JoMTN0Z2NAZw"
-// iCalUID: "05dg56slh66i5eabl300lke1it@google.com"
-// id: "05dg56slh66i5eabl300lke1it"
-// kind: "calendar#event"
-// location: "Roncallihaus, Stiftsherrenstraße 19, 52428 Jülich, Deutschland"
-// organizer:
-// displayName: "EGJ Veranstaltungen "
-// email: "07ioi5n94ai52i862agbh13tgc@group.calendar.google.com"
-// self: true
-// [[Prototype]]: Object
-// sequence: 0
-// start:
-// dateTime: "2022-03-19T13:00:00+01:00"
-// timeZone: "Europe/Berlin"
-// [[Prototype]]: Object
-// status: "confirmed"
-// summary: "Plenum "
-// updated: "2022-03-17T11:43:50.570Z"

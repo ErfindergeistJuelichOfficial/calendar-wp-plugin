@@ -6,7 +6,7 @@
  * Author: Lars 'vreezy' Eschweiler
  * Author URI: https://www.erfindergeist.org
  * Contributor: Erfindergeist Jülich e.V.
- * Version: 2.0.0
+ * Version: 2.1.0
  * Text Domain: erfindergeist
  * Domain Path: /languages
  * Tested up to: 6.8
@@ -22,10 +22,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 require_once 'styles.php';
 require_once 'apis.php';
+require_once 'vars.php';
 
 function egj_calendar_plugin_options() {
 
-  //must check that the user has the required capability
 	if ( !current_user_can( 'manage_options' ) )  {
     wp_die( __( 'You do not have sufficient permissions to access this page.' ) );
 	}
@@ -40,34 +40,50 @@ function egj_calendar_plugin_options() {
 
 function egj_calendar_settings_page() {
 
-
-  //must check that the user has the required capability
   if (!current_user_can('manage_options'))
   {
     wp_die( __('You do not have sufficient permissions to access this page.') );
   }
 
-  // variables for the field and option names
+  $erfindergeist_ics_url_option_name = $_SESSION['erfindergeist_ics_url_option_name'];
+  $erfindergeist_ics_url = get_option( $erfindergeist_ics_url_option_name );
+  $erfindergeist_ics_url_field_name = 'erfindergeist_ics_url_field';
+
+  $erfindergeist_feature_switch_option_name = $_SESSION['erfindergeist_feature_switch_option_name'];
+  $erfindergeist_feature_switch = get_option( $erfindergeist_feature_switch_option_name );
+  $erfindergeist_feature_switch_field_name = 'erfindergeist_feature_switch_field';
+
   $apikey_opt_name = 'g_Calendar_apikey';
   $google_calendar_id_opt_name = 'g_Calendar_id';
 
   $apikey_field_name = 'apikey';
   $google_calendar_id_field_name = 'gcid';
-
-  // Read in existing option value from database
+  
   $apikey_opt_val = get_option( $apikey_opt_name );
   $google_calendar_id_opt_val = get_option( $google_calendar_id_opt_name );
 
-  // See if the user has posted us some information
-  // If they did, this hidden field will be set to 'Y'
   if ( !empty($_POST) || wp_verify_nonce(egj_escape($_POST['egj_calendar_nonce_field']),'egj_calendar_action') ) {
-    // Read their posted value
-    $apikey_opt_val = $_POST[ $apikey_field_name ];
-    $google_calendar_id_opt_val = $_POST[ $google_calendar_id_field_name ];
+    if ( $_POST[ $apikey_field_name ]) {
+      $apikey_opt_val = $_POST[ $apikey_field_name ];
+      update_option( $apikey_opt_name, $apikey_opt_val );
+    }
 
-    // Save the posted value in the database
-    update_option( $apikey_opt_name, $apikey_opt_val );
-    update_option( $google_calendar_id_opt_name, $google_calendar_id_opt_val );
+    if ( $_POST[ $google_calendar_id_field_name ]) {
+      $google_calendar_id_opt_val = $_POST[ $google_calendar_id_field_name ];
+      update_option( $google_calendar_id_opt_name, $google_calendar_id_opt_val );
+    }
+    
+    if( $_POST[ $erfindergeist_ics_url_field_name ])
+    {
+      $erfindergeist_ics_url = $_POST[ $erfindergeist_ics_url_field_name ];
+      update_option( $erfindergeist_ics_url_option_name, $erfindergeist_ics_url );
+    }
+
+    if( $_POST[ $erfindergeist_feature_switch_field_name ])
+    {
+      $erfindergeist_feature_switch = $_POST[ $erfindergeist_feature_switch_field_name ];
+      update_option( $erfindergeist_feature_switch_option_name, $erfindergeist_feature_switch );
+    }
 
     // Put a "settings saved" message on the screen
     ?>
@@ -76,17 +92,8 @@ function egj_calendar_settings_page() {
   }
 
   
-
-  // Now display the settings editing screen
-
   echo '<div class="wrap">';
-
-  // header
-
   echo "<h2>" . __( 'Erfindergeist Calendar Settings', 'menu-test' ) . "</h2>";
-
-  // settings form
-
 ?>
 
   <form name="form1" method="post" action="">
@@ -102,6 +109,17 @@ function egj_calendar_settings_page() {
   <input type="text" name="<?php echo $google_calendar_id_field_name; ?>" value="<?php echo $google_calendar_id_opt_val; ?>" size="60">
   </p><hr />
 
+  <p><?php _e("Ics Url:", 'menu-test' ); ?>
+  <input type="text" name="<?php echo $erfindergeist_ics_url_field_name; ?>" value="<?php echo $erfindergeist_ics_url; ?>" size="60">
+  </p><hr />
+
+  <label for="feature_switch"><?php _e("Feature Switch:", 'menu-test' ); ?></label>
+  <select id="feature_switch" name="<?php echo $erfindergeist_feature_switch_field_name; ?>">
+    <option value="google" <?php if ($erfindergeist_feature_switch == 'google') echo 'selected'; ?>">Google</option>
+    <option value="nextcloud" <?php if ($erfindergeist_feature_switch == 'nextcloud') echo 'selected'; ?>>Nextcloud</option>
+  </select>
+  <hr />
+
   <p class="submit">
   <input type="submit" name="Submit" class="button-primary" value="<?php esc_attr_e('Save Changes') ?>" />
   </p>
@@ -111,27 +129,26 @@ function egj_calendar_settings_page() {
 
 <?php
 }
-  /** Step 1. */
-  function egj_calendar_menu() {
-    if ( empty ( $GLOBALS['admin_page_hooks']['erfindergeist'] ) ) {
-      add_menu_page(
-        'Erfindergeist',
-        'Erfindergeist',
-        'manage_options',
-        'erfindergeist',
-        'egj_calendar_plugin_options'
-      );
-    }
 
-    add_submenu_page(
-      'erfindergeist',
-      'Calendar',
-      'Calendar Settings',
+function egj_calendar_menu() {
+  if ( empty ( $GLOBALS['admin_page_hooks']['erfindergeist'] ) ) {
+    add_menu_page(
+      'Erfindergeist',
+      'Erfindergeist',
       'manage_options',
-      'egj-calendar-submenu-handle',
-      'egj_calendar_settings_page'
+      'erfindergeist',
+      'egj_calendar_plugin_options'
     );
   }
 
-  /** Step 2 (from text above). */
+  add_submenu_page(
+    'erfindergeist',
+    'Calendar',
+    'Calendar Settings',
+    'manage_options',
+    'egj-calendar-submenu-handle',
+    'egj_calendar_settings_page'
+  );
+}
+
   add_action( 'admin_menu', 'egj_calendar_menu' );
