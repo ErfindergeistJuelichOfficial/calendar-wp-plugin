@@ -20,9 +20,10 @@ if ( ! defined( 'ABSPATH' ) ) {
   exit;
 }
 
+require_once 'helpers.php';
+require_once 'vars.php';
 require_once 'styles.php';
 require_once 'apis.php';
-require_once 'vars.php';
 
 function egj_calendar_plugin_options() {
 
