@@ -5,6 +5,7 @@ if (!defined('ABSPATH')) {
 }
 
 // 'https://cloud.erfindergeist.org/remote.php/dav/public-calendars/6SBnaNb727Wqwmdn?export'
+require_once 'Event.php';
 require_once 'ICal.php';
 require_once 'vars.php';
 use ICal\ICal;
