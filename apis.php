@@ -31,7 +31,7 @@ function getIcsFromUrl(): string
 function getIcs(): WP_Error|WP_REST_Response
 {
   $ics = getIcsFromUrl();
-  return new WP_REST_Response($ics, 200, header("content-type:text/calendar");
+  return new WP_REST_Response($ics, 200, ["content-type" => "text/calendar"]);
 }
 
 /**
