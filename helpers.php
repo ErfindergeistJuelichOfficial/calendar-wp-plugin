@@ -216,3 +216,19 @@ if (!function_exists('egj_get_german_weekday_short')) {
     return $weekdays[(int)$date->format('w')];
   }
 }
+
+/**
+ * Hilfsfunktion: escaping für Strings
+ * https://mojoauth.com/escaping/php-string-escaping-in-php/
+ * 
+ * @param string $string Der zu escaped String
+ * @return string Escaped String
+ */
+if (!function_exists('egj_escape')) {
+
+  function egj_escape($string) {
+    $newString = trim($string);
+    $newString = addslashes($newString);
+    return $newString;
+  }
+}

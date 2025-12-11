@@ -4,37 +4,44 @@ if (!defined('ABSPATH')) {
   exit;
 }
 
-// 'https://cloud.erfindergeist.org/remote.php/dav/public-calendars/6SBnaNb727Wqwmdn?export'
 require_once 'Event.php';
 require_once 'ICal.php';
 require_once 'vars.php';
 use ICal\ICal;
 
+function getIcsFromUrl(): string
+{
+  try {
+    $erfindergeist_ics_url = get_option($_SESSION['ics_url_option_name']);
+    $response = wp_remote_get($erfindergeist_ics_url, array(
+      'timeout' => 30,
+      'sslverify' => true
+    ));
+    return wp_remote_retrieve_body($response);
+  } catch (\Exception $e) {
+    egj_send_notification_to_admins("Error getting ICS from URL");
+    return "";
+  }
+
+}
+
+function getIcs(): void
+{
+  $ics = getIcsFromUrl();
+  $response = new WP_REST_Response($ics);
+  $response->set_status(200);
+}
 
 /**
  * Vereinheitlichter Events-Endpunkt
- * Prüft das Feature-Flag und gibt entsprechend Google Calendar oder Nextcloud Daten zurück
  */
-function getEvents()
-{
-  $erfindergeist_feature_switch_option_name = $_SESSION['erfindergeist_feature_switch_option_name'];
-  $feature = get_option($erfindergeist_feature_switch_option_name);
-
-  if ($feature === 'nextcloud') {
-    return egj_get_ics_Events();
-  } else {
-    // Default: Google Calendar
-    return egj_get_google_calendar();
-  }
-}
-
-function egj_get_ics_Events() // $request
+function getEvents() // $request
 {
   try {
     $current_time = time();
-    $erfindergeist_ics_url_option_name = $_SESSION['erfindergeist_ics_url_option_name'];
+    
 
-    if (!get_option($erfindergeist_ics_url_option_name)) {
+    if (!get_option($_SESSION['ics_url_option_name'])) {
       $message = "Erfindergeist Calendar: Error missing ICS URL " . date('d.m.Y H:i:s', $current_time) . " for site " . get_site_url() . ".";
       egj_send_notification_to_admins($message);
       return new WP_Error('rest_custom_error', 'Erfindergeist ICS Url is not set', array('status' => 400));
@@ -47,20 +54,15 @@ function egj_get_ics_Events() // $request
     //   return $cached_ics_data;
     // }
 
-    $erfindergeist_ics_url = get_option($erfindergeist_ics_url_option_name);
-    $response = wp_remote_get($erfindergeist_ics_url, array(
-      'timeout' => 30,
-      'sslverify' => true
-    ));
-    $ics_data = wp_remote_retrieve_body($response);
+
 
     // $response = new WP_REST_Response($ics_data );
     // $response->set_status(200);
     // return $response;
 
-
+    $ics = getIcsFromUrl();
     $iCal = new ICal();
-    $iCal->initString($ics_data);
+    $iCal->initString($ics);
     $arrayOfEvents = $iCal->eventsFromRange(null, null);
 
     // Transformiere iCal-Daten in einheitliches Format
@@ -81,12 +83,11 @@ function egj_get_ics_Events() // $request
  */
 function egj_get_cached_ics_data()
 {
-  $erfindergeist_ics_url_option_name = $_SESSION['erfindergeist_ics_url_option_name'];
   $cache_option_name = 'erfindergeist_ics_cache';
   $cache_timestamp_option_name = 'erfindergeist_ics_cache_timestamp';
   $current_time = time();
 
-  $erfindergeist_ics_url = get_option($erfindergeist_ics_url_option_name);
+  $erfindergeist_ics_url = get_option($_SESSION['ics_url_option_name']);
 
   if (empty($erfindergeist_ics_url)) {
     egj_send_notification_to_admins("Error missing ICS URL");
@@ -138,40 +139,6 @@ function egj_get_cached_ics_data()
   return $ics_data;
 }
 
-function egj_get_google_calendar()
-{
-  $apikey_opt_name = 'g_Calendar_apikey';
-  $google_calendar_id_opt_name = 'g_Calendar_id';
-
-  if (!get_option($apikey_opt_name) && !get_option($google_calendar_id_opt_name)) {
-    egj_send_notification_to_admins("Google API key or Calendar ID is not set");
-    return new WP_Error('rest_custom_error', 'Apikey is not set', array('status' => 400));
-  }
-
-  $dateTime = new DateTime();
-
-  $currentDate = $dateTime->format(DateTimeInterface::RFC3339);
-
-  // google api dislike +00:00. replace with Z
-  $currentDate = str_replace("+00:00", "Z", $currentDate);
-
-  $gCalendarApiKey = get_option($apikey_opt_name);
-  $gCalendarId = get_option($google_calendar_id_opt_name);
-  $url = 'https://www.googleapis.com/calendar/v3/calendars/' . $gCalendarId . '/events?maxResults=20&orderBy=startTime&singleEvents=true&timeMin=' . $currentDate . '&key=' . $gCalendarApiKey;
-
-  $content = file_get_contents($url);
-
-  $data = json_decode($content, true);
-
-  // Transformiere Google Calendar-Daten in einheitliches Format
-  $transformed_data = egj_transform_google_calendar_data($data);
-
-  $response = new WP_REST_Response($transformed_data);
-  $response->set_status(200);
-
-  return $response;
-}
-
 function getNextEvent($request)
 {
   $content = egj_get_google_calendar($request);
@@ -212,7 +179,14 @@ function getNextEvent($request)
 }
 
 // CUSTOM APIS
-// https://<DOMAIN>/wp-json/erfindergeist/v1/gcalendar
+// https://<DOMAIN>/wp-json/erfindergeist/v1/events
+add_action('rest_api_init', function () {
+  register_rest_route('erfindergeist/v1', '/ics', array(
+    'methods' => 'GET',
+    'callback' => 'getIcs'
+  ));
+});
+
 add_action('rest_api_init', function () {
   register_rest_route('erfindergeist/v1', '/events', array(
     'methods' => 'GET',
@@ -221,7 +195,7 @@ add_action('rest_api_init', function () {
 });
 
 add_action('rest_api_init', function () {
-  register_rest_route('erfindergeist/v1', '/nextevent', array(
+  register_rest_route('erfindergeist/v1', '/nextEvent', array(
     'methods' => 'GET',
     'callback' => 'getNextEvent'
   ));

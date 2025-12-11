@@ -1,8 +1,12 @@
 <?PHP
   // VARS
+  $prefix = 'erfindergeist_calendar_';
+
   $_SESSION['erfindergeist_calendar_namespace'] = 'erfindergeist';
   $_SESSION['erfindergeist_calendar_version'] = 'v1';
   $_SESSION['erfindergeist_calendar_route'] = 'calendar';
   
-  $_SESSION['erfindergeist_ics_url_option_name'] = 'erfindergeist_ics_url';
-  $_SESSION['erfindergeist_feature_switch_option_name'] = 'erfindergeist_feature_switch';
+  $_SESSION['ics_url_option_name'] = $prefix . 'ics_url_option_name';
+  $_SESSION['ics_cache_option_name'] = $prefix . 'ics_cache_option_name';
+  $_SESSION['ics_cache_timestamp_option_name'] = $prefix . 'ics_cache_timestamp_option_name';
+  

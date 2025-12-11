@@ -46,49 +46,20 @@ function egj_calendar_settings_page() {
     wp_die( __('You do not have sufficient permissions to access this page.') );
   }
 
-  $erfindergeist_ics_url_option_name = $_SESSION['erfindergeist_ics_url_option_name'];
-  $erfindergeist_ics_url = get_option( $erfindergeist_ics_url_option_name );
-  $erfindergeist_ics_url_field_name = 'erfindergeist_ics_url_field';
+  // updatable options  
+  $ics_url = get_option( $_SESSION['ics_url_option_name']);
+  $ics_url_field_name = 'erfindergeist_ics_url_field';
 
-  $erfindergeist_feature_switch_option_name = $_SESSION['erfindergeist_feature_switch_option_name'];
-  $erfindergeist_feature_switch = get_option( $erfindergeist_feature_switch_option_name );
-  $erfindergeist_feature_switch_field_name = 'erfindergeist_feature_switch_field';
-
-  $apikey_opt_name = 'g_Calendar_apikey';
-  $google_calendar_id_opt_name = 'g_Calendar_id';
-
-  $apikey_field_name = 'apikey';
-  $google_calendar_id_field_name = 'gcid';
-  
-  $apikey_opt_val = get_option( $apikey_opt_name );
-  $google_calendar_id_opt_val = get_option( $google_calendar_id_opt_name );
-
-  $cache_option_name = 'erfindergeist_ics_cache';
-  $cache_timestamp_option_name = 'erfindergeist_ics_cache_timestamp';
-  $cached_data = get_option($cache_option_name);
-  $cache_timestamp = get_option($cache_timestamp_option_name);
+  // read-only options
+  $ics_cache = get_option($_SESSION['ics_cache_option_name']);
+  $ics_cache_timestamp = get_option($_SESSION['ics_cache_timestamp_option_name']);
 
   if ( !empty($_POST) || wp_verify_nonce(egj_escape($_POST['egj_calendar_nonce_field']),'egj_calendar_action') ) {
-    if ( $_POST[ $apikey_field_name ]) {
-      $apikey_opt_val = $_POST[ $apikey_field_name ];
-      update_option( $apikey_opt_name, $apikey_opt_val );
-    }
-
-    if ( $_POST[ $google_calendar_id_field_name ]) {
-      $google_calendar_id_opt_val = $_POST[ $google_calendar_id_field_name ];
-      update_option( $google_calendar_id_opt_name, $google_calendar_id_opt_val );
-    }
-    
-    if( $_POST[ $erfindergeist_ics_url_field_name ])
+    // update ics_url
+    if( $_POST[ $ics_url_field_name ])
     {
-      $erfindergeist_ics_url = $_POST[ $erfindergeist_ics_url_field_name ];
-      update_option( $erfindergeist_ics_url_option_name, $erfindergeist_ics_url );
-    }
-
-    if( $_POST[ $erfindergeist_feature_switch_field_name ])
-    {
-      $erfindergeist_feature_switch = $_POST[ $erfindergeist_feature_switch_field_name ];
-      update_option( $erfindergeist_feature_switch_option_name, $erfindergeist_feature_switch );
+      $ics_url = $_POST[ $ics_url_field_name ];
+      update_option( $_SESSION['ics_url_option_name'], $ics_url );
     }
 
     // Put a "settings saved" message on the screen
@@ -106,24 +77,10 @@ function egj_calendar_settings_page() {
 
   <?php wp_nonce_field('egj_calendar_action','egj_calendar_nonce_field'); ?>
 
-  <p><?php _e("Apikey:", 'menu-test' ); ?>
-  <input type="text" name="<?php echo $apikey_field_name; ?>" value="<?php echo $apikey_opt_val; ?>" size="40">
-  find the apikey in the <a href="https://console.cloud.google.com/apis/api/calendar-json.googleapis.com" target="_blank" rel="nooper">google console</a>.
-  </p><hr />
-
-  <p><?php _e("google calendar id:", 'menu-test' ); ?>
-  <input type="text" name="<?php echo $google_calendar_id_field_name; ?>" value="<?php echo $google_calendar_id_opt_val; ?>" size="60">
-  </p><hr />
-
   <p><?php _e("Ics Url:", 'menu-test' ); ?>
-  <input type="text" name="<?php echo $erfindergeist_ics_url_field_name; ?>" value="<?php echo $erfindergeist_ics_url; ?>" size="60">
+  <input type="text" name="<?php echo $ics_url_field_name; ?>" value="<?php echo $ics_url; ?>" size="60">
   </p><hr />
 
-  <label for="feature_switch"><?php _e("Feature Switch:", 'menu-test' ); ?></label>
-  <select id="feature_switch" name="<?php echo $erfindergeist_feature_switch_field_name; ?>">
-    <option value="google" <?php if ($erfindergeist_feature_switch == 'google') echo 'selected'; ?>">Google</option>
-    <option value="nextcloud" <?php if ($erfindergeist_feature_switch == 'nextcloud') echo 'selected'; ?>>Nextcloud</option>
-  </select>
   <hr />
 
   <p class="submit">
@@ -134,8 +91,8 @@ function egj_calendar_settings_page() {
 
   <div>
     <h3>ICS Cache Information</h3>
-    <p>Last Cache Timestamp: <?php echo $cache_timestamp ? date('d.m.Y H:i:s', $cache_timestamp) : 'No cache available'; ?></p>
-    <p>Cached ICS: </p><div><?php echo $cached_data ? $cached_data : 'No cache available'; ?></div>
+    <p>Cached ICS: </p><div><?php echo $ics_cache ? $ics_cache : 'No ics cache available'; ?></div>
+    <p>Last Cache Timestamp: <?php echo $ics_cache_timestamp ? date('d.m.Y H:i:s', $ics_cache_timestamp) : 'No ics cache timestamp available'; ?></p>
   </div>
 
 <?php
