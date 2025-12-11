@@ -38,15 +38,23 @@ function egj_get_ics_Events() // $request
   }
 
   // Hole gecachte ICS-Daten
-  $cached_ics_data = egj_get_cached_ics_data();
+  // $cached_ics_data = egj_get_cached_ics_data();
   
-  if (is_wp_error($cached_ics_data)) {
-    return $cached_ics_data;
-  }
+  // if (is_wp_error($cached_ics_data)) {
+  //   return $cached_ics_data;
+  // }
+
+  $erfindergeist_ics_url = get_option($erfindergeist_ics_url_option_name);
+  $response = wp_remote_get($erfindergeist_ics_url, array(
+    'timeout' => 30,
+    'sslverify' => true
+  ));
+  $ics_data = wp_remote_retrieve_body($response);
 
   try {
     $iCal = new ICal();
-    $iCal->initString($cached_ics_data);
+    $iCal->initString($ics_data);
+    
 
     // Transformiere iCal-Daten in einheitliches Format
     $transformed_data = egj_transform_ical_data($iCal->cal);
