@@ -32,11 +32,11 @@ function getIcs(): WP_Error|WP_REST_Response
 {
   $ics = getIcsFromUrl();
   
-  return new WP_REST_Response($ics, 200, ["Content-Type" => "text/calendar", "Content-Disposition" => 'inline; filename="erfindergeist.ics"']);
+  // return new WP_REST_Response($ics, 200, ["Content-Type" => "text/calendar", "Content-Disposition" => 'inline; filename="erfindergeist.ics"']);
 
-  // header('Content-Type: text/calendar; charset=utf-8');
-  // header('Content-Disposition: inline; filename="calendar.ics"');
-  // echo $ics;
+  header('Content-Type: text/calendar; charset=utf-8');
+  header('Content-Disposition: inline; filename="calendar.ics"');
+  echo $ics;
 }
 
 /**
