@@ -28,17 +28,18 @@ function getIcsFromUrl(): string
 
 }
 
-function getIcs(): void
+function getIcs(): WP_Error|WP_REST_Response
 {
   $ics = getIcsFromUrl();
   $response = new WP_REST_Response($ics);
   $response->set_status(200);
+  return $response;
 }
 
 /**
  * Vereinheitlichter Events-Endpunkt
  */
-function getEvents() // $request
+function getEvents()
 {
   try {
     $current_time = time();
