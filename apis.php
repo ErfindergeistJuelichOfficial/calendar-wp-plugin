@@ -63,7 +63,7 @@ function egj_get_ics_Events() // $request
     // Transformiere iCal-Daten in einheitliches Format
     // $transformed_data = egj_transform_ical_data($iCal->cal);
 
-    $response = new WP_REST_Response($iCal->cal);
+    $response = new WP_REST_Response($iCal->eventsFromRange());
     $response->set_status(200);
 
     return $response;
