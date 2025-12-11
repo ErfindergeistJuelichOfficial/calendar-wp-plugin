@@ -63,6 +63,11 @@ function egj_calendar_settings_page() {
   $apikey_opt_val = get_option( $apikey_opt_name );
   $google_calendar_id_opt_val = get_option( $google_calendar_id_opt_name );
 
+  $cache_option_name = 'erfindergeist_ics_cache';
+  $cache_timestamp_option_name = 'erfindergeist_ics_cache_timestamp';
+  $cached_data = get_option($cache_option_name);
+  $cache_timestamp = get_option($cache_timestamp_option_name);
+
   if ( !empty($_POST) || wp_verify_nonce(egj_escape($_POST['egj_calendar_nonce_field']),'egj_calendar_action') ) {
     if ( $_POST[ $apikey_field_name ]) {
       $apikey_opt_val = $_POST[ $apikey_field_name ];
@@ -126,6 +131,11 @@ function egj_calendar_settings_page() {
   </p>
 
   </form>
+
+  <div>
+    <h3>ICS Cache Information</h3>
+    <p>Last Cache Timestamp: <?php echo $cache_timestamp ? date('d.m.Y H:i:s', $cache_timestamp) : 'No cache available'; ?></p>
+    <p>Cached ICS: </p><div><?php echo $cached_data ? $cached_data : 'No cache available'; ?></div>
   </div>
 
 <?php

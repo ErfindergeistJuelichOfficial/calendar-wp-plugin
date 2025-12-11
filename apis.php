@@ -27,7 +27,8 @@ function getEvents() {
 }
 
 function egj_get_ics_Events() // $request
-{ $current_time = time();
+{ 
+  $current_time = time();
   $erfindergeist_ics_url_option_name = $_SESSION['erfindergeist_ics_url_option_name'];
 
   if(!get_option( $erfindergeist_ics_url_option_name )) {
