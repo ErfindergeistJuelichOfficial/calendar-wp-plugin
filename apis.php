@@ -53,6 +53,7 @@ function egj_get_ics_Events() // $request
 
   $response = new WP_REST_Response($ics_data );
   $response->set_status(200);
+  return $response;
 
   try {
     $iCal = new ICal();
