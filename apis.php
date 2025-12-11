@@ -13,11 +13,14 @@ function getIcsFromUrl(): string
 {
   try {
     $erfindergeist_ics_url = get_option($_SESSION['ics_url_option_name']);
-    $response = wp_remote_get($erfindergeist_ics_url, array(
-      'timeout' => 30,
-      'sslverify' => true
-    ));
-    return wp_remote_retrieve_body($response);
+    $ics = file_get_contents($erfindergeist_ics_url);
+
+    // $response = wp_remote_get($erfindergeist_ics_url, array(
+    //   'timeout' => 30,
+    //   'sslverify' => true
+    // ));
+    // return wp_remote_retrieve_body($response);
+    return $ics;
   } catch (\Exception $e) {
     egj_send_notification_to_admins("Error getting ICS from URL");
     return "";
