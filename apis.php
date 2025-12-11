@@ -51,9 +51,9 @@ function egj_get_ics_Events() // $request
   ));
   $ics_data = wp_remote_retrieve_body($response);
 
-  $response = new WP_REST_Response($ics_data );
-  $response->set_status(200);
-  return $response;
+  // $response = new WP_REST_Response($ics_data );
+  // $response->set_status(200);
+  // return $response;
 
   try {
     $iCal = new ICal();
@@ -61,9 +61,9 @@ function egj_get_ics_Events() // $request
     
 
     // Transformiere iCal-Daten in einheitliches Format
-    $transformed_data = egj_transform_ical_data($iCal->cal);
+    // $transformed_data = egj_transform_ical_data($iCal->cal);
 
-    $response = new WP_REST_Response($transformed_data);
+    $response = new WP_REST_Response($iCal->cal);
     $response->set_status(200);
 
     return $response;
