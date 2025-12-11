@@ -58,7 +58,7 @@ function egj_get_ics_Events() // $request
   try {
     $iCal = new ICal();
     $iCal->initString($ics_data);
-    $arrayOfEvents = $iCal->eventsFromRange();
+    $arrayOfEvents = $iCal->eventsFromRange(null, null);
 
     // Transformiere iCal-Daten in einheitliches Format
     // $transformed_data = egj_transform_ical_data($iCal->cal);
