@@ -36,7 +36,7 @@ function getIcsInternal()
   $is_cache_timeout = $ics_cache_timestamp && ($current_time - $ics_cache_timestamp) < $cache_lifetime;
 
   $ics = null;
-  if ($is_cache_timeout) 
+  if ($is_cache_timeout && $is_cache_valid) 
   {
     try {
       $ics =  getIcsFromUrl($ics_url);

@@ -1,8 +1,8 @@
 ### 
-GET https://spielwiese.erfindergeist.org/wp-json/erfindergeist/v1/nextevent
+GET https://spielwiese.erfindergeist.org/wp-json/erfindergeist/v2/nextevent
 
 ### events with ical
 GET https://spielwiese.erfindergeist.org/wp-json/erfindergeist/v1/events
 
-### get feature
-GET https://spielwiese.erfindergeist.org/wp-json/erfindergeist/v1/feature
+https://spielwiese.erfindergeist.org/wp-json/erfindergeist/v1/ics
+
