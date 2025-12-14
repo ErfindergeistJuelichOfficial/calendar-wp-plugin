@@ -24,6 +24,76 @@ require_once 'helpers.php';
 require_once 'vars.php';
 require_once 'styles.php';
 require_once 'apis.php';
+require_once 'ICal.php';
+use ICal\ICal;
+
+function egj_render_calendar_events($arrayOfEvents, $attributes)
+{
+  echo '<div class="container p-0 text-dark">';
+  $tags = array();
+   foreach ($arrayOfEvents as $event) {
+    $summary = $event->summary || '';
+    $description = $event->description || '';
+    $location = $event->location || '';
+    
+    
+    $startDate = '';
+    $startTime = '';
+    
+    if (!empty($event->dtstart)) {
+      $startDateTime = new DateTime($event->dtstart);
+      $startDate = $startDateTime->format('d.m.Y');
+      $startTime = $startDateTime->format('H:i');
+    }
+    
+    // Konvertiere dtend ins deutsche Format
+    $endDate = '';
+    $endTime = '';
+    if (!empty($event->dtend)) {
+      $endDateTime = new DateTime($event->dtend);
+      $endDate = $endDateTime->format('d.m.Y');
+      $endTime = $endDateTime->format('H:i');
+    }
+
+        echo ' <div class="row">';
+          echo '<div class="col-1" style="font-size: 3rem">{{weekDayShort}}</div>';
+          echo '<div class="col">'.$summary.', '.$description.', '.$location.' {{startDate}}, {{startTime}}, ';
+           echo'{{endDate}}, {{endTime}}, {{weekDayShort}}';
+
+            echo '<div>';
+            foreach ($tags as $tag) {
+              echo '<span class="badge text-bg-primary">' . $tag . '</span>';
+            }
+            echo '</div>';
+          echo '</div>';
+        echo '</div>';
+  }
+  echo '</div>';
+}
+function egj_calendar_display_shortcode($atts) {
+  // Attribute mit Defaults
+  $attributes = shortcode_atts(array(
+    'max_events' => 20,
+    'view' => 'list' // list, compact
+  ), $atts);
+
+  try {
+    $ics = getIcsInternal();
+    $iCal = new ICal();
+    $iCal->initString($ics);
+    $arrayOfEvents = $iCal->eventsFromRange(null, null);
+  } catch (\Exception $e) {
+    return '<div class="egj-calendar-error">Fehler beim Laden der Termine</div>';
+  }
+  
+  // Rendere die Termine
+  ob_start();
+  egj_render_calendar_events($arrayOfEvents, $attributes);
+  return ob_get_clean();
+}
+
+// Registriere Shortcode
+add_shortcode('egj_calendar', 'egj_calendar_display_shortcode');
 
 function egj_calendar_plugin_options() {
 
