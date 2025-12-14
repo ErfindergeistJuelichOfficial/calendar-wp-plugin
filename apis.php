@@ -107,8 +107,8 @@ function getNextEvent($request)
     $iCal = new ICal();
     $iCal->initString($ics);
     $arrayOfEvents = $iCal->eventsFromRange(
-      date('Y-m-d H:i:s', strtotime('+1 days')),
-      date('Y-m-d H:i:s', strtotime('+2 days'))
+      date('Y-m-d 00:00:00', strtotime('tomorrow')),
+      date('Y-m-d 23:59:59', strtotime('tomorrow'))
     );    
 
   if (is_array($arrayOfEvents) && count($arrayOfEvents) > 0) {
