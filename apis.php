@@ -65,8 +65,6 @@ function getIcsInternal()
   }
 
   return $ics;
-
-
 }
 function getIcs()
 {
@@ -102,7 +100,6 @@ function getEvents()
 
 function getNextEvent($request)
 {
-
     $ics = getIcsInternal();
     $iCal = new ICal();
     $iCal->initString($ics);
@@ -139,20 +136,19 @@ function getNextEvent($request)
   $response = new WP_REST_Response();
   $response->set_status(304);
   return $response;
-
 }
 
 // CUSTOM APIS
-// https://<DOMAIN>/wp-json/erfindergeist/v1/events
+// https://<DOMAIN>/wp-json/erfindergeist/v2/events
 add_action('rest_api_init', function () {
-  register_rest_route('erfindergeist/v1', '/ics', array(
+  register_rest_route('erfindergeist/v2', '/ics', array(
     'methods' => 'GET',
     'callback' => 'getIcs'
   ));
 });
 
 add_action('rest_api_init', function () {
-  register_rest_route('erfindergeist/v1', '/events', array(
+  register_rest_route('erfindergeist/v2', '/events', array(
     'methods' => 'GET',
     'callback' => 'getEvents'
   ));

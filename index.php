@@ -6,7 +6,7 @@
  * Author: Lars 'vreezy' Eschweiler
  * Author URI: https://www.erfindergeist.org
  * Contributor: Erfindergeist Jülich e.V.
- * Version: 2.1.0
+ * Version: 2.2.0
  * Text Domain: erfindergeist
  * Domain Path: /languages
  * Tested up to: 6.8

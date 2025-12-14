@@ -2,7 +2,7 @@
 GET https://spielwiese.erfindergeist.org/wp-json/erfindergeist/v2/nextevent
 
 ### events with ical
-GET https://spielwiese.erfindergeist.org/wp-json/erfindergeist/v1/events
+GET https://spielwiese.erfindergeist.org/wp-json/erfindergeist/v2/events
 
-https://spielwiese.erfindergeist.org/wp-json/erfindergeist/v1/ics
-
+### ICS use Browser
+https://spielwiese.erfindergeist.org/wp-json/erfindergeist/v2/ics
