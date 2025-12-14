@@ -36,7 +36,7 @@ function getIcsInternal()
   $is_cache_timeout = $ics_cache_timestamp && ($current_time - $ics_cache_timestamp) < $cache_lifetime;
 
   $ics = null;
-  if ($is_cache_timeout) 
+  if (!$ics_cache_timestamp || $is_cache_timeout) 
   {
     try {
       $ics =  getIcsFromUrl($ics_url);
@@ -74,7 +74,7 @@ function getIcs()
   
   // Gib ICS-Daten 1:1 zurück wie sie von der URL kommen
   header('Content-Type: text/calendar; charset=utf-8');
-  header('Content-Disposition: inline; filename="calendar.ics"');
+  header('Content-Disposition: inline; filename="erfindergeist.ics"');
   echo $ics;
   exit;
 }
