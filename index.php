@@ -60,7 +60,7 @@ function egj_extract_and_remove_hashtags($text)
  * @param array $variables Assoziatives Array mit Placeholder => Wert
  * @return string Der gerenderte HTML-Code
  */
-function egj_load_and_render_template($templateFile, $variables)
+function egj_load_and_render_template($templateFile, $variables): string
 {
   // Template-Datei laden
   $templatePath = plugin_dir_path(__FILE__) . $templateFile;
@@ -72,8 +72,15 @@ function egj_load_and_render_template($templateFile, $variables)
   $template = file_get_contents($templatePath);
 
   // Placeholder ersetzen
-  foreach ($variables as $placeholder => $value) {
-    $template = str_replace('{{' . $placeholder . '}}', $value, $template);
+  try
+  {
+    foreach ($variables as $placeholder => $value) {
+      $template = str_replace('{{' . $placeholder . '}}', $value, $template);
+    }
+  }
+  catch (\Exception $e)
+  {
+    return '<div class="error">Fehler beim Rendern des Templates: ' . esc_html($e->getMessage()) . '</div>';
   }
 
   return $template;
