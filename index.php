@@ -148,14 +148,14 @@ function egj_render_calendar_events($arrayOfEvents, $attributes)
       'description' => esc_html($description),
       'location' => esc_html($location),
       'dateTimeInfo' => $renderedDateTimeInfo,
-      'tags' => $renderedTags
+      'tags' => join(' ', $renderedTags),
     ));
 
     array_push($renderedAppointments, $renderedAppointment);
   }
 
   $renderedEvents = egj_load_and_render_template('template_events_big.html', array(
-    'appointments' => $renderedAppointments,
+    'appointments' => join(' ', $renderedAppointments),
   ));
 
   echo $renderedEvents;
