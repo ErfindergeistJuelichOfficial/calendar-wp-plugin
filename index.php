@@ -16,7 +16,7 @@
  */
 
 // Exit if accessed directly.
-if ( ! defined( 'ABSPATH' ) ) {
+if (!defined('ABSPATH')) {
   exit;
 }
 
@@ -27,25 +27,80 @@ require_once 'apis.php';
 require_once 'ICal.php';
 use ICal\ICal;
 
+/**
+ * Extrahiert Hashtags aus einem Text und entfernt sie
+ * 
+ * @param string $text Der Text mit Hashtags
+ * @return array Array mit 'text' (bereinigter Text) und 'tags' (gefundene Hashtags)
+ */
+function egj_extract_and_remove_hashtags($text)
+{
+  // Finde alle Wörter, die mit # beginnen
+  preg_match_all('/#\w+/u', $text, $matches);
+
+  $tags = $matches[0]; // Alle gefundenen Hashtags
+
+  // Entferne alle Hashtags aus dem Text
+  $cleanedText = preg_replace('/#\w+/u', '', $text);
+
+  // Entferne überflüssige Leerzeichen
+  $cleanedText = preg_replace('/\s+/', ' ', $cleanedText);
+  $cleanedText = trim($cleanedText);
+
+  return array(
+    'text' => $cleanedText,
+    'tags' => $tags
+  );
+}
+
+/**
+ * Lädt ein Template und ersetzt die Placeholder
+ * 
+ * @param string $templateFile Pfad zur Template-Datei
+ * @param array $variables Assoziatives Array mit Placeholder => Wert
+ * @return string Der gerenderte HTML-Code
+ */
+function egj_load_and_render_template($templateFile, $variables)
+{
+  // Template-Datei laden
+  $templatePath = plugin_dir_path(__FILE__) . $templateFile;
+
+  if (!file_exists($templatePath)) {
+    return '<div class="error">Template nicht gefunden: ' . esc_html($templateFile) . '</div>';
+  }
+
+  $template = file_get_contents($templatePath);
+
+  // Placeholder ersetzen
+  foreach ($variables as $placeholder => $value) {
+    $template = str_replace('{{' . $placeholder . '}}', $value, $template);
+  }
+
+  return $template;
+}
+
 function egj_render_calendar_events($arrayOfEvents, $attributes)
 {
-  echo '<div class="container p-0 text-dark">';
-  $tags = array();
-   foreach ($arrayOfEvents as $event) {
+  $renderedAppointments = array();
+  foreach ($arrayOfEvents as $event) {
     $summary = $event->summary || '';
     $description = $event->description || '';
     $location = $event->location || '';
-    
-    
+
+    // Hashtags aus der Description extrahieren und entfernen
+    $descriptionData = egj_extract_and_remove_hashtags($description);
+    $description = $descriptionData['text'];
+    $tags = $descriptionData['tags'];
+
     $startDate = '';
     $startTime = '';
-    
+
     if (!empty($event->dtstart)) {
       $startDateTime = new DateTime($event->dtstart);
       $startDate = $startDateTime->format('d.m.Y');
       $startTime = $startDateTime->format('H:i');
     }
-    
+
     // Konvertiere dtend ins deutsche Format
     $endDate = '';
     $endTime = '';
@@ -55,22 +110,51 @@ function egj_render_calendar_events($arrayOfEvents, $attributes)
       $endTime = $endDateTime->format('H:i');
     }
 
-        echo ' <div class="row">';
-          echo '<div class="col-1" style="font-size: 3rem">{{weekDayShort}}</div>';
-          echo '<div class="col">'.$summary.', '.$description.', '.$location.' {{startDate}}, {{startTime}}, ';
-           echo'{{endDate}}, {{endTime}}, {{weekDayShort}}';
+    $renderedDateTimeInfo = '';
+    if ($endDate === $startDate) {
+      $renderedDateTimeInfo = egj_load_and_render_template('template_same_day.html', array(
+        'startDate' => esc_html($startDate),
+        'startTime' => esc_html($startTime),
+        'endDate' => esc_html($endDate),
+      ));
+    } else {
+      $renderedDateTimeInfo = egj_load_and_render_template('template_several_days.html', array(
+        'startDate' => esc_html($startDate),
+        'startTime' => esc_html($startTime),
+        'endDate' => esc_html($endDate),
+        'endTime' => esc_html($endTime),
+      ));
+    }
 
-            echo '<div>';
-            foreach ($tags as $tag) {
-              echo '<span class="badge text-bg-primary">' . $tag . '</span>';
-            }
-            echo '</div>';
-          echo '</div>';
-        echo '</div>';
+    $renderedTags = array();
+    if (!empty($tags)) {
+      foreach ($tags as $tag) {
+        $renderedTag = egj_load_and_render_template('template_tag.html', array(
+          'tag' => esc_html($tag),
+        ));
+        array_push($renderedTags, $renderedTag);
+      }
+    }
+
+    $renderedAppointment = egj_load_and_render_template('template_appointment.html', array(
+      'summary' => esc_html($summary),
+      'description' => esc_html($description),
+      'location' => esc_html($location),
+      'dateTimeInfo' => $renderedDateTimeInfo,
+      'tags' => $renderedTags
+    ));
+
+    array_push($renderedAppointments, $renderedAppointment);
   }
-  echo '</div>';
+
+  $renderedEvents = egj_load_and_render_template('template_events_big.html', array(
+    'appointments' => $renderedAppointments,
+  ));
+
+  echo $renderedEvents;
 }
-function egj_calendar_display_shortcode($atts) {
+function egj_calendar_display_shortcode($atts)
+{
   // Attribute mit Defaults
   $attributes = shortcode_atts(array(
     'max_events' => 20,
@@ -85,7 +169,7 @@ function egj_calendar_display_shortcode($atts) {
   } catch (\Exception $e) {
     return '<div class="egj-calendar-error">Fehler beim Laden der Termine</div>';
   }
-  
+
   // Rendere die Termine
   ob_start();
   egj_render_calendar_events($arrayOfEvents, $attributes);
@@ -95,81 +179,88 @@ function egj_calendar_display_shortcode($atts) {
 // Registriere Shortcode
 add_shortcode('egj_calendar', 'egj_calendar_display_shortcode');
 
-function egj_calendar_plugin_options() {
+function egj_calendar_plugin_options()
+{
 
-	if ( !current_user_can( 'manage_options' ) )  {
-    wp_die( __( 'You do not have sufficient permissions to access this page.' ) );
-	}
+  if (!current_user_can('manage_options')) {
+    wp_die(__('You do not have sufficient permissions to access this page.'));
+  }
 
   ?>
-    <div>
-      <h3>Erfindergeist</h3>
-      <p>Please use Submenus for Options</p>
-    </div>
+  <div>
+    <h3>Erfindergeist</h3>
+    <p>Please use Submenus for Options</p>
+  </div>
   <?php
 }
 
-function egj_calendar_settings_page() {
+function egj_calendar_settings_page()
+{
 
-  if (!current_user_can('manage_options'))
-  {
-    wp_die( __('You do not have sufficient permissions to access this page.') );
+  if (!current_user_can('manage_options')) {
+    wp_die(__('You do not have sufficient permissions to access this page.'));
   }
 
   // updatable options  
-  $ics_url = get_option( $_SESSION['ics_url_option_name']);
+  $ics_url = get_option($_SESSION['ics_url_option_name']);
   $ics_url_field_name = 'erfindergeist_ics_url_field';
 
   // read-only options
   $ics_cache = get_option($_SESSION['ics_cache_option_name']);
   $ics_cache_timestamp = get_option($_SESSION['ics_cache_timestamp_option_name']);
 
-  if ( !empty($_POST) || wp_verify_nonce(egj_escape($_POST['egj_calendar_nonce_field']),'egj_calendar_action') ) {
+  if (!empty($_POST) || wp_verify_nonce(egj_escape($_POST['egj_calendar_nonce_field']), 'egj_calendar_action')) {
     // update ics_url
-    if( $_POST[ $ics_url_field_name ])
-    {
-      $ics_url = $_POST[ $ics_url_field_name ];
-      update_option( $_SESSION['ics_url_option_name'], $ics_url );
+    if ($_POST[$ics_url_field_name]) {
+      $ics_url = $_POST[$ics_url_field_name];
+      update_option($_SESSION['ics_url_option_name'], $ics_url);
     }
 
     // Put a "settings saved" message on the screen
     ?>
-      <div class="updated"><p><strong><?php _e('settings saved.', 'menu-test' ); ?></strong></p></div>
+    <div class="updated">
+      <p><strong><?php _e('settings saved.', 'menu-test'); ?></strong></p>
+    </div>
     <?php
   }
 
-  
+
   echo '<div class="wrap">';
-  echo "<h2>" . __( 'Erfindergeist Calendar Settings', 'menu-test' ) . "</h2>";
-?>
+  echo "<h2>" . __('Erfindergeist Calendar Settings', 'menu-test') . "</h2>";
+  ?>
 
   <form name="form1" method="post" action="">
 
-  <?php wp_nonce_field('egj_calendar_action','egj_calendar_nonce_field'); ?>
+    <?php wp_nonce_field('egj_calendar_action', 'egj_calendar_nonce_field'); ?>
 
-  <p><?php _e("Ics Url:", 'menu-test' ); ?>
-  <input type="text" name="<?php echo $ics_url_field_name; ?>" value="<?php echo $ics_url; ?>" size="60">
-  </p><hr />
+    <p><?php _e("Ics Url:", 'menu-test'); ?>
+      <input type="text" name="<?php echo $ics_url_field_name; ?>" value="<?php echo $ics_url; ?>" size="60">
+    </p>
+    <hr />
 
-  <hr />
+    <hr />
 
-  <p class="submit">
-  <input type="submit" name="Submit" class="button-primary" value="<?php esc_attr_e('Save Changes') ?>" />
-  </p>
+    <p class="submit">
+      <input type="submit" name="Submit" class="button-primary" value="<?php esc_attr_e('Save Changes') ?>" />
+    </p>
 
   </form>
 
   <div>
     <h3>ICS Cache Information</h3>
-    <p>Cached ICS: </p><div><?php echo $ics_cache ? $ics_cache : 'No ics cache available'; ?></div>
-    <p>Last Cache Timestamp: <?php echo $ics_cache_timestamp ? date('d.m.Y H:i:s', $ics_cache_timestamp) : 'No ics cache timestamp available'; ?></p>
+    <p>Cached ICS: </p>
+    <div><?php echo $ics_cache ? $ics_cache : 'No ics cache available'; ?></div>
+    <p>Last Cache Timestamp:
+      <?php echo $ics_cache_timestamp ? date('d.m.Y H:i:s', $ics_cache_timestamp) : 'No ics cache timestamp available'; ?>
+    </p>
   </div>
 
-<?php
+  <?php
 }
 
-function egj_calendar_menu() {
-  if ( empty ( $GLOBALS['admin_page_hooks']['erfindergeist'] ) ) {
+function egj_calendar_menu()
+{
+  if (empty($GLOBALS['admin_page_hooks']['erfindergeist'])) {
     add_menu_page(
       'Erfindergeist',
       'Erfindergeist',
@@ -189,4 +280,4 @@ function egj_calendar_menu() {
   );
 }
 
-  add_action( 'admin_menu', 'egj_calendar_menu' );
+add_action('admin_menu', 'egj_calendar_menu');
