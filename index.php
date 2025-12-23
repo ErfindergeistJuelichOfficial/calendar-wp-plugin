@@ -126,7 +126,7 @@ function egj_link_text_by_tag($summary, $tag)
   return $summary;
 }
 
-function egj_render_small_calendar_events($arrayOfEvents)
+function egj_render_small_calendar_events($arrayOfEvents, $filterTags = array())
 {
   $renderedAppointments = array();
   foreach ($arrayOfEvents as $event) {
@@ -174,7 +174,20 @@ function egj_render_small_calendar_events($arrayOfEvents)
       foreach ($tags as $tag) {
         $summary =  egj_link_text_by_tag($summary, $tag);
       }
-    }   
+    }
+    
+    if (!empty($filterTags)) {
+      $hasFilterTag = false;
+      foreach ($tags as $tag) {
+        if (in_array($tag, $filterTags)) {
+          $hasFilterTag = true;
+          break;
+        }
+      }
+      if (!$hasFilterTag) {
+        continue; // Überspringe diesen Termin, wenn kein Filter-Tag übereinstimmt
+      }
+    }
 
     $renderedAppointment = egj_load_and_render_template('template_appointment_small.html', array(
       'linkText' => $summary,
@@ -273,7 +286,8 @@ function egj_calendar_display_shortcode($atts)
   // Attribute mit Defaults
   $attributes = shortcode_atts(array(
     'max_events' => 20,
-    'view' => 'normal' // normal, compact
+    'view' => 'normal', // normal, compact
+    'filter' => []
   ), $atts);
 
   try {
@@ -290,7 +304,7 @@ function egj_calendar_display_shortcode($atts)
   // Rendere die Termine
   ob_start();
   if(egj_escape($attributes['view']) === 'compact') {
-    egj_render_small_calendar_events($arrayOfEvents);
+    egj_render_small_calendar_events($arrayOfEvents, $attributes['filter']);
   } else {
     egj_render_big_calendar_events($arrayOfEvents);
     
