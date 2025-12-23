@@ -90,9 +90,9 @@ function egj_render_calendar_events($arrayOfEvents)
 {
   $renderedAppointments = array();
   foreach ($arrayOfEvents as $event) {
-    $summary = "SUMMARY" ; # $event->summary || '';
-    $description = $event->description || '';
-    $location = $event->location || '';
+    $summary = $event->summary ?? '';
+    $description = $event->description ?? '';
+    $location = $event->location ?? '';
 
     // Hashtags aus der Description extrahieren und entfernen
     $descriptionData = egj_extract_and_remove_hashtags($description);
