@@ -126,7 +126,7 @@ function egj_link_text_by_tag($summary, $tag)
   return $summary;
 }
 
-function egj_render_small_calendar_events($arrayOfEvents, $filterTag = '')
+function egj_render_small_calendar_events($arrayOfEvents, $filterTag)
 {
   $renderedAppointments = array();
   foreach ($arrayOfEvents as $event) {
@@ -176,7 +176,7 @@ function egj_render_small_calendar_events($arrayOfEvents, $filterTag = '')
       }
     }
     
-    if (!$filterTag !== '') {
+    if ($filterTag !== '') {
       $hasFilterTag = false;
       foreach ($tags as $tag) {
         if (in_array($tag, $filterTag)) {
