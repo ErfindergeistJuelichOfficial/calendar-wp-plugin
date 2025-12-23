@@ -177,7 +177,7 @@ function egj_render_small_calendar_events($arrayOfEvents)
     }   
 
     $renderedAppointment = egj_load_and_render_template('template_appointment_small.html', array(
-      'linkText' => esc_html($summary),
+      'linkText' => $summary,
       'dateTimeInfo' => $renderedDateTimeInfo
     ));
 
