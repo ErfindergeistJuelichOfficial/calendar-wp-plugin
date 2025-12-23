@@ -271,16 +271,19 @@ function egj_calendar_settings_page()
     <span>
       <p>Cache Pretty Print</p>
 
-    <?php 
-      if ($ics_cache && $ics_cache != "") {
-        $iCal = new ICal();
-        $iCal->initString( $ics_cache);
-        $arrayOfEvents = $iCal->eventsFromRange(null, null);
-        echo json_encode($arrayOfEvents, JSON_PRETTY_PRINT);
-      }
-    ?>
+      <pre>
+        <?php 
+          if ($ics_cache && $ics_cache != "") {
+            $iCal = new ICal();
+            $iCal->initString( $ics_cache);
+            $arrayOfEvents = $iCal->eventsFromRange(null, null);
+            echo json_encode($arrayOfEvents, JSON_PRETTY_PRINT);
+          }
+        ?>
+      </pre>
     </span>
 
+    <br>
     <div><?php echo $ics_cache ? $ics_cache : 'No ics cache available'; ?></div>
    
       
