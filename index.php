@@ -90,7 +90,7 @@ function egj_render_calendar_events($arrayOfEvents)
 {
   $renderedAppointments = array();
   foreach ($arrayOfEvents as $event) {
-    $summary = $event->summary || '';
+    $summary = "SUMMARY" ; # $event->summary || '';
     $description = $event->description || '';
     $location = $event->location || '';
 
