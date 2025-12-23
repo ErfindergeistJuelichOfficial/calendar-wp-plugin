@@ -229,6 +229,8 @@ function egj_calendar_settings_page()
       // clear cache
       delete_option($_SESSION['ics_cache_option_name']);
       delete_option($_SESSION['ics_cache_timestamp_option_name']);
+      $ics_cache = "";
+      $ics_cache_timestamp = "";
     }
 
     // Put a "settings saved" message on the screen
@@ -252,11 +254,9 @@ function egj_calendar_settings_page()
       <input type="text" name="<?php echo $ics_url_field_name; ?>" value="<?php echo $ics_url; ?>" size="60">
     </p>
 
-    <p><?php _e("Ics Url:", 'menu-test'); ?>
+    <p>
       <input type="checkbox" name="clear_cache" > Clear ICS Cache
     </p>
-
-
 
     <p class="submit">
       <input type="submit" name="Submit" class="button-primary" value="<?php esc_attr_e('Save Changes') ?>" />
@@ -266,10 +266,24 @@ function egj_calendar_settings_page()
 
   <div>
     <h3>ICS Cache Information</h3>
-    <p>Cached ICS: </p>
+    Timestamp: <?php echo $ics_cache_timestamp ? date('d.m.Y H:i:s', $ics_cache_timestamp) : 'No ics cache timestamp available'; ?>
+    
+    <span>
+      <p>Cache Pretty Print</p>
+
+    <?php 
+      if ($ics_cache && $ics_cache != "") {
+        $iCal = new ICal();
+        $iCal->initString( $ics_cache);
+        $arrayOfEvents = $iCal->eventsFromRange(null, null);
+        echo json_encode($arrayOfEvents, JSON_PRETTY_PRINT);
+      }
+    ?>
+    </span>
+
     <div><?php echo $ics_cache ? $ics_cache : 'No ics cache available'; ?></div>
-    <p>Last Cache Timestamp:
-      <?php echo $ics_cache_timestamp ? date('d.m.Y H:i:s', $ics_cache_timestamp) : 'No ics cache timestamp available'; ?>
+   
+      
     </p>
   </div>
 
