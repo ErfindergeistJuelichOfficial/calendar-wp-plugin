@@ -131,6 +131,7 @@ function egj_render_small_calendar_events($arrayOfEvents)
   $renderedAppointments = array();
   foreach ($arrayOfEvents as $event) {
     $summary = $event->summary ?? '';
+    $description = $event->description ?? '';
     $descriptionData = egj_extract_and_remove_hashtags($description);
     $description = $descriptionData['text'];
     $tags = $descriptionData['tags'];
