@@ -159,6 +159,8 @@ function egj_render_calendar_events($arrayOfEvents)
   ));
 
   echo $renderedEvents;
+
+  echo json_encode($arrayOfEvents, JSON_PRETTY_PRINT);
 }
 function egj_calendar_display_shortcode($atts)
 {
