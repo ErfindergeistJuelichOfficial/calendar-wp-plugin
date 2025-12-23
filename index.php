@@ -72,14 +72,11 @@ function egj_load_and_render_template($templateFile, $variables): string
   $template = file_get_contents($templatePath);
 
   // Placeholder ersetzen
-  try
-  {
+  try {
     foreach ($variables as $placeholder => $value) {
       $template = str_replace('{{' . $placeholder . '}}', $value, $template);
     }
-  }
-  catch (\Exception $e)
-  {
+  } catch (\Exception $e) {
     return '<div class="error">Fehler beim Rendern des Templates: ' . esc_html($e->getMessage()) . '</div>';
   }
 
@@ -171,13 +168,12 @@ function egj_render_small_calendar_events($arrayOfEvents, $tag_filter)
       ));
     }
 
-    $linkText = $summary;
     if (!empty($tags)) {
       foreach ($tags as $tag) {
-        $linkText =  egj_link_text_by_tag($summary, $tag);
+        $summary = egj_link_text_by_tag($summary, $tag);
       }
     }
-    
+
     $hasFilterTag = false;
     if ($tag_filter !== '') {
       foreach ($tags as $tag) {
@@ -191,16 +187,14 @@ function egj_render_small_calendar_events($arrayOfEvents, $tag_filter)
       }
     }
 
-    if($hasFilterTag)
-    {
+    if ($hasFilterTag) {
       $renderedAppointment = egj_load_and_render_template('template_appointment_compact_filtered.html', array(
         'location' => $location,
         'dateTimeInfo' => $renderedDateTimeInfo
       ));
-    }
-    else {
+    } else {
       $renderedAppointment = egj_load_and_render_template('template_appointment_small.html', array(
-        'linkText' =>  $linkText,
+        'linkText' => $summary,
         'dateTimeInfo' => $renderedDateTimeInfo
       ));
     }
@@ -310,15 +304,15 @@ function egj_calendar_display_shortcode($atts)
     return '<div class="egj-calendar-error">Fehler beim Laden der Termine</div>';
   }
 
-  $arrayOfEvents = array_slice($arrayOfEvents, 0 , egj_escape($attributes['max_events']));
+  $arrayOfEvents = array_slice($arrayOfEvents, 0, egj_escape($attributes['max_events']));
 
   // Rendere die Termine
   ob_start();
-  if(egj_escape($attributes['view']) === 'compact') {
+  if (egj_escape($attributes['view']) === 'compact') {
     egj_render_small_calendar_events($arrayOfEvents, $attributes['tag_filter']);
   } else {
     egj_render_big_calendar_events($arrayOfEvents);
-    
+
   }
   return ob_get_clean();
 }
@@ -393,7 +387,7 @@ function egj_calendar_settings_page()
     </p>
 
     <p>
-      <input type="checkbox" name="clear_cache" > Clear ICS Cache
+      <input type="checkbox" name="clear_cache"> Clear ICS Cache
     </p>
 
     <p class="submit">
@@ -404,27 +398,28 @@ function egj_calendar_settings_page()
 
   <div>
     <h3>ICS Cache Information</h3>
-    Timestamp: <?php echo $ics_cache_timestamp ? date('d.m.Y H:i:s', $ics_cache_timestamp) : 'No ics cache timestamp available'; ?>
-    
+    Timestamp:
+    <?php echo $ics_cache_timestamp ? date('d.m.Y H:i:s', $ics_cache_timestamp) : 'No ics cache timestamp available'; ?>
+
     <span>
       <p>Cache Pretty Print</p>
 
       <pre>
-        <?php 
+          <?php
           if ($ics_cache && $ics_cache != "") {
             $iCal = new ICal();
-            $iCal->initString( $ics_cache);
+            $iCal->initString($ics_cache);
             $arrayOfEvents = $iCal->eventsFromRange(null, null);
             echo json_encode($arrayOfEvents, JSON_PRETTY_PRINT);
           }
-        ?>
-      </pre>
+          ?>
+        </pre>
     </span>
 
     <br>
     <div><?php echo $ics_cache ? $ics_cache : 'No ics cache available'; ?></div>
-   
-      
+
+
     </p>
   </div>
 
