@@ -126,7 +126,7 @@ function egj_link_text_by_tag($summary, $tag)
   return $summary;
 }
 
-function egj_render_small_calendar_events($arrayOfEvents, $filterTags = array())
+function egj_render_small_calendar_events($arrayOfEvents, $filterTag = '')
 {
   $renderedAppointments = array();
   foreach ($arrayOfEvents as $event) {
@@ -176,10 +176,10 @@ function egj_render_small_calendar_events($arrayOfEvents, $filterTags = array())
       }
     }
     
-    if (!empty($filterTags)) {
+    if (!$filterTag !== '') {
       $hasFilterTag = false;
       foreach ($tags as $tag) {
-        if (in_array($tag, $filterTags)) {
+        if (in_array($tag, $filterTag)) {
           $hasFilterTag = true;
           break;
         }
@@ -287,7 +287,7 @@ function egj_calendar_display_shortcode($atts)
   $attributes = shortcode_atts(array(
     'max_events' => 20,
     'view' => 'normal', // normal, compact
-    'filter' => []
+    'filter' => ''
   ), $atts);
 
   try {
