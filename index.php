@@ -225,6 +225,12 @@ function egj_calendar_settings_page()
       update_option($_SESSION['ics_url_option_name'], $ics_url);
     }
 
+    if (isset($_POST['clear_cache'])) {
+      // clear cache
+      delete_option($_SESSION['ics_cache_option_name']);
+      delete_option($_SESSION['ics_cache_timestamp_option_name']);
+    }
+
     // Put a "settings saved" message on the screen
     ?>
     <div class="updated">
@@ -245,9 +251,12 @@ function egj_calendar_settings_page()
     <p><?php _e("Ics Url:", 'menu-test'); ?>
       <input type="text" name="<?php echo $ics_url_field_name; ?>" value="<?php echo $ics_url; ?>" size="60">
     </p>
-    <hr />
 
-    <hr />
+    <p><?php _e("Ics Url:", 'menu-test'); ?>
+      <input type="checkbox" name="clear_cache" > Clear ICS Cache
+    </p>
+
+
 
     <p class="submit">
       <input type="submit" name="Submit" class="button-primary" value="<?php esc_attr_e('Save Changes') ?>" />
