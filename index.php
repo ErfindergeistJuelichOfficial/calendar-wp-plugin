@@ -99,8 +99,8 @@ function egj_extend_description_by_tag($description, $tag)
     '#OffeneWerkstatt' => '<p>Alle Informationen zur Offenen Werkstatt findest du auf der <a href="https://werkstatt.erfindergeist.org">Offene Werkstatt Seite</a>.</p>',
     '#KreativTag' => '<p>Alle Informationen zum KreativTag findest du auf der <a href="https://kreativ-tag.erfindergeist.org">KreativTag Seite</a>.</p>',
     '#Mobilitaetstag' => '<p>Alle Informationen zum Mobilitätstag findest du auf der <a href="/mobilitaetstag">Mobilitätstag Seite</a>.</p>',
-    '#Stadtbücherei' => '<div class="bd-callout">Achtung! heute findest du uns in der <a href="https://buecherei.juelich.de/" target="_blank" rel="noopener noreferrer">Stadtbücherei Jülich</a>.</div><br>',
-    '#Extern' => '<div class="bd-callout">Achtung! Dieser Termin findet nicht in unseren Räumlichkeiten statt. Achte auf die Adresse im Standortfeld.</div><br>',
+    '#Stadtbücherei' => '<div class="bd-callout">Achtung! heute findest du uns in der <a href="https://buecherei.juelich.de/" target="_blank" rel="noopener noreferrer">Stadtbücherei Jülich</a>.</div>',
+    '#Extern' => '<div class="bd-callout">Achtung! Dieser Termin findet nicht in unseren Räumlichkeiten statt. Achte auf die Adresse im Standortfeld.</div>',
   );
 
   if (array_key_exists($tag, $tagHtmlMap)) {
@@ -110,7 +110,86 @@ function egj_extend_description_by_tag($description, $tag)
   return $description;
 }
 
-function egj_render_calendar_events($arrayOfEvents)
+function egj_link_text_by_tag($summary, $tag)
+{
+  $tagHtmlMap = array(
+    '#Repaircafe' => '<a href="https://repaircafe.erfindergeist.org">' . $summary . '</a>',
+    '#OffeneWerkstatt' => '<a href="https://werkstatt.erfindergeist.org">' . $summary . '</a>',
+    '#KreativTag' => '<a href="https://kreativ-tag.erfindergeist.org">' . $summary . '</a>',
+    '#Mobilitaetstag' => '<a href="/mobilitaetstag">' . $summary . '</a>',
+  );
+
+  if (array_key_exists($tag, $tagHtmlMap)) {
+    $summary = $tagHtmlMap[$tag];
+  }
+
+  return $summary;
+}
+
+function egj_render_small_calendar_events($arrayOfEvents)
+{
+  $renderedAppointments = array();
+  foreach ($arrayOfEvents as $event) {
+    $summary = $event->summary ?? '';
+    $descriptionData = egj_extract_and_remove_hashtags($description);
+    $description = $descriptionData['text'];
+    $tags = $descriptionData['tags'];
+
+    $startDate = '';
+    $startTime = '';
+
+    if (!empty($event->dtstart)) {
+      $startDateTime = new DateTime($event->dtstart);
+      $startDate = $startDateTime->format('d.m.Y');
+      $startTime = $startDateTime->format('H:i');
+    }
+
+    // Konvertiere dtend ins deutsche Format
+    $endDate = '';
+    $endTime = '';
+    if (!empty($event->dtend)) {
+      $endDateTime = new DateTime($event->dtend);
+      $endDate = $endDateTime->format('d.m.Y');
+      $endTime = $endDateTime->format('H:i');
+    }
+
+    $renderedDateTimeInfo = '';
+    if ($endDate === $startDate) {
+      $renderedDateTimeInfo = egj_load_and_render_template('template_same_day.html', array(
+        'startDate' => esc_html($startDate),
+        'startTime' => esc_html($startTime),
+        'endTime' => esc_html($endTime),
+      ));
+    } else {
+      $renderedDateTimeInfo = egj_load_and_render_template('template_several_days.html', array(
+        'startDate' => esc_html($startDate),
+        'startTime' => esc_html($startTime),
+        'endDate' => esc_html($endDate),
+        'endTime' => esc_html($endTime),
+      ));
+    }
+
+    if (!empty($tags)) {
+      foreach ($tags as $tag) {
+        $summary =  egj_link_text_by_tag($summary, $tag);
+      }
+    }   
+
+    $renderedAppointment = egj_load_and_render_template('template_appointment_big.html', array(
+      'linkText' => esc_html($summary),
+      'dateTimeInfo' => $renderedDateTimeInfo
+    ));
+
+    array_push($renderedAppointments, $renderedAppointment);
+  }
+
+  $renderedEvents = egj_load_and_render_template('template_events_small.html', array(
+    'appointments' => join(' ', $renderedAppointments),
+  ));
+
+  echo $renderedEvents;
+}
+function egj_render_big_calendar_events($arrayOfEvents)
 {
   $renderedAppointments = array();
   foreach ($arrayOfEvents as $event) {
@@ -169,7 +248,7 @@ function egj_render_calendar_events($arrayOfEvents)
       }
     }
 
-    $renderedAppointment = egj_load_and_render_template('template_appointment.html', array(
+    $renderedAppointment = egj_load_and_render_template('template_appointment_big.html', array(
       'summary' => esc_html($summary),
       'description' => $description,
       'location' => esc_html($location),
@@ -193,7 +272,7 @@ function egj_calendar_display_shortcode($atts)
   // Attribute mit Defaults
   $attributes = shortcode_atts(array(
     'max_events' => 20,
-    'view' => 'list' // list, compact
+    'view' => 'normal' // normal, compact
   ), $atts);
 
   try {
@@ -205,9 +284,16 @@ function egj_calendar_display_shortcode($atts)
     return '<div class="egj-calendar-error">Fehler beim Laden der Termine</div>';
   }
 
+  $arrayOfEvents = array_slice($arrayOfEvents, 0 , egj_escape($attributes['max_events']));
+
   // Rendere die Termine
   ob_start();
-  egj_render_calendar_events($arrayOfEvents, $attributes);
+  if(egj_escape($attributes['view']) === 'compact') {
+    egj_render_small_calendar_events($arrayOfEvents);
+  } else {
+    egj_render_big_calendar_events($arrayOfEvents);
+    
+  }
   return ob_get_clean();
 }
 
