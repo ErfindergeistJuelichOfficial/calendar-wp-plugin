@@ -145,8 +145,8 @@ function egj_render_calendar_events($arrayOfEvents)
 
     $renderedAppointment = egj_load_and_render_template('template_appointment.html', array(
       'summary' => esc_html($summary),
-      'description' => esc_html($description),
-      'location' => $location,
+      'description' => $description,
+      'location' => esc_html($location),
       'dateTimeInfo' => $renderedDateTimeInfo,
       'tags' => join(' ', $renderedTags),
     ));
@@ -160,7 +160,7 @@ function egj_render_calendar_events($arrayOfEvents)
 
   echo $renderedEvents;
 
-  echo json_encode($arrayOfEvents, JSON_PRETTY_PRINT);
+  // echo json_encode($arrayOfEvents, JSON_PRETTY_PRINT);
 }
 function egj_calendar_display_shortcode($atts)
 {
