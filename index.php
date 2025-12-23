@@ -85,6 +85,30 @@ function egj_load_and_render_template($templateFile, $variables): string
 
   return $template;
 }
+/**
+ * Erweitert die Beschreibung basierend auf dem Tag
+ * 
+ * @param string $description Die ursprüngliche Beschreibung
+ * @param string $tag Der Hashtag
+ * @return string Die erweiterte Beschreibung
+ */
+function egj_extend_description_by_tag($description, $tag)
+{
+  $tagHtmlMap = array(
+    '#Repaircafe' => 'Alle Informationen zum Repair Cafe findest du auf der <a href="https://repaircafe.erfindergeist.org">Repair Cafe Seite</a>.',
+    '#OffeneWerkstatt' => 'Alle Informationen zur Offenen Werkstatt findest du auf der <a href="https://werkstatt.erfindergeist.org">Offene Werkstatt Seite</a>.',
+    '#KreativTag' => 'Alle Informationen zum KreativTag findest du auf der <a href="https://kreativ-tag.erfindergeist.org">KreativTag Seite</a>.',
+    '#Mobilitaetstag' => 'Alle Informationen zum Mobilitätstag findest du auf der <a href="/mobilitaetstag">Mobilitätstag Seite</a>.',
+    '#Stadtbücherei' => '<div class="bd-callout">Achtung! heute findest du uns in der <a href="https://buecherei.juelich.de/" target="_blank" rel="noopener noreferrer">Stadtbücherei Jülich</a>.</div>',
+    '#Extern' => '<div class="bd-callout">Achtung! Dieser Termin findet nicht in unseren Räumlichkeiten statt. Achte auf die Adresse im Standortfeld.</div>',
+  );
+
+  if (array_key_exists($tag, $tagHtmlMap)) {
+    $description .= $tagHtmlMap[$tag];
+  }
+
+  return $description;
+}
 
 function egj_render_calendar_events($arrayOfEvents)
 {
@@ -140,6 +164,8 @@ function egj_render_calendar_events($arrayOfEvents)
           'tag' => esc_html($tag),
         ));
         array_push($renderedTags, $renderedTag);
+
+        $description = egj_extend_description_by_tag($description, $tag);
       }
     }
 
