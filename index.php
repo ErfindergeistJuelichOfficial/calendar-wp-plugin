@@ -170,14 +170,15 @@ function egj_render_small_calendar_events($arrayOfEvents, $tag_filter)
       ));
     }
 
+    $linkText = $summary;
     if (!empty($tags)) {
       foreach ($tags as $tag) {
-        $summary =  egj_link_text_by_tag($summary, $tag);
+        $linkText =  egj_link_text_by_tag($summary, $tag);
       }
     }
     
+    $hasFilterTag = false;
     if ($tag_filter !== '') {
-      $hasFilterTag = false;
       foreach ($tags as $tag) {
         if ($tag === $tag_filter) {
           $hasFilterTag = true;
@@ -189,10 +190,19 @@ function egj_render_small_calendar_events($arrayOfEvents, $tag_filter)
       }
     }
 
-    $renderedAppointment = egj_load_and_render_template('template_appointment_small.html', array(
-      'linkText' => $summary,
-      'dateTimeInfo' => $renderedDateTimeInfo
-    ));
+    if($hasFilterTag)
+    {
+      $renderedAppointment = egj_load_and_render_template('template_appointment_compact_filtered.html', array(
+        'summary' => $summary,
+        'dateTimeInfo' => $renderedDateTimeInfo
+      ));
+    }
+    else {
+      $renderedAppointment = egj_load_and_render_template('template_appointment_small.html', array(
+        'linkText' =>  $linkText,
+        'dateTimeInfo' => $renderedDateTimeInfo
+      ));
+    }
 
     array_push($renderedAppointments, $renderedAppointment);
   }
