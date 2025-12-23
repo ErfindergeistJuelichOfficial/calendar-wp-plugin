@@ -95,12 +95,12 @@ function egj_load_and_render_template($templateFile, $variables): string
 function egj_extend_description_by_tag($description, $tag)
 {
   $tagHtmlMap = array(
-    '#Repaircafe' => 'Alle Informationen zum Repair Cafe findest du auf der <a href="https://repaircafe.erfindergeist.org">Repair Cafe Seite</a>.',
-    '#OffeneWerkstatt' => 'Alle Informationen zur Offenen Werkstatt findest du auf der <a href="https://werkstatt.erfindergeist.org">Offene Werkstatt Seite</a>.',
-    '#KreativTag' => 'Alle Informationen zum KreativTag findest du auf der <a href="https://kreativ-tag.erfindergeist.org">KreativTag Seite</a>.',
-    '#Mobilitaetstag' => 'Alle Informationen zum Mobilitätstag findest du auf der <a href="/mobilitaetstag">Mobilitätstag Seite</a>.',
-    '#Stadtbücherei' => '<div class="bd-callout">Achtung! heute findest du uns in der <a href="https://buecherei.juelich.de/" target="_blank" rel="noopener noreferrer">Stadtbücherei Jülich</a>.</div>',
-    '#Extern' => '<div class="bd-callout">Achtung! Dieser Termin findet nicht in unseren Räumlichkeiten statt. Achte auf die Adresse im Standortfeld.</div>',
+    '#Repaircafe' => '<br>Alle Informationen zum Repair Cafe findest du auf der <a href="https://repaircafe.erfindergeist.org">Repair Cafe Seite</a>.<br>',
+    '#OffeneWerkstatt' => '<br>Alle Informationen zur Offenen Werkstatt findest du auf der <a href="https://werkstatt.erfindergeist.org">Offene Werkstatt Seite</a>.<br>',
+    '#KreativTag' => '<br>Alle Informationen zum KreativTag findest du auf der <a href="https://kreativ-tag.erfindergeist.org">KreativTag Seite</a>.<br>',
+    '#Mobilitaetstag' => '<br>Alle Informationen zum Mobilitätstag findest du auf der <a href="/mobilitaetstag">Mobilitätstag Seite</a>.<br>',
+    '#Stadtbücherei' => '<div class="bd-callout">Achtung! heute findest du uns in der <a href="https://buecherei.juelich.de/" target="_blank" rel="noopener noreferrer">Stadtbücherei Jülich</a>.</div><br>',
+    '#Extern' => '<div class="bd-callout">Achtung! Dieser Termin findet nicht in unseren Räumlichkeiten statt. Achte auf die Adresse im Standortfeld.</div><br>',
   );
 
   if (array_key_exists($tag, $tagHtmlMap)) {
