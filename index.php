@@ -86,7 +86,7 @@ function egj_load_and_render_template($templateFile, $variables): string
   return $template;
 }
 
-function egj_render_calendar_events($arrayOfEvents, $attributes)
+function egj_render_calendar_events($arrayOfEvents)
 {
   $renderedAppointments = array();
   foreach ($arrayOfEvents as $event) {
@@ -122,7 +122,7 @@ function egj_render_calendar_events($arrayOfEvents, $attributes)
       $renderedDateTimeInfo = egj_load_and_render_template('template_same_day.html', array(
         'startDate' => esc_html($startDate),
         'startTime' => esc_html($startTime),
-        'endDate' => esc_html($endDate),
+        'endTime' => esc_html($endTime),
       ));
     } else {
       $renderedDateTimeInfo = egj_load_and_render_template('template_several_days.html', array(
@@ -146,7 +146,7 @@ function egj_render_calendar_events($arrayOfEvents, $attributes)
     $renderedAppointment = egj_load_and_render_template('template_appointment.html', array(
       'summary' => esc_html($summary),
       'description' => esc_html($description),
-      'location' => esc_html($location),
+      'location' => $location,
       'dateTimeInfo' => $renderedDateTimeInfo,
       'tags' => join(' ', $renderedTags),
     ));
