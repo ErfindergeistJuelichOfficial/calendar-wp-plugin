@@ -131,6 +131,7 @@ function egj_render_small_calendar_events($arrayOfEvents, $tag_filter)
   $renderedAppointments = array();
   foreach ($arrayOfEvents as $event) {
     $summary = $event->summary ?? '';
+    $location = $event->location ?? '';
     $description = $event->description ?? '';
     $descriptionData = egj_extract_and_remove_hashtags($description);
     $description = $descriptionData['text'];
@@ -193,7 +194,7 @@ function egj_render_small_calendar_events($arrayOfEvents, $tag_filter)
     if($hasFilterTag)
     {
       $renderedAppointment = egj_load_and_render_template('template_appointment_compact_filtered.html', array(
-        'summary' => $summary,
+        'location' => $location,
         'dateTimeInfo' => $renderedDateTimeInfo
       ));
     }
