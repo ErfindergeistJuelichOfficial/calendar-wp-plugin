@@ -61,6 +61,6 @@
     <script src="https://erfindergeist.org/wp-includes/js/jquery/jquery.min.js?ver=3.7.1" id="jquery-core-js"></script>
     <script src="https://erfindergeist.org/wp-includes/js/jquery/jquery-migrate.min.js?ver=3.4.1" id="jquery-migrate-js"></script>
     <script src="./handlebars.js?ver=4.7.8" id="handlebars-js"></script>
-    <script src="./gcalendar.js?ver=1.6"></script>
+    <script src="./calendar.js?ver=2"></script>
   </body>
 </html>

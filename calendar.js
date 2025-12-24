@@ -24,6 +24,8 @@
     return event.toLocaleDateString("de-DE", options);
   }
 
+  erfindergeistCalendar.getGermanDateDayString = getGermanDateDayString;
+
   function getGermanTimeString(date) {
     const event = new Date(date);
 
@@ -32,6 +34,8 @@
       minute: "2-digit",
     });
   }
+
+  erfindergeistCalendar.getGermanTimeString = getGermanTimeString;
 
   function getGermanWeekDayShortString(date) {
     const event = new Date(date);
@@ -42,22 +46,19 @@
     return event.toLocaleDateString("de-DE", options);
   }
 
-  function getData(renderType) {
-    $.getJSON(`https://${location.hostname}/wp-json/erfindergeist/v1/events`)
+  erfindergeistCalendar.getGermanWeekDayShortString = getGermanWeekDayShortString;
+
+  function getData() {
+    $.getJSON(`https://${location.hostname}/wp-json/erfindergeist/v2/events`)
       .done(function (json) {
-        switch (renderType) {
-          case "gcalendarList":
-            renderNormal(json);
-            break;
-          case "gcalendarListShort":
-            renderShort(json);
-            break;
-        }
+         render(json);
+
+        
       })
       .fail(function (jqxhr, textStatus, error) {
         const err = textStatus + ", " + error;
         console.log("Request Failed: " + err);
-        renderError(renderType);
+        renderError();
       });
   }
 
@@ -70,34 +71,7 @@
     $(`#${renderType}`).html(html);
   }
 
-  function renderShort(data) {
-    if (data?.items && Array.isArray(data.items) && data.items?.length > 0) {
-      let html = `<div class="wp-block-coblocks-column__inner has-no-padding has-no-margin">`;
-      for (let i = 0; i < data.items.length; i++) {
-        const ele = data.items[i];
-
-        let dateFormated = "";
-
-        if (ele.sameDay) {
-          dateFormated = `[${ele.weekDayShort}, ${ele.startDate}, ${ele.startTime} - ${ele.endTime}]`;
-        } else {
-          dateFormated = `[${ele.startDate}, ${ele.startTime} - ${ele.endDate}, ${ele.endTime}]`;
-        }
-
-        html += `<p>`;
-        html += `${dateFormated} <br>`;
-        html += ele.summary ? `${ele.summary} <br>` : "";
-        html += ele.description ? `${ele.description}` : "";
-        html += `</p>`;
-        html += i + 1 !== data.items.length ? `<hr>` : "";
-      }
-
-      html += `</div>`;
-      $("#gcalendarListShort").html(html);
-    }
-  }
-
-  function renderNormal(data) {
+  function render(data) {
     let calenderTemplate = "";
 
     const fallbackCalenderTemplate = `
@@ -120,7 +94,7 @@
     `;
 
     try {
-      calenderTemplate = document.getElementById("gcalendarTemplate").innerHTML;
+      calenderTemplate = document.getElementById("egj_calendar_template").innerHTML;
     } catch (e) {
       calenderTemplate = fallbackCalenderTemplate;
     }
@@ -140,12 +114,9 @@
 
   erfindergeistCalendar.init = function () {
     if (document.getElementById("gcalendarList")) {
-      getData("gcalendarList");
+      getData();
     }
 
-    if (document.getElementById("gcalendarListShort")) {
-      getData("gcalendarListShort");
-    }
   };
 })((window.erfindergeistCalendar = window.erfindergeistCalendar || {}), jQuery);
 
@@ -178,8 +149,18 @@ jQuery(document).ready(function () {
   });
 
   Handlebars.registerHelper("today", function () {
-    return gCalendar.getGermanDateString(new Date())
+    return erfindergeistCalendar.getGermanDateString(new Date())
   });
+
+  Handlebars.registerHelper("getDateFromDt", function (str) {
+    const dateTime = new Date(str);
+    return erfindergeistCalendar.getGermanDateString(dateTime);
+  });
+
+  Handlebars.registerHelper("getTimeFromDt", function (str) {
+    const dateTime = new Date(str);
+    return erfindergeistCalendar.getGermanTimeString(dateTime);
+  });   
 
   erfindergeistCalendar.init();
 });

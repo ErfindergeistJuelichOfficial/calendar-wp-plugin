@@ -14,10 +14,10 @@
           {{summary}}
         </div>
           <div class="col">
-            {{startDate}}
+            {{getDateFromDt dtstart_tz}}
           </div>
           <div class="col">
-            {{startTime}} - {{endTime}}
+            {{(getTimeFromDt dtstart_tz)}} - {{(getTimeFromDt dtend_tz)}}
           </div>
         {{/if}}
         {{#if location}}

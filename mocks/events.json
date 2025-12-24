@@ -1,0 +1,373 @@
+[
+  {
+    "summary": "Offene Werkstatt",
+    "dtstart": "20251230T180000",
+    "dtend": "20251230T210000",
+    "duration": null,
+    "dtstamp": "20251019T180953Z",
+    "dtstart_tz": "20251230T180000",
+    "dtend_tz": "20251230T210000",
+    "uid": "bb54668c-cebe-47ef-8bb2-e3908164fb0f",
+    "created": "20251019T174544Z",
+    "last_modified": "20251019T180953Z",
+    "description": "#OffeneWerkstatt #Awo",
+    "location": "Marie-Juchacz-Weg 2, 52428 J\u00fclich",
+    "sequence": "4",
+    "status": "CONFIRMED",
+    "transp": null,
+    "organizer": null,
+    "attendee": null,
+    "additionalProperties": {
+      "created_array": [
+        [],
+        "20251019T174544Z"
+      ],
+      "dtstamp_array": [
+        [],
+        "20251019T180953Z"
+      ],
+      "last_modified_array": [
+        [],
+        "20251019T180953Z"
+      ],
+      "sequence_array": [
+        [],
+        "4"
+      ],
+      "uid_array": [
+        [],
+        "bb54668c-cebe-47ef-8bb2-e3908164fb0f"
+      ],
+      "dtstart_array": [
+        {
+          "TZID": "Europe\/Berlin"
+        },
+        "20251230T180000",
+        1767114000,
+        "TZID=Europe\/Berlin:20251230T180000"
+      ],
+      "dtend_array": [
+        {
+          "TZID": "Europe\/Berlin"
+        },
+        "20251230T210000",
+        1767124800,
+        "TZID=Europe\/Berlin:20251230T210000"
+      ],
+      "status_array": [
+        [],
+        "CONFIRMED"
+      ],
+      "summary_array": [
+        [],
+        "Offene Werkstatt"
+      ],
+      "location_array": [
+        [],
+        "Marie-Juchacz-Weg 2, 52428 J\u00fclich"
+      ],
+      "description_array": [
+        [],
+        "#OffeneWerkstatt #Awo"
+      ],
+      "rrule_array": [
+        [],
+        "FREQ=WEEKLY;INTERVAL=2;BYDAY=TU;UNTIL=20251230T230000Z",
+        "Generated recurrence event"
+      ],
+      "rrule": "FREQ=WEEKLY;INTERVAL=2;BYDAY=TU;UNTIL=20251230T230000Z"
+    }
+  },
+  {
+    "summary": "Repair Caf\u00e9",
+    "dtstart": "20260131T110000",
+    "dtend": "20260131T150000",
+    "duration": null,
+    "dtstamp": "20251223T132555Z",
+    "dtstart_tz": "20260131T110000",
+    "dtend_tz": "20260131T150000",
+    "uid": "9802e017-50ca-4604-8474-7b385db0e726",
+    "created": "20251223T082457Z",
+    "last_modified": "20251223T132555Z",
+    "description": "#Repaircafe #Awo",
+    "location": "Erfindergeist Werkstatt, Marie-Juchacz-Weg 2, 52428 J\u00fclich, Deutschland",
+    "sequence": "3",
+    "status": "CONFIRMED",
+    "transp": null,
+    "organizer": null,
+    "attendee": null,
+    "additionalProperties": {
+      "created_array": [
+        [],
+        "20251223T082457Z"
+      ],
+      "dtstamp_array": [
+        [],
+        "20251223T132555Z"
+      ],
+      "last_modified_array": [
+        [],
+        "20251223T132555Z"
+      ],
+      "sequence_array": [
+        [],
+        "3"
+      ],
+      "uid_array": [
+        [],
+        "9802e017-50ca-4604-8474-7b385db0e726"
+      ],
+      "dtstart_array": [
+        {
+          "TZID": "Europe\/Berlin"
+        },
+        "20260131T110000",
+        1769853600,
+        "TZID=Europe\/Berlin:20260131T110000"
+      ],
+      "dtend_array": [
+        {
+          "TZID": "Europe\/Berlin"
+        },
+        "20260131T150000",
+        1769868000,
+        "TZID=Europe\/Berlin:20260131T150000"
+      ],
+      "status_array": [
+        [],
+        "CONFIRMED"
+      ],
+      "summary_array": [
+        [],
+        "Repair Caf\u00e9"
+      ],
+      "location_array": [
+        [],
+        "Erfindergeist Werkstatt, Marie-Juchacz-Weg 2, 52428 J\u00fclich, Deutschland"
+      ],
+      "description_array": [
+        [],
+        "#Repaircafe #Awo"
+      ]
+    }
+  },
+  {
+    "summary": "Repair Caf\u00e9",
+    "dtstart": "20260228T100000",
+    "dtend": "20260228T123000",
+    "duration": null,
+    "dtstamp": "20251223T132611Z",
+    "dtstart_tz": "20260228T100000",
+    "dtend_tz": "20260228T123000",
+    "uid": "75a07780-0e46-4621-909f-2afe5d7123ce",
+    "created": "20251223T082538Z",
+    "last_modified": "20251223T132611Z",
+    "description": "#Repaircafe #Stadtb\u00fccherei",
+    "location": "Stadtb\u00fccherei J\u00fclich, Kleine Rurstra\u00dfe 20, 52428 J\u00fclich, Deutschland",
+    "sequence": "3",
+    "status": "CONFIRMED",
+    "transp": null,
+    "organizer": null,
+    "attendee": null,
+    "additionalProperties": {
+      "created_array": [
+        [],
+        "20251223T082538Z"
+      ],
+      "dtstamp_array": [
+        [],
+        "20251223T132611Z"
+      ],
+      "last_modified_array": [
+        [],
+        "20251223T132611Z"
+      ],
+      "sequence_array": [
+        [],
+        "3"
+      ],
+      "uid_array": [
+        [],
+        "75a07780-0e46-4621-909f-2afe5d7123ce"
+      ],
+      "dtstart_array": [
+        {
+          "TZID": "Europe\/Berlin"
+        },
+        "20260228T100000",
+        1772269200,
+        "TZID=Europe\/Berlin:20260228T100000"
+      ],
+      "dtend_array": [
+        {
+          "TZID": "Europe\/Berlin"
+        },
+        "20260228T123000",
+        1772278200,
+        "TZID=Europe\/Berlin:20260228T123000"
+      ],
+      "status_array": [
+        [],
+        "CONFIRMED"
+      ],
+      "location_array": [
+        [],
+        "Stadtb\u00fccherei J\u00fclich, Kleine Rurstra\u00dfe 20, 52428 J\u00fclich, Deutschland"
+      ],
+      "description_array": [
+        [],
+        "#Repaircafe #Stadtb\u00fccherei"
+      ],
+      "summary_array": [
+        [],
+        "Repair Caf\u00e9"
+      ]
+    }
+  },
+  {
+    "summary": "Repair Caf\u00e9",
+    "dtstart": "20260331T110000",
+    "dtend": "20260331T150000",
+    "duration": null,
+    "dtstamp": "20251223T132624Z",
+    "dtstart_tz": "20260331T110000",
+    "dtend_tz": "20260331T150000",
+    "uid": "e06f0320-c452-4960-8a22-3713acefc7ef",
+    "created": "20251223T082625Z",
+    "last_modified": "20251223T132624Z",
+    "description": "#Repaircafe #Awo",
+    "location": "Erfindergeist Werkstatt, Marie-Juchacz-Weg 2, 52428 J\u00fclich, Deutschland",
+    "sequence": "3",
+    "status": "CONFIRMED",
+    "transp": null,
+    "organizer": null,
+    "attendee": null,
+    "additionalProperties": {
+      "created_array": [
+        [],
+        "20251223T082625Z"
+      ],
+      "dtstamp_array": [
+        [],
+        "20251223T132624Z"
+      ],
+      "last_modified_array": [
+        [],
+        "20251223T132624Z"
+      ],
+      "sequence_array": [
+        [],
+        "3"
+      ],
+      "uid_array": [
+        [],
+        "e06f0320-c452-4960-8a22-3713acefc7ef"
+      ],
+      "dtstart_array": [
+        {
+          "TZID": "Europe\/Berlin"
+        },
+        "20260331T110000",
+        1774947600,
+        "TZID=Europe\/Berlin:20260331T110000"
+      ],
+      "dtend_array": [
+        {
+          "TZID": "Europe\/Berlin"
+        },
+        "20260331T150000",
+        1774962000,
+        "TZID=Europe\/Berlin:20260331T150000"
+      ],
+      "status_array": [
+        [],
+        "CONFIRMED"
+      ],
+      "summary_array": [
+        [],
+        "Repair Caf\u00e9"
+      ],
+      "location_array": [
+        [],
+        "Erfindergeist Werkstatt, Marie-Juchacz-Weg 2, 52428 J\u00fclich, Deutschland"
+      ],
+      "description_array": [
+        [],
+        "#Repaircafe #Awo"
+      ]
+    }
+  },
+  {
+    "summary": "Repair Caf\u00e9",
+    "dtstart": "20260530T100000",
+    "dtend": "20260530T123000",
+    "duration": null,
+    "dtstamp": "20251223T132635Z",
+    "dtstart_tz": "20260530T100000",
+    "dtend_tz": "20260530T123000",
+    "uid": "f2ba4108-4a40-4a65-8d24-c6e40a333e94",
+    "created": "20251223T082741Z",
+    "last_modified": "20251223T132635Z",
+    "description": "#Repaircafe #Stadtb\u00fccherei",
+    "location": "Stadtb\u00fccherei J\u00fclich, Kleine Rurstra\u00dfe 20, 52428 J\u00fclich, Deutschland",
+    "sequence": "3",
+    "status": "CONFIRMED",
+    "transp": null,
+    "organizer": null,
+    "attendee": null,
+    "additionalProperties": {
+      "created_array": [
+        [],
+        "20251223T082741Z"
+      ],
+      "dtstamp_array": [
+        [],
+        "20251223T132635Z"
+      ],
+      "last_modified_array": [
+        [],
+        "20251223T132635Z"
+      ],
+      "sequence_array": [
+        [],
+        "3"
+      ],
+      "uid_array": [
+        [],
+        "f2ba4108-4a40-4a65-8d24-c6e40a333e94"
+      ],
+      "dtstart_array": [
+        {
+          "TZID": "Europe\/Berlin"
+        },
+        "20260530T100000",
+        1780128000,
+        "TZID=Europe\/Berlin:20260530T100000"
+      ],
+      "dtend_array": [
+        {
+          "TZID": "Europe\/Berlin"
+        },
+        "20260530T123000",
+        1780137000,
+        "TZID=Europe\/Berlin:20260530T123000"
+      ],
+      "status_array": [
+        [],
+        "CONFIRMED"
+      ],
+      "summary_array": [
+        [],
+        "Repair Caf\u00e9"
+      ],
+      "location_array": [
+        [],
+        "Stadtb\u00fccherei J\u00fclich, Kleine Rurstra\u00dfe 20, 52428 J\u00fclich, Deutschland"
+      ],
+      "description_array": [
+        [],
+        "#Repaircafe #Stadtb\u00fccherei"
+      ]
+    }
+  }
+]
