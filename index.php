@@ -28,22 +28,22 @@ require_once 'ICal.php';
 use ICal\ICal;
 
 /**
- * Extrahiert Hashtags aus einem Text und entfernt sie
+ * Extracts hashtags from text and removes them
  * 
- * @param string $text Der Text mit Hashtags
- * @return array Array mit 'text' (bereinigter Text) und 'tags' (gefundene Hashtags)
+ * @param string $text The text with hashtags
+ * @return array Array with 'text' (cleaned text) and 'tags' (found hashtags)
  */
 function egj_extract_and_remove_hashtags($text)
 {
-  // Finde alle Wörter, die mit # beginnen
+  // Find all words that start with #
   preg_match_all('/#\w+/u', $text, $matches);
 
-  $tags = $matches[0]; // Alle gefundenen Hashtags
+  $tags = $matches[0]; // All found hashtags
 
-  // Entferne alle Hashtags aus dem Text
+  // Remove all hashtags from text
   $cleanedText = preg_replace('/#\w+/u', '', $text);
 
-  // Entferne überflüssige Leerzeichen
+  // Remove excessive whitespace
   $cleanedText = preg_replace('/\s+/', ' ', $cleanedText);
   $cleanedText = trim($cleanedText);
 
@@ -54,40 +54,40 @@ function egj_extract_and_remove_hashtags($text)
 }
 
 /**
- * Lädt ein Template und ersetzt die Placeholder
+ * Loads a template and replaces placeholders
  * 
- * @param string $templateFile Pfad zur Template-Datei
- * @param array $variables Assoziatives Array mit Placeholder => Wert
- * @return string Der gerenderte HTML-Code
+ * @param string $templateFile Path to template file
+ * @param array $variables Associative array with Placeholder => Value
+ * @return string The rendered HTML code
  */
 function egj_load_and_render_template($templateFile, $variables): string
 {
-  // Template-Datei laden
+  // Load template file
   $templatePath = plugin_dir_path(__FILE__) . $templateFile;
 
   if (!file_exists($templatePath)) {
-    return '<div class="error">Template nicht gefunden: ' . esc_html($templateFile) . '</div>';
+    return '<div class="error">Template not found: ' . esc_html($templateFile) . '</div>';
   }
 
   $template = file_get_contents($templatePath);
 
-  // Placeholder ersetzen
+  // Replace placeholders
   try {
     foreach ($variables as $placeholder => $value) {
       $template = str_replace('{{' . $placeholder . '}}', $value, $template);
     }
   } catch (\Exception $e) {
-    return '<div class="error">Fehler beim Rendern des Templates: ' . esc_html($e->getMessage()) . '</div>';
+    return '<div class="error">Error rendering template: ' . esc_html($e->getMessage()) . '</div>';
   }
 
   return $template;
 }
 /**
- * Erweitert die Beschreibung basierend auf dem Tag
+ * Extends the description based on the tag
  * 
- * @param string $description Die ursprüngliche Beschreibung
- * @param string $tag Der Hashtag
- * @return string Die erweiterte Beschreibung
+ * @param string $description The original description
+ * @param string $tag The hashtag
+ * @return string The extended description
  */
 function egj_extend_description_by_tag($description, $tag)
 {
@@ -107,6 +107,13 @@ function egj_extend_description_by_tag($description, $tag)
   return $description;
 }
 
+/**
+ * Wraps the summary text with a link based on the tag
+ * 
+ * @param string $summary The event summary text
+ * @param string $tag The hashtag to match
+ * @return string The summary text, optionally wrapped in an HTML link
+ */
 function egj_link_text_by_tag($summary, $tag)
 {
   $tagHtmlMap = array(
@@ -123,7 +130,14 @@ function egj_link_text_by_tag($summary, $tag)
   return $summary;
 }
 
-function egj_render_small_calendar_events($arrayOfEvents, $tag_filter)
+/**
+ * Renders calendar events in compact view
+ * 
+ * @param array $arrayOfEvents Array of calendar event objects
+ * @param string $tag_filter Optional tag filter to show only events with specific hashtag
+ * @return void Outputs HTML directly
+ */
+function egj_render_compact_calendar_events($arrayOfEvents, $tag_filter)
 {
   $renderedAppointments = array();
   foreach ($arrayOfEvents as $event) {
@@ -137,16 +151,16 @@ function egj_render_small_calendar_events($arrayOfEvents, $tag_filter)
     $startDate = '';
     $startTime = '';
 
-    if (!empty($event->dtstart)) {
+    if (isset($event->dtstart)) {
       $startDateTime = new DateTime($event->dtstart);
       $startDate = $startDateTime->format('d.m.Y');
       $startTime = $startDateTime->format('H:i');
     }
 
-    // Konvertiere dtend ins deutsche Format
+    // Convert dtend to date format
     $endDate = '';
     $endTime = '';
-    if (!empty($event->dtend)) {
+    if (isset($event->dtend)) {
       $endDateTime = new DateTime($event->dtend);
       $endDate = $endDateTime->format('d.m.Y');
       $endTime = $endDateTime->format('H:i');
@@ -183,7 +197,7 @@ function egj_render_small_calendar_events($arrayOfEvents, $tag_filter)
         }
       }
       if (!$hasFilterTag) {
-        continue; // Überspringe diesen Termin, wenn kein Filter-Tag übereinstimmt
+        continue; // Skip this appointment if no filter tag matches
       }
     }
 
@@ -193,7 +207,7 @@ function egj_render_small_calendar_events($arrayOfEvents, $tag_filter)
         'dateTimeInfo' => $renderedDateTimeInfo
       ));
     } else {
-      $renderedAppointment = egj_load_and_render_template('template_appointment_small.html', array(
+      $renderedAppointment = egj_load_and_render_template('template_appointment_compact.html', array(
         'linkText' => $summary,
         'dateTimeInfo' => $renderedDateTimeInfo
       ));
@@ -202,13 +216,20 @@ function egj_render_small_calendar_events($arrayOfEvents, $tag_filter)
     array_push($renderedAppointments, $renderedAppointment);
   }
 
-  $renderedEvents = egj_load_and_render_template('template_events_small.html', array(
+  $renderedEvents = egj_load_and_render_template('template_events_compacts.html', array(
     'appointments' => join(' ', $renderedAppointments),
   ));
 
   echo $renderedEvents;
 }
-function egj_render_big_calendar_events($arrayOfEvents)
+
+/**
+ * Renders calendar events in normal (full) view
+ * 
+ * @param array $arrayOfEvents Array of calendar event objects
+ * @return void Outputs HTML directly
+ */
+function egj_render_calendar_events($arrayOfEvents)
 {
   $renderedAppointments = array();
   foreach ($arrayOfEvents as $event) {
@@ -216,7 +237,7 @@ function egj_render_big_calendar_events($arrayOfEvents)
     $description = $event->description ?? '';
     $location = $event->location ?? '';
 
-    // Hashtags aus der Description extrahieren und entfernen
+    // Extract and remove hashtags from description
     $descriptionData = egj_extract_and_remove_hashtags($description);
     $description = $descriptionData['text'];
     $tags = $descriptionData['tags'];
@@ -224,16 +245,16 @@ function egj_render_big_calendar_events($arrayOfEvents)
     $startDate = '';
     $startTime = '';
 
-    if (!empty($event->dtstart)) {
+    if (isset($event->dtstart)) {
       $startDateTime = new DateTime($event->dtstart);
       $startDate = $startDateTime->format('d.m.Y');
       $startTime = $startDateTime->format('H:i');
     }
 
-    // Konvertiere dtend ins deutsche Format
+    // Convert dtend to date format
     $endDate = '';
     $endTime = '';
-    if (!empty($event->dtend)) {
+    if (isset($event->dtend)) {
       $endDateTime = new DateTime($event->dtend);
       $endDate = $endDateTime->format('d.m.Y');
       $endTime = $endDateTime->format('H:i');
@@ -267,7 +288,7 @@ function egj_render_big_calendar_events($arrayOfEvents)
       }
     }
 
-    $renderedAppointment = egj_load_and_render_template('template_appointment_big.html', array(
+    $renderedAppointment = egj_load_and_render_template('template_appointment.html', array(
       'summary' => esc_html($summary),
       'description' => $description,
       'location' => esc_html($location),
@@ -278,7 +299,7 @@ function egj_render_big_calendar_events($arrayOfEvents)
     array_push($renderedAppointments, $renderedAppointment);
   }
 
-  $renderedEvents = egj_load_and_render_template('template_events_big.html', array(
+  $renderedEvents = egj_load_and_render_template('template_events.html', array(
     'appointments' => join(' ', $renderedAppointments),
   ));
 
@@ -286,17 +307,26 @@ function egj_render_big_calendar_events($arrayOfEvents)
 
   // echo json_encode($arrayOfEvents, JSON_PRETTY_PRINT);
 }
+
+/**
+ * WordPress shortcode handler for displaying calendar events
+ * 
+ * Usage: [egj_calendar max_events="20" view="normal" tag_filter="#Repaircafe"]
+ * 
+ * @param array $raw_attributes Shortcode attributes from WordPress
+ * @return string The rendered HTML output
+ */
 function egj_calendar_display_shortcode($raw_attributes)
 {
-  // Attribute mit Defaults
+  // Attributes with defaults
   $attributes = shortcode_atts(array(
     'max_events' => 20,
     'view' => 'normal',
     'tag_filter' => ''
   ), $raw_attributes);
 
-  // Validierung: max_events
-  // Als Integer casten und auf sinnvollen Bereich begrenzen (1-100)
+  // Validation: max_events
+  // Cast to integer and limit to sensible range (1-100)
   $max_events = absint($attributes['max_events']);
   if ($max_events < 1) {
     $max_events = 1;
@@ -304,46 +334,51 @@ function egj_calendar_display_shortcode($raw_attributes)
     $max_events = 100;
   }
 
-  // Validierung: view
-  // Nur erlaubte Werte zulassen (Whitelist)
+  // Validation: view
+  // Only allow permitted values (whitelist)
   $allowed_views = array('normal', 'compact');
   $view = in_array($attributes['view'], $allowed_views, true) ? $attributes['view'] : 'normal';
 
-  // Validierung: tag_filter
-  // Hashtag-Format prüfen: muss mit # beginnen, nur Buchstaben/Zahlen/Unterstriche
+  // Validation: tag_filter
+  // Check hashtag format: must start with #, only letters/numbers/underscores
   $tag_filter = '';
   if (!empty($attributes['tag_filter'])) {
     $tag = sanitize_text_field($attributes['tag_filter']);
-    // Prüfe ob Format korrekt ist: #Wortzeichen
+    // Check if format is correct: #wordcharacters
     if (preg_match('/^#\w+$/u', $tag)) {
       $tag_filter = $tag;
     }
   }
 
   try {
-    $ics = getIcsInternal();
+    $ics = get_ics_internal();
     $iCal = new ICal();
     $iCal->initString($ics);
     $arrayOfEvents = $iCal->eventsFromRange(null, null);
   } catch (\Exception $e) {
-    return '<div class="egj-calendar-error">Fehler beim Laden der Termine</div>';
+    return '<div class="egj-calendar-error">Error loading appointments</div>';
   }
 
   $arrayOfEvents = array_slice($arrayOfEvents, 0, $max_events);
 
-  // Rendere die Termine
+  // Render the appointments
   ob_start();
   if ($view === 'compact') {
-    egj_render_small_calendar_events($arrayOfEvents, $tag_filter);
+    egj_render_compact_calendar_events($arrayOfEvents, $tag_filter);
   } else {
-    egj_render_big_calendar_events($arrayOfEvents);
+    egj_render_calendar_events($arrayOfEvents);
   }
   return ob_get_clean();
 }
 
-// Registriere Shortcode
+// Register shortcode
 add_shortcode('egj_calendar', 'egj_calendar_display_shortcode');
 
+/**
+ * Renders the main plugin options page in WordPress admin
+ * 
+ * @return void Outputs HTML directly
+ */
 function egj_calendar_plugin_options()
 {
 
@@ -359,6 +394,12 @@ function egj_calendar_plugin_options()
   <?php
 }
 
+/**
+ * Renders the calendar settings page in WordPress admin
+ * Handles ICS URL configuration and cache management
+ * 
+ * @return void Outputs HTML directly
+ */
 function egj_calendar_settings_page()
 {
 
@@ -426,7 +467,7 @@ function egj_calendar_settings_page()
     <?php echo $ics_cache_timestamp ? date('d.m.Y H:i:s', $ics_cache_timestamp) : 'No ics cache timestamp available'; ?>
 
     <span>
-      <p>Cache Pretty Print</p>
+      <p>Cache</p>
 
       <pre>
           <?php
@@ -450,6 +491,11 @@ function egj_calendar_settings_page()
   <?php
 }
 
+/**
+ * Registers the plugin menu and submenu pages in WordPress admin
+ * 
+ * @return void Registers admin menu items
+ */
 function egj_calendar_menu()
 {
   if (empty($GLOBALS['admin_page_hooks']['erfindergeist'])) {
