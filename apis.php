@@ -77,7 +77,7 @@ function get_ics_internal()
   $has_cache_expired = $ics_cache_timestamp && ($current_time - $ics_cache_timestamp) > $cache_lifetime;
 
   $ics = null;
-  if ($has_cache_expired) 
+  if (!$ics_cache_timestamp ||$has_cache_expired) 
   {
     try {
       $ics =  get_ics_from_url($ics_url);
