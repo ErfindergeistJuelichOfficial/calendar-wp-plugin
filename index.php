@@ -216,7 +216,7 @@ function egj_render_compact_calendar_events($arrayOfEvents, $tag_filter)
     array_push($renderedAppointments, $renderedAppointment);
   }
 
-  $renderedEvents = egj_load_and_render_template('template_events_compacts.html', array(
+  $renderedEvents = egj_load_and_render_template('template_events_compact.html', array(
     'appointments' => join(' ', $renderedAppointments),
   ));
 
