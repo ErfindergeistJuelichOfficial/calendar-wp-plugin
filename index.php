@@ -408,24 +408,24 @@ function egj_calendar_settings_page()
   }
 
   // updatable options  
-  $ics_url = get_option($_SESSION['ics_url_option_name']);
+  $ics_url = get_option('egj_ics_url');
   $ics_url_field_name = 'erfindergeist_ics_url_field';
 
   // read-only options
-  $ics_cache = get_option($_SESSION['ics_cache_option_name']);
-  $ics_cache_timestamp = get_option($_SESSION['ics_cache_timestamp_option_name']);
+  $ics_cache = get_option('egj_ics_cache');
+  $ics_cache_timestamp = get_option('egj_ics_cache_timestamp');
 
   if (!empty($_POST) && wp_verify_nonce(egj_escape($_POST['egj_calendar_nonce_field']), 'egj_calendar_action')) {
     // update ics_url
     if (isset($_POST[$ics_url_field_name])) {
       $ics_url = esc_url_raw($_POST[$ics_url_field_name]);
-      update_option($_SESSION['ics_url_option_name'], $ics_url);
+      update_option('egj_ics_url', $ics_url);
     }
 
     if (isset($_POST['clear_cache'])) {
       // clear cache
-      delete_option($_SESSION['ics_cache_option_name']);
-      delete_option($_SESSION['ics_cache_timestamp_option_name']);
+      delete_option('egj_ics_cache');
+      delete_option('egj_ics_cache_timestamp');
       $ics_cache = "";
       $ics_cache_timestamp = "";
     }

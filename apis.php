@@ -19,6 +19,29 @@ use ICal\ICal;
 function get_ics_from_url($ics_url): string|null
 {
   try {
+    // Validate URL format
+    if (!filter_var($ics_url, FILTER_VALIDATE_URL)) {
+      egj_send_notification_to_admins("Invalid ICS URL format");
+      return null;
+    }
+
+    // Only allow HTTP and HTTPS protocols
+    $scheme = parse_url($ics_url, PHP_URL_SCHEME);
+    if (!in_array($scheme, ['http', 'https'], true)) {
+      egj_send_notification_to_admins("ICS URL must use HTTP or HTTPS");
+      return null;
+    }
+
+    // SSRF Protection: Block private and reserved IP ranges
+    $host = parse_url($ics_url, PHP_URL_HOST);
+    if ($host) {
+      $ip = gethostbyname($host);
+      if (filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE) === false) {
+        egj_send_notification_to_admins("ICS URL points to private/local IP address");
+        return null;
+      }
+    }
+
     $context = stream_context_create(array(
       'http' => array(
         'timeout' => 7
@@ -29,7 +52,7 @@ function get_ics_from_url($ics_url): string|null
 
     return $ics;
   } catch (\Exception $e) {
-    egj_send_notification_to_admins("Error getting ICS from URL");
+    egj_send_notification_to_admins("Error getting ICS from URL: " . $e->getMessage());
     return null;
   }
 }
@@ -44,9 +67,9 @@ function get_ics_from_url($ics_url): string|null
 function get_ics_internal()
 {
   $cache_lifetime = 3600; // 1 hour
-  $ics_url = get_option($_SESSION['ics_url_option_name']);
-  $ics_cache = get_option( $_SESSION['ics_cache_option_name'] );
-  $ics_cache_timestamp = get_option($_SESSION['ics_cache_timestamp_option_name']);
+  $ics_url = get_option('egj_ics_url');
+  $ics_cache = get_option('egj_ics_cache');
+  $ics_cache_timestamp = get_option('egj_ics_cache_timestamp');
   $current_time = time();
 
   $is_cache_valid = $ics_cache && $ics_cache != "";
@@ -78,8 +101,8 @@ function get_ics_internal()
   else 
   {
     // Save new cache
-    update_option( $_SESSION['ics_cache_option_name'], $ics );
-    update_option( $_SESSION['ics_cache_timestamp_option_name'], $current_time );
+    update_option('egj_ics_cache', $ics);
+    update_option('egj_ics_cache_timestamp', $current_time);
   }
 
   return $ics;
@@ -95,9 +118,18 @@ function get_ics()
 {
   $ics = get_ics_internal();
   
+  // Check if we have valid ICS data
+  if (!$ics) {
+    status_header(500);
+    echo 'Error: Unable to retrieve calendar data';
+    exit;
+  }
+  
   // Return ICS data as-is from the URL
-  header('Content-Type: text/calendar; charset=utf-8');
-  header('Content-Disposition: inline; filename="erfindergeist.ics"');
+  if (!headers_sent()) {
+    header('Content-Type: text/calendar; charset=utf-8');
+    header('Content-Disposition: inline; filename="erfindergeist.ics"');
+  }
   echo $ics;
   exit;
 }
@@ -128,9 +160,9 @@ function get_events()
 
 /**
  * REST API endpoint that returns the first event occurring tomorrow
- * Returns a NextEvent object with formatted date/time information
+ * Returns a tomorrow object with formatted date/time information
  * 
- * @return WP_REST_Response Response with NextEvent object (200) or empty response (404)
+ * @return WP_REST_Response Response with tomorrow object (200) or empty response (404)
  */
 function get_tomorrow_event()
 {
@@ -189,7 +221,7 @@ add_action('rest_api_init', function () {
     'permission_callback' => '__return_true'
   ));
 
-  // Register next event endpoint
+  // Register tomorrow endpoint
   register_rest_route('erfindergeist/v2', '/tomorrow', array(
     'methods' => 'GET',
     'callback' => 'get_tomorrow_event',
