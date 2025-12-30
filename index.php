@@ -286,14 +286,39 @@ function egj_render_big_calendar_events($arrayOfEvents)
 
   // echo json_encode($arrayOfEvents, JSON_PRETTY_PRINT);
 }
-function egj_calendar_display_shortcode($atts)
+function egj_calendar_display_shortcode($raw_attributes)
 {
   // Attribute mit Defaults
   $attributes = shortcode_atts(array(
     'max_events' => 20,
-    'view' => 'normal', // normal, compact
+    'view' => 'normal',
     'tag_filter' => ''
-  ), $atts);
+  ), $raw_attributes);
+
+  // Validierung: max_events
+  // Als Integer casten und auf sinnvollen Bereich begrenzen (1-100)
+  $max_events = absint($attributes['max_events']);
+  if ($max_events < 1) {
+    $max_events = 1;
+  } elseif ($max_events > 100) {
+    $max_events = 100;
+  }
+
+  // Validierung: view
+  // Nur erlaubte Werte zulassen (Whitelist)
+  $allowed_views = array('normal', 'compact');
+  $view = in_array($attributes['view'], $allowed_views, true) ? $attributes['view'] : 'normal';
+
+  // Validierung: tag_filter
+  // Hashtag-Format prüfen: muss mit # beginnen, nur Buchstaben/Zahlen/Unterstriche
+  $tag_filter = '';
+  if (!empty($attributes['tag_filter'])) {
+    $tag = sanitize_text_field($attributes['tag_filter']);
+    // Prüfe ob Format korrekt ist: #Wortzeichen
+    if (preg_match('/^#\w+$/u', $tag)) {
+      $tag_filter = $tag;
+    }
+  }
 
   try {
     $ics = getIcsInternal();
@@ -304,15 +329,14 @@ function egj_calendar_display_shortcode($atts)
     return '<div class="egj-calendar-error">Fehler beim Laden der Termine</div>';
   }
 
-  $arrayOfEvents = array_slice($arrayOfEvents, 0, egj_escape($attributes['max_events']));
+  $arrayOfEvents = array_slice($arrayOfEvents, 0, $max_events);
 
   // Rendere die Termine
   ob_start();
-  if (egj_escape($attributes['view']) === 'compact') {
-    egj_render_small_calendar_events($arrayOfEvents, $attributes['tag_filter']);
+  if ($view === 'compact') {
+    egj_render_small_calendar_events($arrayOfEvents, $tag_filter);
   } else {
     egj_render_big_calendar_events($arrayOfEvents);
-
   }
   return ob_get_clean();
 }
@@ -350,10 +374,10 @@ function egj_calendar_settings_page()
   $ics_cache = get_option($_SESSION['ics_cache_option_name']);
   $ics_cache_timestamp = get_option($_SESSION['ics_cache_timestamp_option_name']);
 
-  if (!empty($_POST) || wp_verify_nonce(egj_escape($_POST['egj_calendar_nonce_field']), 'egj_calendar_action')) {
+  if (!empty($_POST) && wp_verify_nonce(egj_escape($_POST['egj_calendar_nonce_field']), 'egj_calendar_action')) {
     // update ics_url
-    if ($_POST[$ics_url_field_name]) {
-      $ics_url = $_POST[$ics_url_field_name];
+    if (isset($_POST[$ics_url_field_name])) {
+      $ics_url = esc_url_raw($_POST[$ics_url_field_name]);
       update_option($_SESSION['ics_url_option_name'], $ics_url);
     }
 
@@ -383,7 +407,7 @@ function egj_calendar_settings_page()
     <?php wp_nonce_field('egj_calendar_action', 'egj_calendar_nonce_field'); ?>
 
     <p><?php _e("Ics Url:", 'menu-test'); ?>
-      <input type="text" name="<?php echo $ics_url_field_name; ?>" value="<?php echo $ics_url; ?>" size="60">
+      <input type="text" name="<?php echo $ics_url_field_name; ?>" value="<?php echo esc_attr($ics_url); ?>" size="60">
     </p>
 
     <p>
