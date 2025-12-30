@@ -1,0 +1,712 @@
+[
+  {
+    "summary": "test",
+    "dtstart": "20251215T122300Z",
+    "dtend": "20251215T132300Z",
+    "duration": null,
+    "dtstamp": "20251214T153943Z",
+    "dtstart_tz": "20251215T132300",
+    "dtend_tz": "20251215T142300",
+    "uid": "40bi616lahumuhlu3tkl8if5rn@google.com",
+    "created": "20251214T144915Z",
+    "last_modified": "20251214T144915Z",
+    "description": null,
+    "location": null,
+    "sequence": null,
+    "status": "CONFIRMED",
+    "transp": "OPAQUE",
+    "organizer": null,
+    "attendee": null,
+    "additionalProperties": {
+      "dtstart_array": [
+        [],
+        "20251215T122300Z",
+        1765801380,
+        "20251215T122300Z"
+      ],
+      "dtend_array": [
+        [],
+        "20251215T132300Z",
+        1765804980,
+        "20251215T132300Z"
+      ],
+      "dtstamp_array": [
+        [],
+        "20251214T153943Z"
+      ],
+      "uid_array": [
+        [],
+        "40bi616lahumuhlu3tkl8if5rn@google.com"
+      ],
+      "created_array": [
+        [],
+        "20251214T144915Z"
+      ],
+      "last_modified_array": [
+        [],
+        "20251214T144915Z"
+      ],
+      "status_array": [
+        [],
+        "CONFIRMED"
+      ],
+      "summary_array": [
+        [],
+        "test"
+      ],
+      "transp_array": [
+        [],
+        "OPAQUE"
+      ]
+    }
+  },
+  {
+    "summary": "Offene Werkstatt",
+    "dtstart": "20251216T180000",
+    "dtend": "20251216T210000",
+    "duration": null,
+    "dtstamp": "20251214T153943Z",
+    "dtstart_tz": "20251216T180000",
+    "dtend_tz": "20251216T210000",
+    "uid": "8js5dp3c87vrlu063ujv1mg689_R20251021T160000@google.com",
+    "created": "20250426T163440Z",
+    "last_modified": "20251007T180814Z",
+    "description": "#OffeneWerkstatt #Awo",
+    "location": "Erfindergeist Werkstatt, Marie-Juchacz-Weg 2, 52428 J\u00fclich, Deutschland",
+    "sequence": "2",
+    "status": "CONFIRMED",
+    "transp": "OPAQUE",
+    "organizer": null,
+    "attendee": null,
+    "additionalProperties": {
+      "dtstart_array": [
+        {
+          "TZID": "Europe\/Berlin"
+        },
+        "20251216T180000",
+        1765904400,
+        "TZID=Europe\/Berlin:20251216T180000"
+      ],
+      "dtend_array": [
+        {
+          "TZID": "Europe\/Berlin"
+        },
+        "20251216T210000",
+        1765915200,
+        "TZID=Europe\/Berlin:20251216T210000"
+      ],
+      "rrule_array": [
+        [],
+        "FREQ=WEEKLY;WKST=MO;COUNT=6;INTERVAL=2;BYDAY=TU",
+        "Generated recurrence event"
+      ],
+      "rrule": "FREQ=WEEKLY;WKST=MO;COUNT=6;INTERVAL=2;BYDAY=TU",
+      "dtstamp_array": [
+        [],
+        "20251214T153943Z"
+      ],
+      "uid_array": [
+        [],
+        "8js5dp3c87vrlu063ujv1mg689_R20251021T160000@google.com"
+      ],
+      "created_array": [
+        [],
+        "20250426T163440Z"
+      ],
+      "description_array": [
+        [],
+        "#OffeneWerkstatt #Awo"
+      ],
+      "last_modified_array": [
+        [],
+        "20251007T180814Z"
+      ],
+      "location_array": [
+        [],
+        "Erfindergeist Werkstatt, Marie-Juchacz-Weg 2, 52428 J\u00fclich, Deutschland"
+      ],
+      "sequence_array": [
+        [],
+        "2"
+      ],
+      "status_array": [
+        [],
+        "CONFIRMED"
+      ],
+      "summary_array": [
+        [],
+        "Offene Werkstatt"
+      ],
+      "transp_array": [
+        [],
+        "OPAQUE"
+      ]
+    }
+  },
+  {
+    "summary": "Indeland im Gespr\u00e4ch",
+    "dtstart": "20251217T160000Z",
+    "dtend": "20251217T210000Z",
+    "duration": null,
+    "dtstamp": "20251214T153943Z",
+    "dtstart_tz": "20251217T170000",
+    "dtend_tz": "20251217T220000",
+    "uid": "4ilgcrdi06t9lvslqcevmm70qi@google.com",
+    "created": "20251119T183500Z",
+    "last_modified": "20251119T183941Z",
+    "description": "Unser 1. Vorstand ist zur Podiumsdiskussion im Kuba eingeladen<br><br><p><b>Veranstaltungsdaten<\/b><\/p><p><b>Wann:<\/b> Mittwoch, 17.12.2025<br><b>Uhrzeit:<\/b> 17:00 - 21:45 Uhr (Podiumsgespr\u00e4ch ab 20:00 Uhr)<\/p><p><b>Wo:<\/b> Kulturbahnhof J\u00fclich<\/p><p><b>Podiumsgespr\u00e4ch:<\/b> ca. 20:00 - 20:40 Uhr<br><b>Moderation:<\/b> Marianka Lesser<br><br><b>Kurz\u00fcberblick Programm<\/b><\/p><ul><li><b>17:30 Uhr<\/b> - Begr\u00fc\u00dfung (Christian Rast, indeland GmbH)<\/li><li><b>17:40 Uhr<\/b> - Vorstellung des Projekts <i>inReNa2030 II<\/i> (Daniela Eskelson)<\/li><li><b>17:50 Uhr<\/b> - Filmeinf\u00fchrung (Marianka Lesser)<\/li><li><b>18:00 Uhr<\/b> - Filmvorf\u00fchrung<\/li><li><b>20:00 Uhr<\/b> - Podiumsgespr\u00e4ch mit Ihnen<\/li><li><b>20:45 Uhr<\/b> - Abschluss &amp; Ausblick<\/li><li><b>ab 20:45 Uhr<\/b> - Get-together mit Imbiss und Austausch<\/li><\/ul><p><br>Im Anschluss an das Podium soll das Get-together eine M\u00f6glichkeit bieten mit Interessierten und Aktiven vor Ort ins Gespr\u00e4ch zu kommen.<\/p><br><br><br><br>#Extern #Indeland",
+    "location": "Kulturbahnhof J\u00fclich, Bahnhofstra\u00dfe 13, 52428 J\u00fclich, Deutschland",
+    "sequence": null,
+    "status": "CONFIRMED",
+    "transp": "OPAQUE",
+    "organizer": null,
+    "attendee": null,
+    "additionalProperties": {
+      "dtstart_array": [
+        [],
+        "20251217T160000Z",
+        1765987200,
+        "20251217T160000Z"
+      ],
+      "dtend_array": [
+        [],
+        "20251217T210000Z",
+        1766005200,
+        "20251217T210000Z"
+      ],
+      "dtstamp_array": [
+        [],
+        "20251214T153943Z"
+      ],
+      "uid_array": [
+        [],
+        "4ilgcrdi06t9lvslqcevmm70qi@google.com"
+      ],
+      "created_array": [
+        [],
+        "20251119T183500Z"
+      ],
+      "description_array": [
+        [],
+        "Unser 1. Vorstand ist zur Podiumsdiskussion im Kuba eingeladen<br><br><p><b>Veranstaltungsdaten<\/b><\/p><p><b>Wann:<\/b> Mittwoch, 17.12.2025<br><b>Uhrzeit:<\/b> 17:00 - 21:45 Uhr (Podiumsgespr\u00e4ch ab 20:00 Uhr)<\/p><p><b>Wo:<\/b> Kulturbahnhof J\u00fclich<\/p><p><b>Podiumsgespr\u00e4ch:<\/b> ca. 20:00 - 20:40 Uhr<br><b>Moderation:<\/b> Marianka Lesser<br><br><b>Kurz\u00fcberblick Programm<\/b><\/p><ul><li><b>17:30 Uhr<\/b> - Begr\u00fc\u00dfung (Christian Rast, indeland GmbH)<\/li><li><b>17:40 Uhr<\/b> - Vorstellung des Projekts <i>inReNa2030 II<\/i> (Daniela Eskelson)<\/li><li><b>17:50 Uhr<\/b> - Filmeinf\u00fchrung (Marianka Lesser)<\/li><li><b>18:00 Uhr<\/b> - Filmvorf\u00fchrung<\/li><li><b>20:00 Uhr<\/b> - Podiumsgespr\u00e4ch mit Ihnen<\/li><li><b>20:45 Uhr<\/b> - Abschluss &amp; Ausblick<\/li><li><b>ab 20:45 Uhr<\/b> - Get-together mit Imbiss und Austausch<\/li><\/ul><p><br>Im Anschluss an das Podium soll das Get-together eine M\u00f6glichkeit bieten mit Interessierten und Aktiven vor Ort ins Gespr\u00e4ch zu kommen.<\/p><br><br><br><br>#Extern #Indeland"
+      ],
+      "last_modified_array": [
+        [],
+        "20251119T183941Z"
+      ],
+      "location_array": [
+        [],
+        "Kulturbahnhof J\u00fclich, Bahnhofstra\u00dfe 13, 52428 J\u00fclich, Deutschland"
+      ],
+      "status_array": [
+        [],
+        "CONFIRMED"
+      ],
+      "summary_array": [
+        [],
+        "Indeland im Gespr\u00e4ch"
+      ],
+      "transp_array": [
+        [],
+        "OPAQUE"
+      ]
+    }
+  },
+  {
+    "summary": "Offene Werkstatt",
+    "dtstart": "20251230T180000",
+    "dtend": "20251230T210000",
+    "duration": null,
+    "dtstamp": "20251214T153943Z",
+    "dtstart_tz": "20251230T180000",
+    "dtend_tz": "20251230T210000",
+    "uid": "8js5dp3c87vrlu063ujv1mg689_R20251021T160000@google.com",
+    "created": "20250426T163440Z",
+    "last_modified": "20251007T180814Z",
+    "description": "#OffeneWerkstatt #Awo",
+    "location": "Erfindergeist Werkstatt, Marie-Juchacz-Weg 2, 52428 J\u00fclich, Deutschland",
+    "sequence": "2",
+    "status": "CONFIRMED",
+    "transp": "OPAQUE",
+    "organizer": null,
+    "attendee": null,
+    "additionalProperties": {
+      "dtstart_array": [
+        {
+          "TZID": "Europe\/Berlin"
+        },
+        "20251230T180000",
+        1767114000,
+        "TZID=Europe\/Berlin:20251230T180000"
+      ],
+      "dtend_array": [
+        {
+          "TZID": "Europe\/Berlin"
+        },
+        "20251230T210000",
+        1767124800,
+        "TZID=Europe\/Berlin:20251230T210000"
+      ],
+      "rrule_array": [
+        [],
+        "FREQ=WEEKLY;WKST=MO;COUNT=6;INTERVAL=2;BYDAY=TU",
+        "Generated recurrence event"
+      ],
+      "rrule": "FREQ=WEEKLY;WKST=MO;COUNT=6;INTERVAL=2;BYDAY=TU",
+      "dtstamp_array": [
+        [],
+        "20251214T153943Z"
+      ],
+      "uid_array": [
+        [],
+        "8js5dp3c87vrlu063ujv1mg689_R20251021T160000@google.com"
+      ],
+      "created_array": [
+        [],
+        "20250426T163440Z"
+      ],
+      "description_array": [
+        [],
+        "#OffeneWerkstatt #Awo"
+      ],
+      "last_modified_array": [
+        [],
+        "20251007T180814Z"
+      ],
+      "location_array": [
+        [],
+        "Erfindergeist Werkstatt, Marie-Juchacz-Weg 2, 52428 J\u00fclich, Deutschland"
+      ],
+      "sequence_array": [
+        [],
+        "2"
+      ],
+      "status_array": [
+        [],
+        "CONFIRMED"
+      ],
+      "summary_array": [
+        [],
+        "Offene Werkstatt"
+      ],
+      "transp_array": [
+        [],
+        "OPAQUE"
+      ]
+    }
+  },
+  {
+    "summary": "Keller entr\u00fcmpeln",
+    "dtstart": "20260117T100000Z",
+    "dtend": "20260117T140000Z",
+    "duration": null,
+    "dtstamp": "20251214T153943Z",
+    "dtstart_tz": "20260117T110000",
+    "dtend_tz": "20260117T150000",
+    "uid": "65no23d0ina5028qjb4numv3im@google.com",
+    "created": "20251207T170302Z",
+    "last_modified": "20251207T170302Z",
+    "description": "#Intern #Awo",
+    "location": "Erfindergeist Werkstatt, Marie-Juchacz-Weg 2, 52428 J\u00fclich, Deutschland",
+    "sequence": null,
+    "status": "CONFIRMED",
+    "transp": "OPAQUE",
+    "organizer": null,
+    "attendee": null,
+    "additionalProperties": {
+      "dtstart_array": [
+        [],
+        "20260117T100000Z",
+        1768644000,
+        "20260117T100000Z"
+      ],
+      "dtend_array": [
+        [],
+        "20260117T140000Z",
+        1768658400,
+        "20260117T140000Z"
+      ],
+      "dtstamp_array": [
+        [],
+        "20251214T153943Z"
+      ],
+      "uid_array": [
+        [],
+        "65no23d0ina5028qjb4numv3im@google.com"
+      ],
+      "created_array": [
+        [],
+        "20251207T170302Z"
+      ],
+      "description_array": [
+        [],
+        "#Intern #Awo"
+      ],
+      "last_modified_array": [
+        [],
+        "20251207T170302Z"
+      ],
+      "location_array": [
+        [],
+        "Erfindergeist Werkstatt, Marie-Juchacz-Weg 2, 52428 J\u00fclich, Deutschland"
+      ],
+      "status_array": [
+        [],
+        "CONFIRMED"
+      ],
+      "summary_array": [
+        [],
+        "Keller entr\u00fcmpeln"
+      ],
+      "transp_array": [
+        [],
+        "OPAQUE"
+      ]
+    }
+  },
+  {
+    "summary": "Repair Caf\u00e9",
+    "dtstart": "20260131T100000Z",
+    "dtend": "20260131T140000Z",
+    "duration": null,
+    "dtstamp": "20251214T153943Z",
+    "dtstart_tz": "20260131T110000",
+    "dtend_tz": "20260131T150000",
+    "uid": "5p0p2p47saelvrsmqt1hnr1ktq@google.com",
+    "created": "20251117T182450Z",
+    "last_modified": "20251117T182450Z",
+    "description": "<a href=https:\/\/repaircafe.erfindergeist.org\/>https:\/\/repaircafe.erfindergeist.org\/<\/a><br><br>AWO Stadt J\u00fclich<br>Maria-Juchacz-Weg 2<br>52428 J\u00fclich<br>#Repaircafe #Awo",
+    "location": "Erfindergeist Werkstatt, Marie-Juchacz-Weg 2, 52428 J\u00fclich, Deutschland",
+    "sequence": null,
+    "status": "CONFIRMED",
+    "transp": "OPAQUE",
+    "organizer": null,
+    "attendee": null,
+    "additionalProperties": {
+      "dtstart_array": [
+        [],
+        "20260131T100000Z",
+        1769853600,
+        "20260131T100000Z"
+      ],
+      "dtend_array": [
+        [],
+        "20260131T140000Z",
+        1769868000,
+        "20260131T140000Z"
+      ],
+      "dtstamp_array": [
+        [],
+        "20251214T153943Z"
+      ],
+      "uid_array": [
+        [],
+        "5p0p2p47saelvrsmqt1hnr1ktq@google.com"
+      ],
+      "created_array": [
+        [],
+        "20251117T182450Z"
+      ],
+      "description_array": [
+        [],
+        "<a href=https:\/\/repaircafe.erfindergeist.org\/>https:\/\/repaircafe.erfindergeist.org\/<\/a><br><br>AWO Stadt J\u00fclich<br>Maria-Juchacz-Weg 2<br>52428 J\u00fclich<br>#Repaircafe #Awo"
+      ],
+      "last_modified_array": [
+        [],
+        "20251117T182450Z"
+      ],
+      "location_array": [
+        [],
+        "Erfindergeist Werkstatt, Marie-Juchacz-Weg 2, 52428 J\u00fclich, Deutschland"
+      ],
+      "status_array": [
+        [],
+        "CONFIRMED"
+      ],
+      "summary_array": [
+        [],
+        "Repair Caf\u00e9"
+      ],
+      "transp_array": [
+        [],
+        "OPAQUE"
+      ]
+    }
+  },
+  {
+    "summary": "Repair Caf\u00e9",
+    "dtstart": "20260228T090000Z",
+    "dtend": "20260228T113000Z",
+    "duration": null,
+    "dtstamp": "20251214T153943Z",
+    "dtstart_tz": "20260228T100000",
+    "dtend_tz": "20260228T123000",
+    "uid": "7g96r6762isk2vd06u4djvapsc@google.com",
+    "created": "20251117T182534Z",
+    "last_modified": "20251117T182534Z",
+    "description": "<a href=https:\/\/repaircafe.erfindergeist.org\/>https:\/\/repaircafe.erfindergeist.org\/<\/a><br><br>Stadtb\u00fccherei J\u00fclich<br>Kleine Rurstra\u00dfe 20<br>52428 J\u00fclich<br>#Repaircafe #Stadtb\u00fccherei",
+    "location": "Stadtb\u00fccherei J\u00fclich, Kleine Rurstra\u00dfe 20, 52428 J\u00fclich, Deutschland",
+    "sequence": null,
+    "status": "CONFIRMED",
+    "transp": "OPAQUE",
+    "organizer": null,
+    "attendee": null,
+    "additionalProperties": {
+      "dtstart_array": [
+        [],
+        "20260228T090000Z",
+        1772269200,
+        "20260228T090000Z"
+      ],
+      "dtend_array": [
+        [],
+        "20260228T113000Z",
+        1772278200,
+        "20260228T113000Z"
+      ],
+      "dtstamp_array": [
+        [],
+        "20251214T153943Z"
+      ],
+      "uid_array": [
+        [],
+        "7g96r6762isk2vd06u4djvapsc@google.com"
+      ],
+      "created_array": [
+        [],
+        "20251117T182534Z"
+      ],
+      "description_array": [
+        [],
+        "<a href=https:\/\/repaircafe.erfindergeist.org\/>https:\/\/repaircafe.erfindergeist.org\/<\/a><br><br>Stadtb\u00fccherei J\u00fclich<br>Kleine Rurstra\u00dfe 20<br>52428 J\u00fclich<br>#Repaircafe #Stadtb\u00fccherei"
+      ],
+      "last_modified_array": [
+        [],
+        "20251117T182534Z"
+      ],
+      "location_array": [
+        [],
+        "Stadtb\u00fccherei J\u00fclich, Kleine Rurstra\u00dfe 20, 52428 J\u00fclich, Deutschland"
+      ],
+      "status_array": [
+        [],
+        "CONFIRMED"
+      ],
+      "summary_array": [
+        [],
+        "Repair Caf\u00e9"
+      ],
+      "transp_array": [
+        [],
+        "OPAQUE"
+      ]
+    }
+  },
+  {
+    "summary": "Repair Caf\u00e9",
+    "dtstart": "20260321T100000Z",
+    "dtend": "20260321T140000Z",
+    "duration": null,
+    "dtstamp": "20251214T153943Z",
+    "dtstart_tz": "20260321T110000",
+    "dtend_tz": "20260321T150000",
+    "uid": "3nm0a43d2niv2dhlmu6okcipij@google.com",
+    "created": "20251117T182945Z",
+    "last_modified": "20251117T182953Z",
+    "description": "<a href=https:\/\/repaircafe.erfindergeist.org\/>https:\/\/repaircafe.erfindergeist.org\/<\/a><br><br>AWO Stadt J\u00fclich<br>Maria-Juchacz-Weg 2<br>52428 J\u00fclich<br>#Repaircafe #Awo",
+    "location": "Erfindergeist Werkstatt, Marie-Juchacz-Weg 2, 52428 J\u00fclich, Deutschland",
+    "sequence": null,
+    "status": "CONFIRMED",
+    "transp": "OPAQUE",
+    "organizer": null,
+    "attendee": null,
+    "additionalProperties": {
+      "dtstart_array": [
+        [],
+        "20260321T100000Z",
+        1774087200,
+        "20260321T100000Z"
+      ],
+      "dtend_array": [
+        [],
+        "20260321T140000Z",
+        1774101600,
+        "20260321T140000Z"
+      ],
+      "dtstamp_array": [
+        [],
+        "20251214T153943Z"
+      ],
+      "uid_array": [
+        [],
+        "3nm0a43d2niv2dhlmu6okcipij@google.com"
+      ],
+      "created_array": [
+        [],
+        "20251117T182945Z"
+      ],
+      "description_array": [
+        [],
+        "<a href=https:\/\/repaircafe.erfindergeist.org\/>https:\/\/repaircafe.erfindergeist.org\/<\/a><br><br>AWO Stadt J\u00fclich<br>Maria-Juchacz-Weg 2<br>52428 J\u00fclich<br>#Repaircafe #Awo"
+      ],
+      "last_modified_array": [
+        [],
+        "20251117T182953Z"
+      ],
+      "location_array": [
+        [],
+        "Erfindergeist Werkstatt, Marie-Juchacz-Weg 2, 52428 J\u00fclich, Deutschland"
+      ],
+      "status_array": [
+        [],
+        "CONFIRMED"
+      ],
+      "summary_array": [
+        [],
+        "Repair Caf\u00e9"
+      ],
+      "transp_array": [
+        [],
+        "OPAQUE"
+      ]
+    }
+  },
+  {
+    "summary": "Repair Caf\u00e9",
+    "dtstart": "20260425T090000Z",
+    "dtend": "20260425T130000Z",
+    "duration": null,
+    "dtstamp": "20251214T153943Z",
+    "dtstart_tz": "20260425T110000",
+    "dtend_tz": "20260425T150000",
+    "uid": "12u8qtgfrtgp752de853kbt3ts@google.com",
+    "created": "20251117T183030Z",
+    "last_modified": "20251117T183030Z",
+    "description": "<a href=https:\/\/repaircafe.erfindergeist.org\/>https:\/\/repaircafe.erfindergeist.org\/<\/a><br><br>AWO Stadt J\u00fclich<br>Maria-Juchacz-Weg 2<br>52428 J\u00fclich<br>#Repaircafe #Awo",
+    "location": "Erfindergeist Werkstatt, Marie-Juchacz-Weg 2, 52428 J\u00fclich, Deutschland",
+    "sequence": null,
+    "status": "CONFIRMED",
+    "transp": "OPAQUE",
+    "organizer": null,
+    "attendee": null,
+    "additionalProperties": {
+      "dtstart_array": [
+        [],
+        "20260425T090000Z",
+        1777107600,
+        "20260425T090000Z"
+      ],
+      "dtend_array": [
+        [],
+        "20260425T130000Z",
+        1777122000,
+        "20260425T130000Z"
+      ],
+      "dtstamp_array": [
+        [],
+        "20251214T153943Z"
+      ],
+      "uid_array": [
+        [],
+        "12u8qtgfrtgp752de853kbt3ts@google.com"
+      ],
+      "created_array": [
+        [],
+        "20251117T183030Z"
+      ],
+      "description_array": [
+        [],
+        "<a href=https:\/\/repaircafe.erfindergeist.org\/>https:\/\/repaircafe.erfindergeist.org\/<\/a><br><br>AWO Stadt J\u00fclich<br>Maria-Juchacz-Weg 2<br>52428 J\u00fclich<br>#Repaircafe #Awo"
+      ],
+      "last_modified_array": [
+        [],
+        "20251117T183030Z"
+      ],
+      "location_array": [
+        [],
+        "Erfindergeist Werkstatt, Marie-Juchacz-Weg 2, 52428 J\u00fclich, Deutschland"
+      ],
+      "status_array": [
+        [],
+        "CONFIRMED"
+      ],
+      "summary_array": [
+        [],
+        "Repair Caf\u00e9"
+      ],
+      "transp_array": [
+        [],
+        "OPAQUE"
+      ]
+    }
+  },
+  {
+    "summary": "Repair Caf\u00e9",
+    "dtstart": "20260530T080000Z",
+    "dtend": "20260530T103000Z",
+    "duration": null,
+    "dtstamp": "20251214T153943Z",
+    "dtstart_tz": "20260530T100000",
+    "dtend_tz": "20260530T123000",
+    "uid": "4g8c6esaisr2q1l80e49sdco2d@google.com",
+    "created": "20251117T183101Z",
+    "last_modified": "20251117T183101Z",
+    "description": "<a href=https:\/\/repaircafe.erfindergeist.org\/>https:\/\/repaircafe.erfindergeist.org\/<\/a><br><br>Stadtb\u00fccherei J\u00fclich<br>Kleine Rurstra\u00dfe 20<br>52428 J\u00fclich<br>#Repaircafe #Stadtb\u00fccherei",
+    "location": "Stadtb\u00fccherei J\u00fclich, Kleine Rurstra\u00dfe 20, 52428 J\u00fclich, Deutschland",
+    "sequence": null,
+    "status": "CONFIRMED",
+    "transp": "OPAQUE",
+    "organizer": null,
+    "attendee": null,
+    "additionalProperties": {
+      "dtstart_array": [
+        [],
+        "20260530T080000Z",
+        1780128000,
+        "20260530T080000Z"
+      ],
+      "dtend_array": [
+        [],
+        "20260530T103000Z",
+        1780137000,
+        "20260530T103000Z"
+      ],
+      "dtstamp_array": [
+        [],
+        "20251214T153943Z"
+      ],
+      "uid_array": [
+        [],
+        "4g8c6esaisr2q1l80e49sdco2d@google.com"
+      ],
+      "created_array": [
+        [],
+        "20251117T183101Z"
+      ],
+      "description_array": [
+        [],
+        "<a href=https:\/\/repaircafe.erfindergeist.org\/>https:\/\/repaircafe.erfindergeist.org\/<\/a><br><br>Stadtb\u00fccherei J\u00fclich<br>Kleine Rurstra\u00dfe 20<br>52428 J\u00fclich<br>#Repaircafe #Stadtb\u00fccherei"
+      ],
+      "last_modified_array": [
+        [],
+        "20251117T183101Z"
+      ],
+      "location_array": [
+        [],
+        "Stadtb\u00fccherei J\u00fclich, Kleine Rurstra\u00dfe 20, 52428 J\u00fclich, Deutschland"
+      ],
+      "status_array": [
+        [],
+        "CONFIRMED"
+      ],
+      "summary_array": [
+        [],
+        "Repair Caf\u00e9"
+      ],
+      "transp_array": [
+        [],
+        "OPAQUE"
+      ]
+    }
+  }
+]

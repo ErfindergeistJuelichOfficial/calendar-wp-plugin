@@ -1,0 +1,36 @@
+alias: nextevent_reminder_discord_public
+description: ""
+triggers:
+  - trigger: time
+    at: "10:00:00"
+conditions: []
+actions:
+  - action: rest_command.egj_nextevent_get
+    response_variable: nextevent_response
+    data: {}
+  - if:
+      - condition: template
+        value_template: "{{ nextevent_response['status'] == 200 }}"
+    then:
+      - action: notify.egj_homeassistant
+        data:
+          message: ""
+          target: "913007797237604402"
+          data:
+            embed:
+              title: >-
+                Erinnerung für morgen:
+                {{nextevent_response['content']['summary']}}
+              url: https://erfindergeist.org/veranstaltungen/
+              color: 199363
+              fields:
+                - name: Beschreibung
+                  value: "{{nextevent_response['content']['description']}}"
+                  inline: false
+                - name: Ort
+                  value: "{{nextevent_response['content']['location']}}"
+                  inline: false
+                - name: Datum Uhrzeit
+                  value: "{{nextevent_response['content']['starttime']}}"
+                  inline: false
+mode: single

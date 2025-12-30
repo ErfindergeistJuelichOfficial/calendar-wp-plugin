@@ -1,0 +1,330 @@
+{
+    "kind": "calendar#events",
+    "etag": "\"p32ntbm69l6up20o\"",
+    "summary": "Erfindergeist J\u00fclich Veranstaltungen ",
+    "description": "In diesem Kalender werden, alle EGJ Veranstaltungen eingetragen.",
+    "updated": "2025-12-14T14:49:15.391Z",
+    "timeZone": "Europe\/Berlin",
+    "accessRole": "reader",
+    "defaultReminders": [],
+    "items": [
+        {
+            "kind": "calendar#event",
+            "etag": "\"3531447510783326\"",
+            "id": "40bi616lahumuhlu3tkl8if5rn",
+            "status": "confirmed",
+            "htmlLink": "https:\/\/www.google.com\/calendar\/event?eid=NDBiaTYxNmxhaHVtdWhsdTN0a2w4aWY1cm4gMDdpb2k1bjk0YWk1Mmk4NjJhZ2JoMTN0Z2NAZw",
+            "created": "2025-12-14T14:49:15.000Z",
+            "updated": "2025-12-14T14:49:15.391Z",
+            "summary": "test ",
+            "creator": {
+                "email": "erfindergeistjuelich@gmail.com"
+            },
+            "organizer": {
+                "email": "07ioi5n94ai52i862agbh13tgc@group.calendar.google.com",
+                "displayName": "Erfindergeist J\u00fclich Veranstaltungen ",
+                "self": true
+            },
+            "start": {
+                "dateTime": "2025-12-15T13:23:00+01:00",
+                "timeZone": "Europe\/Berlin"
+            },
+            "end": {
+                "dateTime": "2025-12-15T14:23:00+01:00",
+                "timeZone": "Europe\/Berlin"
+            },
+            "iCalUID": "40bi616lahumuhlu3tkl8if5rn@google.com",
+            "sequence": 0,
+            "eventType": "default"
+        },
+        {
+            "kind": "calendar#event",
+            "etag": "\"3519720989208734\"",
+            "id": "8js5dp3c87vrlu063ujv1mg689_20251216T170000Z",
+            "status": "confirmed",
+            "htmlLink": "https:\/\/www.google.com\/calendar\/event?eid=OGpzNWRwM2M4N3ZybHUwNjN1anYxbWc2ODlfMjAyNTEyMTZUMTcwMDAwWiAwN2lvaTVuOTRhaTUyaTg2MmFnYmgxM3RnY0Bn",
+            "created": "2025-04-26T16:34:40.000Z",
+            "updated": "2025-10-07T18:08:14.604Z",
+            "summary": "Offene Werkstatt",
+            "description": "#OffeneWerkstatt #Awo",
+            "location": "Erfindergeist Werkstatt, Marie-Juchacz-Weg 2, 52428 J\u00fclich, Deutschland",
+            "creator": {
+                "email": "erfindergeistjuelich@gmail.com"
+            },
+            "organizer": {
+                "email": "07ioi5n94ai52i862agbh13tgc@group.calendar.google.com",
+                "displayName": "Erfindergeist J\u00fclich Veranstaltungen ",
+                "self": true
+            },
+            "start": {
+                "dateTime": "2025-12-16T18:00:00+01:00",
+                "timeZone": "Europe\/Berlin"
+            },
+            "end": {
+                "dateTime": "2025-12-16T21:00:00+01:00",
+                "timeZone": "Europe\/Berlin"
+            },
+            "recurringEventId": "8js5dp3c87vrlu063ujv1mg689_R20251021T160000",
+            "originalStartTime": {
+                "dateTime": "2025-12-16T18:00:00+01:00",
+                "timeZone": "Europe\/Berlin"
+            },
+            "iCalUID": "8js5dp3c87vrlu063ujv1mg689_R20251021T160000@google.com",
+            "sequence": 2,
+            "eventType": "default"
+        },
+        {
+            "kind": "calendar#event",
+            "etag": "\"3527155162890430\"",
+            "id": "4ilgcrdi06t9lvslqcevmm70qi",
+            "status": "confirmed",
+            "htmlLink": "https:\/\/www.google.com\/calendar\/event?eid=NGlsZ2NyZGkwNnQ5bHZzbHFjZXZtbTcwcWkgMDdpb2k1bjk0YWk1Mmk4NjJhZ2JoMTN0Z2NAZw",
+            "created": "2025-11-19T18:35:00.000Z",
+            "updated": "2025-11-19T18:39:41.445Z",
+            "summary": "Indeland im Gespr\u00e4ch",
+            "description": "Unser 1. Vorstand ist zur Podiumsdiskussion im Kuba eingeladen<br><br><p><b>Veranstaltungsdaten<\/b><\/p><p><b>Wann:<\/b>\u00a0Mittwoch, 17.12.2025<br><b>Uhrzeit:<\/b>\u00a017:00 \u2013 21:45 Uhr (Podiumsgespr\u00e4ch ab 20:00 Uhr)<\/p><p><b>Wo:<\/b>\u00a0Kulturbahnhof J\u00fclich<\/p><p><b>Podiumsgespr\u00e4ch:<\/b>\u00a0ca. 20:00 \u2013 20:40 Uhr<br><b>Moderation:<\/b>\u00a0Marianka Lesser<br><br><b>Kurz\u00fcberblick Programm<\/b><\/p><ul><li><b>17:30 Uhr<\/b>\u00a0\u2013 Begr\u00fc\u00dfung (Christian Rast, indeland GmbH)<\/li><li><b>17:40 Uhr<\/b>\u00a0\u2013 Vorstellung des Projekts\u00a0<i>inReNa2030 II<\/i>\u00a0(Daniela Eskelson)<\/li><li><b>17:50 Uhr<\/b>\u00a0\u2013 Filmeinf\u00fchrung (Marianka Lesser)<\/li><li><b>18:00 Uhr<\/b>\u00a0\u2013 Filmvorf\u00fchrung<\/li><li><b>20:00 Uhr<\/b>\u00a0\u2013 Podiumsgespr\u00e4ch mit Ihnen<\/li><li><b>20:45 Uhr<\/b>\u00a0\u2013 Abschluss &amp; Ausblick<\/li><li><b>ab 20:45 Uhr<\/b>\u00a0\u2013 Get-together mit Imbiss und Austausch<\/li><\/ul><p><br>Im Anschluss an das Podium soll das Get-together eine M\u00f6glichkeit bieten mit Interessierten und Aktiven vor Ort ins Gespr\u00e4ch zu kommen.<\/p><br><br><br><br>#Extern #Indeland",
+            "location": "Kulturbahnhof J\u00fclich, Bahnhofstra\u00dfe 13, 52428 J\u00fclich, Deutschland",
+            "creator": {
+                "email": "erfindergeistjuelich@gmail.com"
+            },
+            "organizer": {
+                "email": "07ioi5n94ai52i862agbh13tgc@group.calendar.google.com",
+                "displayName": "Erfindergeist J\u00fclich Veranstaltungen ",
+                "self": true
+            },
+            "start": {
+                "dateTime": "2025-12-17T17:00:00+01:00",
+                "timeZone": "Europe\/Berlin"
+            },
+            "end": {
+                "dateTime": "2025-12-17T22:00:00+01:00",
+                "timeZone": "Europe\/Berlin"
+            },
+            "iCalUID": "4ilgcrdi06t9lvslqcevmm70qi@google.com",
+            "sequence": 0,
+            "eventType": "default"
+        },
+        {
+            "kind": "calendar#event",
+            "etag": "\"3519720989208734\"",
+            "id": "8js5dp3c87vrlu063ujv1mg689_20251230T170000Z",
+            "status": "confirmed",
+            "htmlLink": "https:\/\/www.google.com\/calendar\/event?eid=OGpzNWRwM2M4N3ZybHUwNjN1anYxbWc2ODlfMjAyNTEyMzBUMTcwMDAwWiAwN2lvaTVuOTRhaTUyaTg2MmFnYmgxM3RnY0Bn",
+            "created": "2025-04-26T16:34:40.000Z",
+            "updated": "2025-10-07T18:08:14.604Z",
+            "summary": "Offene Werkstatt",
+            "description": "#OffeneWerkstatt #Awo",
+            "location": "Erfindergeist Werkstatt, Marie-Juchacz-Weg 2, 52428 J\u00fclich, Deutschland",
+            "creator": {
+                "email": "erfindergeistjuelich@gmail.com"
+            },
+            "organizer": {
+                "email": "07ioi5n94ai52i862agbh13tgc@group.calendar.google.com",
+                "displayName": "Erfindergeist J\u00fclich Veranstaltungen ",
+                "self": true
+            },
+            "start": {
+                "dateTime": "2025-12-30T18:00:00+01:00",
+                "timeZone": "Europe\/Berlin"
+            },
+            "end": {
+                "dateTime": "2025-12-30T21:00:00+01:00",
+                "timeZone": "Europe\/Berlin"
+            },
+            "recurringEventId": "8js5dp3c87vrlu063ujv1mg689_R20251021T160000",
+            "originalStartTime": {
+                "dateTime": "2025-12-30T18:00:00+01:00",
+                "timeZone": "Europe\/Berlin"
+            },
+            "iCalUID": "8js5dp3c87vrlu063ujv1mg689_R20251021T160000@google.com",
+            "sequence": 2,
+            "eventType": "default"
+        },
+        {
+            "kind": "calendar#event",
+            "etag": "\"3530253964679422\"",
+            "id": "65no23d0ina5028qjb4numv3im",
+            "status": "confirmed",
+            "htmlLink": "https:\/\/www.google.com\/calendar\/event?eid=NjVubzIzZDBpbmE1MDI4cWpiNG51bXYzaW0gMDdpb2k1bjk0YWk1Mmk4NjJhZ2JoMTN0Z2NAZw",
+            "created": "2025-12-07T17:03:02.000Z",
+            "updated": "2025-12-07T17:03:02.339Z",
+            "summary": "Keller entr\u00fcmpeln",
+            "description": "#Intern #Awo",
+            "location": "Erfindergeist Werkstatt, Marie-Juchacz-Weg 2, 52428 J\u00fclich, Deutschland",
+            "creator": {
+                "email": "erfindergeistjuelich@gmail.com"
+            },
+            "organizer": {
+                "email": "07ioi5n94ai52i862agbh13tgc@group.calendar.google.com",
+                "displayName": "Erfindergeist J\u00fclich Veranstaltungen ",
+                "self": true
+            },
+            "start": {
+                "dateTime": "2026-01-17T11:00:00+01:00",
+                "timeZone": "Europe\/Berlin"
+            },
+            "end": {
+                "dateTime": "2026-01-17T15:00:00+01:00",
+                "timeZone": "Europe\/Berlin"
+            },
+            "iCalUID": "65no23d0ina5028qjb4numv3im@google.com",
+            "sequence": 0,
+            "eventType": "default"
+        },
+        {
+            "kind": "calendar#event",
+            "etag": "\"3526807781541790\"",
+            "id": "5p0p2p47saelvrsmqt1hnr1ktq",
+            "status": "confirmed",
+            "htmlLink": "https:\/\/www.google.com\/calendar\/event?eid=NXAwcDJwNDdzYWVsdnJzbXF0MWhucjFrdHEgMDdpb2k1bjk0YWk1Mmk4NjJhZ2JoMTN0Z2NAZw",
+            "created": "2025-11-17T18:24:50.000Z",
+            "updated": "2025-11-17T18:24:50.770Z",
+            "summary": "Repair Caf\u00e9",
+            "description": "<a href=\"https:\/\/repaircafe.erfindergeist.org\/\">https:\/\/repaircafe.erfindergeist.org\/<\/a><br><br>AWO Stadt J\u00fclich<br>Maria-Juchacz-Weg 2<br>52428 J\u00fclich<br>#Repaircafe #Awo",
+            "location": "Erfindergeist Werkstatt, Marie-Juchacz-Weg 2, 52428 J\u00fclich, Deutschland",
+            "creator": {
+                "email": "erfindergeistjuelich@gmail.com"
+            },
+            "organizer": {
+                "email": "07ioi5n94ai52i862agbh13tgc@group.calendar.google.com",
+                "displayName": "Erfindergeist J\u00fclich Veranstaltungen ",
+                "self": true
+            },
+            "start": {
+                "dateTime": "2026-01-31T11:00:00+01:00",
+                "timeZone": "Europe\/Berlin"
+            },
+            "end": {
+                "dateTime": "2026-01-31T15:00:00+01:00",
+                "timeZone": "Europe\/Berlin"
+            },
+            "iCalUID": "5p0p2p47saelvrsmqt1hnr1ktq@google.com",
+            "sequence": 0,
+            "eventType": "default"
+        },
+        {
+            "kind": "calendar#event",
+            "etag": "\"3526807868414494\"",
+            "id": "7g96r6762isk2vd06u4djvapsc",
+            "status": "confirmed",
+            "htmlLink": "https:\/\/www.google.com\/calendar\/event?eid=N2c5NnI2NzYyaXNrMnZkMDZ1NGRqdmFwc2MgMDdpb2k1bjk0YWk1Mmk4NjJhZ2JoMTN0Z2NAZw",
+            "created": "2025-11-17T18:25:34.000Z",
+            "updated": "2025-11-17T18:25:34.207Z",
+            "summary": "Repair Caf\u00e9",
+            "description": "<a href=\"https:\/\/repaircafe.erfindergeist.org\/\">https:\/\/repaircafe.erfindergeist.org\/<\/a><br><br>Stadtb\u00fccherei J\u00fclich<br>Kleine Rurstra\u00dfe 20<br>52428 J\u00fclich<br>#Repaircafe #Stadtb\u00fccherei",
+            "location": "Stadtb\u00fccherei J\u00fclich, Kleine Rurstra\u00dfe 20, 52428 J\u00fclich, Deutschland",
+            "creator": {
+                "email": "erfindergeistjuelich@gmail.com"
+            },
+            "organizer": {
+                "email": "07ioi5n94ai52i862agbh13tgc@group.calendar.google.com",
+                "displayName": "Erfindergeist J\u00fclich Veranstaltungen ",
+                "self": true
+            },
+            "start": {
+                "dateTime": "2026-02-28T10:00:00+01:00",
+                "timeZone": "Europe\/Berlin"
+            },
+            "end": {
+                "dateTime": "2026-02-28T12:30:00+01:00",
+                "timeZone": "Europe\/Berlin"
+            },
+            "iCalUID": "7g96r6762isk2vd06u4djvapsc@google.com",
+            "sequence": 0,
+            "eventType": "default"
+        },
+        {
+            "kind": "calendar#event",
+            "etag": "\"3526808386354270\"",
+            "id": "3nm0a43d2niv2dhlmu6okcipij",
+            "status": "confirmed",
+            "htmlLink": "https:\/\/www.google.com\/calendar\/event?eid=M25tMGE0M2Qybml2MmRobG11Nm9rY2lwaWogMDdpb2k1bjk0YWk1Mmk4NjJhZ2JoMTN0Z2NAZw",
+            "created": "2025-11-17T18:29:45.000Z",
+            "updated": "2025-11-17T18:29:53.177Z",
+            "summary": "Repair Caf\u00e9",
+            "description": "<a href=\"https:\/\/repaircafe.erfindergeist.org\/\">https:\/\/repaircafe.erfindergeist.org\/<\/a><br><br>AWO Stadt J\u00fclich<br>Maria-Juchacz-Weg 2<br>52428 J\u00fclich<br>#Repaircafe #Awo",
+            "location": "Erfindergeist Werkstatt, Marie-Juchacz-Weg 2, 52428 J\u00fclich, Deutschland",
+            "creator": {
+                "email": "erfindergeistjuelich@gmail.com"
+            },
+            "organizer": {
+                "email": "07ioi5n94ai52i862agbh13tgc@group.calendar.google.com",
+                "displayName": "Erfindergeist J\u00fclich Veranstaltungen ",
+                "self": true
+            },
+            "start": {
+                "dateTime": "2026-03-21T11:00:00+01:00",
+                "timeZone": "Europe\/Berlin"
+            },
+            "end": {
+                "dateTime": "2026-03-21T15:00:00+01:00",
+                "timeZone": "Europe\/Berlin"
+            },
+            "iCalUID": "3nm0a43d2niv2dhlmu6okcipij@google.com",
+            "sequence": 0,
+            "eventType": "default"
+        },
+        {
+            "kind": "calendar#event",
+            "etag": "\"3526808461556830\"",
+            "id": "12u8qtgfrtgp752de853kbt3ts",
+            "status": "confirmed",
+            "htmlLink": "https:\/\/www.google.com\/calendar\/event?eid=MTJ1OHF0Z2ZydGdwNzUyZGU4NTNrYnQzdHMgMDdpb2k1bjk0YWk1Mmk4NjJhZ2JoMTN0Z2NAZw",
+            "created": "2025-11-17T18:30:30.000Z",
+            "updated": "2025-11-17T18:30:30.778Z",
+            "summary": "Repair Caf\u00e9",
+            "description": "<a href=\"https:\/\/repaircafe.erfindergeist.org\/\">https:\/\/repaircafe.erfindergeist.org\/<\/a><br><br>AWO Stadt J\u00fclich<br>Maria-Juchacz-Weg 2<br>52428 J\u00fclich<br>#Repaircafe #Awo",
+            "location": "Erfindergeist Werkstatt, Marie-Juchacz-Weg 2, 52428 J\u00fclich, Deutschland",
+            "creator": {
+                "email": "erfindergeistjuelich@gmail.com"
+            },
+            "organizer": {
+                "email": "07ioi5n94ai52i862agbh13tgc@group.calendar.google.com",
+                "displayName": "Erfindergeist J\u00fclich Veranstaltungen ",
+                "self": true
+            },
+            "start": {
+                "dateTime": "2026-04-25T11:00:00+02:00",
+                "timeZone": "Europe\/Berlin"
+            },
+            "end": {
+                "dateTime": "2026-04-25T15:00:00+02:00",
+                "timeZone": "Europe\/Berlin"
+            },
+            "iCalUID": "12u8qtgfrtgp752de853kbt3ts@google.com",
+            "sequence": 0,
+            "eventType": "default"
+        },
+        {
+            "kind": "calendar#event",
+            "etag": "\"3526808522930302\"",
+            "id": "4g8c6esaisr2q1l80e49sdco2d",
+            "status": "confirmed",
+            "htmlLink": "https:\/\/www.google.com\/calendar\/event?eid=NGc4YzZlc2Fpc3IycTFsODBlNDlzZGNvMmQgMDdpb2k1bjk0YWk1Mmk4NjJhZ2JoMTN0Z2NAZw",
+            "created": "2025-11-17T18:31:01.000Z",
+            "updated": "2025-11-17T18:31:01.465Z",
+            "summary": "Repair Caf\u00e9",
+            "description": "<a href=\"https:\/\/repaircafe.erfindergeist.org\/\">https:\/\/repaircafe.erfindergeist.org\/<\/a><br><br>Stadtb\u00fccherei J\u00fclich<br>Kleine Rurstra\u00dfe 20<br>52428 J\u00fclich<br>#Repaircafe #Stadtb\u00fccherei",
+            "location": "Stadtb\u00fccherei J\u00fclich, Kleine Rurstra\u00dfe 20, 52428 J\u00fclich, Deutschland",
+            "creator": {
+                "email": "erfindergeistjuelich@gmail.com"
+            },
+            "organizer": {
+                "email": "07ioi5n94ai52i862agbh13tgc@group.calendar.google.com",
+                "displayName": "Erfindergeist J\u00fclich Veranstaltungen ",
+                "self": true
+            },
+            "start": {
+                "dateTime": "2026-05-30T10:00:00+02:00",
+                "timeZone": "Europe\/Berlin"
+            },
+            "end": {
+                "dateTime": "2026-05-30T12:30:00+02:00",
+                "timeZone": "Europe\/Berlin"
+            },
+            "iCalUID": "4g8c6esaisr2q1l80e49sdco2d@google.com",
+            "sequence": 0,
+            "eventType": "default"
+        }
+    ]
+}

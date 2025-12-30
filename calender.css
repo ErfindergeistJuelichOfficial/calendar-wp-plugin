@@ -3,9 +3,7 @@
 --bs-secondary: var(--wp--preset--color--secondary);
 --bs-primary-rgb: 21, 153, 137;
 --bs-secondary-rgb: 249, 179, 56;
-
 }
-
 
 .bd-callout {
   padding: 1.25rem;
@@ -43,9 +41,7 @@
   margin-top: 0.2rem;
 }
 
-
 @media print {
-
   :root {
     font-family: Arial, sans-serif;
     font-size: 1.2rem;
@@ -95,6 +91,4 @@
 .no-print {
   display: block;
 }
-
-
 

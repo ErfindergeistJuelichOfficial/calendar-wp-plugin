@@ -1,0 +1,30 @@
+{
+  "kind": "calendar#event",
+  "etag": "\"3531447510783326\"",
+  "id": "40bi616lahumuhlu3tkl8if5rn",
+  "status": "confirmed",
+  "htmlLink": "https://www.google.com/calendar/event?eid=NDBiaTYxNmxhaHVtdWhsdTN0a2w4aWY1cm4gMDdpb2k1bjk0YWk1Mmk4NjJhZ2JoMTN0Z2NAZw",
+  "created": "2025-12-14T14:49:15.000Z",
+  "updated": "2025-12-14T14:49:15.391Z",
+  "summary": "test ",
+  "creator": {
+    "email": "erfindergeistjuelich@gmail.com"
+  },
+  "organizer": {
+    "email": "07ioi5n94ai52i862agbh13tgc@group.calendar.google.com",
+    "displayName": "Erfindergeist Jülich Veranstaltungen ",
+    "self": true
+  },
+  "start": {
+    "dateTime": "2025-12-15T13:23:00+01:00",
+    "timeZone": "Europe/Berlin"
+  },
+  "end": {
+    "dateTime": "2025-12-15T14:23:00+01:00",
+    "timeZone": "Europe/Berlin"
+  },
+  "iCalUID": "40bi616lahumuhlu3tkl8if5rn@google.com",
+  "sequence": 0,
+  "eventType": "default",
+  "starttime": "15.12.2025 13:23"
+}

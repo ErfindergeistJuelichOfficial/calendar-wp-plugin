@@ -1,0 +1,43 @@
+<section class="container text-dark bd-container-even">
+  <div class="row">
+    <div class="col">
+      <h2 class="m-0">{{summary}}</h2>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col">
+      {{dateTimeInfo}}
+      <span>
+        📍 {{location}}
+        <a
+          href="https://www.openstreetmap.org/search?query={{location}}"
+          target="_blank"
+          >OSM</a
+        >
+        <a href="https://maps.google.com/?q={{location}}" target="_blank"
+          >google</a
+        >
+        <a href="https://maps.apple.com/?q={{location}}" target="_blank"
+          >apple</a
+        >
+        <a
+          href="https://bing.com/maps/default.aspx?where1={{location}}"
+          target="_blank"
+          >bing</a
+        >
+        <a href="https://waze.com/ul?q={{location}}" target="_blank">waze</a>
+      </span>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col">
+      {{description}}
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col">{{tags}}</div>
+  </div>
+</section>
