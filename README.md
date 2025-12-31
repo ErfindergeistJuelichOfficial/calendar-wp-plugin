@@ -152,3 +152,6 @@ Returns ics as erfindergeist.ics
 
 See LICENSE file for details.
 
+## Dependencies
+
+[u01jmg3 / ics-parser](https://github.com/u01jmg3/ics-parser)
