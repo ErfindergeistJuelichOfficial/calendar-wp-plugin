@@ -5,7 +5,7 @@ if (!defined('ABSPATH')) {
 }
 
 require_once 'Event.php';
-require_once 'NextEvent.php';
+require_once 'TomorrowEvent.php';
 require_once 'ICal.php';
 require_once 'vars.php';
 use ICal\ICal;
@@ -177,24 +177,24 @@ function get_tomorrow_event()
   if (is_array($arrayOfEvents) && count($arrayOfEvents) > 0) {
     $event = $arrayOfEvents[0];
 
-    // Convert Event to NextEvent
-    $nextEvent = new NextEvent();
-    $nextEvent->summary = $event->summary ?? '';
-    $nextEvent->description = $event->description ?? '';
-    $nextEvent->location = $event->location ?? '';
+    // Convert Event to TomorrowEvent
+    $tomorrowEvent = new TomorrowEvent();
+    $tomorrowEvent->summary = $event->summary ?? '';
+    $tomorrowEvent->description = $event->description ?? '';
+    $tomorrowEvent->location = $event->location ?? '';
     
     // Format start and end time in German format
     if (isset($event->dtstart)) {
       $startDateTime = new DateTime($event->dtstart);
-      $nextEvent->starttime = $startDateTime->format("d.m.Y H:i");
+      $tomorrowEvent->starttime = $startDateTime->format("d.m.Y H:i");
     }
     
     if (isset($event->dtend)) {
       $endDateTime = new DateTime($event->dtend);
-      $nextEvent->endtime = $endDateTime->format("d.m.Y H:i");
+      $tomorrowEvent->endtime = $endDateTime->format("d.m.Y H:i");
     }
 
-    $response = new WP_REST_Response($nextEvent);
+    $response = new WP_REST_Response($tomorrowEvent);
     $response->set_status(200);
     return $response;
   }

@@ -148,6 +148,11 @@ Returns ics as erfindergeist.ics
 - WordPress 6.0 or higher (tested up to 6.8)
 - Valid ICS calendar URL
 
+## homeassistant
+
+we use the tomorrow api to easy access events in the future and send a notification to discord.
+there is a configuration example in the "homeassistant" folder.
+
 ## License
 
 See LICENSE file for details.

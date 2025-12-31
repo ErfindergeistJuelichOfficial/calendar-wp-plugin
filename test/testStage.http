@@ -1,8 +1,8 @@
-### 
-GET https://spielwiese.erfindergeist.org/wp-json/erfindergeist/v2/nextevent
+### get tomorrow events (404 there are no events tomorrow)
+GET https://spielwiese.erfindergeist.org/wp-json/erfindergeist/v2/tomorrow
 
-### events with ical
+### get Events as json
 GET https://spielwiese.erfindergeist.org/wp-json/erfindergeist/v2/events
 
-### ICS use Browser
+### get ICS file
 https://spielwiese.erfindergeist.org/wp-json/erfindergeist/v2/ics

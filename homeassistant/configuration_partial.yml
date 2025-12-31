@@ -1,0 +1,10 @@
+notify:
+  - name: egj_homeassistant
+    platform: discord
+    token: YOUR_BOT_TOKEN
+    default_room: YOUR_CHANNEL_ID
+
+rest_command:
+  egj_tomorrow:
+    url: "https://erfindergeist.org/wp-json/erfindergeist/v2/tomorrow"
+    method: get

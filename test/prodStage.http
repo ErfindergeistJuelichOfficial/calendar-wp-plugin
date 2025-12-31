@@ -1,0 +1,8 @@
+### get tomorrow events (404 there are no events tomorrow)
+GET https://erfindergeist.org/wp-json/erfindergeist/v2/tomorrow
+
+### get Events as json
+GET https://erfindergeist.org/wp-json/erfindergeist/v2/events
+
+### get ICS file
+https://erfindergeist.org/wp-json/erfindergeist/v2/ics
