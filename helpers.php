@@ -53,8 +53,6 @@ if (!function_exists('egj_send_notification_to_admins')) {
 if (!function_exists('egj_escape')) {
 
   function egj_escape($string) {
-    $newString = trim($string);
-    $newString = addslashes($newString);
-    return $newString;
+    return sanitize_text_field($string);
   }
 }

@@ -116,11 +116,12 @@ function egj_extend_description_by_tag($description, $tag)
  */
 function egj_link_text_by_tag($summary, $tag)
 {
+  $safe_summary = esc_html($summary);
   $tagHtmlMap = array(
-    '#Repaircafe' => '<a href="https://repaircafe.erfindergeist.org">' . $summary . '</a>',
-    '#OffeneWerkstatt' => '<a href="https://werkstatt.erfindergeist.org">' . $summary . '</a>',
-    '#KreativTag' => '<a href="https://kreativ-tag.erfindergeist.org">' . $summary . '</a>',
-    '#Mobilitaetstag' => '<a href="/mobilitaetstag">' . $summary . '</a>',
+    '#Repaircafe' => '<a href="https://repaircafe.erfindergeist.org">' . $safe_summary . '</a>',
+    '#OffeneWerkstatt' => '<a href="https://werkstatt.erfindergeist.org">' . $safe_summary . '</a>',
+    '#KreativTag' => '<a href="https://kreativ-tag.erfindergeist.org">' . $safe_summary . '</a>',
+    '#Mobilitaetstag' => '<a href="/mobilitaetstag">' . $safe_summary . '</a>',
   );
 
   if (array_key_exists($tag, $tagHtmlMap)) {
@@ -203,7 +204,7 @@ function egj_render_compact_calendar_events($arrayOfEvents, $tag_filter)
 
     if ($hasFilterTag) {
       $renderedAppointment = egj_load_and_render_template('template_appointment_compact_filtered.html', array(
-        'location' => $location,
+        'location' => esc_html($location),
         'dateTimeInfo' => $renderedDateTimeInfo
       ));
     } else {
@@ -239,7 +240,7 @@ function egj_render_calendar_events($arrayOfEvents)
 
     // Extract and remove hashtags from description
     $descriptionData = egj_extract_and_remove_hashtags($description);
-    $description = $descriptionData['text'];
+    $description = esc_html($descriptionData['text']);
     $tags = $descriptionData['tags'];
 
     $startDate = '';
@@ -292,6 +293,7 @@ function egj_render_calendar_events($arrayOfEvents)
       'summary' => esc_html($summary),
       'description' => $description,
       'location' => esc_html($location),
+      'locationUrl' => urlencode($location),
       'dateTimeInfo' => $renderedDateTimeInfo,
       'tags' => join(' ', $renderedTags),
     ));
@@ -475,14 +477,14 @@ function egj_calendar_settings_page()
             $iCal = new ICal();
             $iCal->initString($ics_cache);
             $arrayOfEvents = $iCal->eventsFromRange(null, null);
-            echo json_encode($arrayOfEvents, JSON_PRETTY_PRINT);
+            echo json_encode($arrayOfEvents, JSON_PRETTY_PRINT | JSON_HEX_TAG | JSON_HEX_AMP);
           }
           ?>
         </pre>
     </span>
 
     <br>
-    <div><?php echo $ics_cache ? $ics_cache : 'No ics cache available'; ?></div>
+    <div><?php echo $ics_cache ? esc_html($ics_cache) : 'No ics cache available'; ?></div>
 
 
     </p>
