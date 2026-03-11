@@ -1,7 +1,9 @@
-
 # Manuel Test
 
-open <https://spielwiese.erfindergeist.org/calendar_test/> have a look for:
+TEST: https://spielwiese.erfindergeist.org/calendar_test/
+PROD: https://erfindergeist.org/calendar_test/
+
+Check for following. if this not happens everything is XSS save
 
 - No alert() popups
 - <script> tags visible as escaped text, not executed
