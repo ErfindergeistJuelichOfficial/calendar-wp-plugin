@@ -72,9 +72,12 @@ function egj_load_and_render_template($templateFile, $variables): string
   $template = file_get_contents($templatePath);
 
   // Replace placeholders
+  // {{{var}}} = raw output (for trusted HTML like sub-templates)
+  // {{var}}  = auto-escaped output (default, safe for untrusted data)
   try {
     foreach ($variables as $placeholder => $value) {
-      $template = str_replace('{{' . $placeholder . '}}', $value, $template);
+      $template = str_replace('{{{' . $placeholder . '}}}', $value, $template);
+      $template = str_replace('{{' . $placeholder . '}}', esc_html($value), $template);
     }
   } catch (\Exception $e) {
     return '<div class="error">Error rendering template: ' . esc_html($e->getMessage()) . '</div>';
@@ -125,10 +128,10 @@ function egj_link_text_by_tag($summary, $tag)
   );
 
   if (array_key_exists($tag, $tagHtmlMap)) {
-    $summary = $tagHtmlMap[$tag];
+    return $tagHtmlMap[$tag];
   }
 
-  return $summary;
+  return $safe_summary;
 }
 
 /**
@@ -170,16 +173,16 @@ function egj_render_compact_calendar_events($arrayOfEvents, $tag_filter)
     $renderedDateTimeInfo = '';
     if ($endDate === $startDate) {
       $renderedDateTimeInfo = egj_load_and_render_template('template_same_day.html', array(
-        'startDate' => esc_html($startDate),
-        'startTime' => esc_html($startTime),
-        'endTime' => esc_html($endTime),
+        'startDate' => $startDate,
+        'startTime' => $startTime,
+        'endTime' => $endTime,
       ));
     } else {
       $renderedDateTimeInfo = egj_load_and_render_template('template_several_days.html', array(
-        'startDate' => esc_html($startDate),
-        'startTime' => esc_html($startTime),
-        'endDate' => esc_html($endDate),
-        'endTime' => esc_html($endTime),
+        'startDate' => $startDate,
+        'startTime' => $startTime,
+        'endDate' => $endDate,
+        'endTime' => $endTime,
       ));
     }
 
@@ -204,7 +207,7 @@ function egj_render_compact_calendar_events($arrayOfEvents, $tag_filter)
 
     if ($hasFilterTag) {
       $renderedAppointment = egj_load_and_render_template('template_appointment_compact_filtered.html', array(
-        'location' => esc_html($location),
+        'location' => $location,
         'dateTimeInfo' => $renderedDateTimeInfo
       ));
     } else {
@@ -264,16 +267,16 @@ function egj_render_calendar_events($arrayOfEvents)
     $renderedDateTimeInfo = '';
     if ($endDate === $startDate) {
       $renderedDateTimeInfo = egj_load_and_render_template('template_same_day.html', array(
-        'startDate' => esc_html($startDate),
-        'startTime' => esc_html($startTime),
-        'endTime' => esc_html($endTime),
+        'startDate' => $startDate,
+        'startTime' => $startTime,
+        'endTime' => $endTime,
       ));
     } else {
       $renderedDateTimeInfo = egj_load_and_render_template('template_several_days.html', array(
-        'startDate' => esc_html($startDate),
-        'startTime' => esc_html($startTime),
-        'endDate' => esc_html($endDate),
-        'endTime' => esc_html($endTime),
+        'startDate' => $startDate,
+        'startTime' => $startTime,
+        'endDate' => $endDate,
+        'endTime' => $endTime,
       ));
     }
 
@@ -281,7 +284,7 @@ function egj_render_calendar_events($arrayOfEvents)
     if (!empty($tags)) {
       foreach ($tags as $tag) {
         $renderedTag = egj_load_and_render_template('template_tag.html', array(
-          'tag' => esc_html($tag),
+          'tag' => $tag,
         ));
         array_push($renderedTags, $renderedTag);
 
@@ -290,9 +293,9 @@ function egj_render_calendar_events($arrayOfEvents)
     }
 
     $renderedAppointment = egj_load_and_render_template('template_appointment.html', array(
-      'summary' => esc_html($summary),
+      'summary' => $summary,
       'description' => $description,
-      'location' => esc_html($location),
+      'location' => $location,
       'locationUrl' => urlencode($location),
       'dateTimeInfo' => $renderedDateTimeInfo,
       'tags' => join(' ', $renderedTags),
