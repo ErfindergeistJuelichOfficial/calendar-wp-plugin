@@ -327,7 +327,8 @@ function egj_calendar_display_shortcode($raw_attributes)
   $attributes = shortcode_atts(array(
     'max_events' => 20,
     'view' => 'normal',
-    'tag_filter' => ''
+    'tag_filter' => '',
+    'test_ics' => ''
   ), $raw_attributes);
 
   // Validation: max_events
@@ -356,7 +357,22 @@ function egj_calendar_display_shortcode($raw_attributes)
   }
 
   try {
-    $ics = get_ics_internal();
+    $ics = null;
+
+    // test_ics: Load a local .ics file from the plugin's test/ directory (admin-only)
+    if (!empty($attributes['test_ics']) && current_user_can('manage_options')) {
+      $filename = sanitize_file_name($attributes['test_ics']);
+      $test_path = plugin_dir_path(__FILE__) . 'test/' . $filename;
+
+      if (file_exists($test_path) && pathinfo($test_path, PATHINFO_EXTENSION) === 'ics') {
+        $ics = file_get_contents($test_path);
+      }
+    }
+
+    if (!$ics) {
+      $ics = get_ics_internal();
+    }
+
     $iCal = new ICal();
     $iCal->initString($ics);
     $arrayOfEvents = $iCal->eventsFromRange(null, null);
