@@ -5,4 +5,5 @@ GET https://spielwiese.erfindergeist.org/wp-json/erfindergeist/v2/tomorrow
 GET https://spielwiese.erfindergeist.org/wp-json/erfindergeist/v2/events
 
 ### get ICS file
-https://spielwiese.erfindergeist.org/wp-json/erfindergeist/v2/ics
+GET https://spielwiese.erfindergeist.org/wp-json/erfindergeist/v2/ics
+

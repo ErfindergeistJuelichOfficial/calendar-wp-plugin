@@ -72,9 +72,12 @@ function egj_load_and_render_template($templateFile, $variables): string
   $template = file_get_contents($templatePath);
 
   // Replace placeholders
+  // {{{var}}} = raw output (for trusted HTML like sub-templates)
+  // {{var}}  = auto-escaped output (default, safe for untrusted data)
   try {
     foreach ($variables as $placeholder => $value) {
-      $template = str_replace('{{' . $placeholder . '}}', $value, $template);
+      $template = str_replace('{{{' . $placeholder . '}}}', $value, $template);
+      $template = str_replace('{{' . $placeholder . '}}', esc_html($value), $template);
     }
   } catch (\Exception $e) {
     return '<div class="error">Error rendering template: ' . esc_html($e->getMessage()) . '</div>';
@@ -116,15 +119,15 @@ function egj_extend_description_by_tag($description, $tag)
  */
 function egj_link_text_by_tag($summary, $tag)
 {
-  $tagHtmlMap = array(
-    '#Repaircafe' => '<a href="https://repaircafe.erfindergeist.org">' . $summary . '</a>',
-    '#OffeneWerkstatt' => '<a href="https://werkstatt.erfindergeist.org">' . $summary . '</a>',
-    '#KreativTag' => '<a href="https://kreativ-tag.erfindergeist.org">' . $summary . '</a>',
-    '#Mobilitaetstag' => '<a href="/mobilitaetstag">' . $summary . '</a>',
+  $tagLinkMap = array(
+    '#Repaircafe' => 'https://repaircafe.erfindergeist.org',
+    '#OffeneWerkstatt' => 'https://werkstatt.erfindergeist.org',
+    '#KreativTag' => 'https://kreativ-tag.erfindergeist.org',
+    '#Mobilitaetstag' => '/mobilitaetstag',
   );
 
-  if (array_key_exists($tag, $tagHtmlMap)) {
-    $summary = $tagHtmlMap[$tag];
+  if (array_key_exists($tag, $tagLinkMap)) {
+    return '<a href="' . esc_url($tagLinkMap[$tag]) . '">' . esc_html($summary) . '</a>';
   }
 
   return $summary;
@@ -169,24 +172,31 @@ function egj_render_compact_calendar_events($arrayOfEvents, $tag_filter)
     $renderedDateTimeInfo = '';
     if ($endDate === $startDate) {
       $renderedDateTimeInfo = egj_load_and_render_template('template_same_day.html', array(
-        'startDate' => esc_html($startDate),
-        'startTime' => esc_html($startTime),
-        'endTime' => esc_html($endTime),
+        'startDate' => $startDate,
+        'startTime' => $startTime,
+        'endTime' => $endTime,
       ));
     } else {
       $renderedDateTimeInfo = egj_load_and_render_template('template_several_days.html', array(
-        'startDate' => esc_html($startDate),
-        'startTime' => esc_html($startTime),
-        'endDate' => esc_html($endDate),
-        'endTime' => esc_html($endTime),
+        'startDate' => $startDate,
+        'startTime' => $startTime,
+        'endDate' => $endDate,
+        'endTime' => $endTime,
       ));
     }
 
+    $linkedSummary = null;
     if (!empty($tags)) {
       foreach ($tags as $tag) {
-        $summary = egj_link_text_by_tag($summary, $tag);
+        if ($linkedSummary === null) {
+          $result = egj_link_text_by_tag($summary, $tag);
+          if ($result !== $summary) {
+            $linkedSummary = $result;
+          }
+        }
       }
     }
+    $summary = $linkedSummary ?? esc_html($summary);
 
     $hasFilterTag = false;
     if ($tag_filter !== '') {
@@ -239,7 +249,7 @@ function egj_render_calendar_events($arrayOfEvents)
 
     // Extract and remove hashtags from description
     $descriptionData = egj_extract_and_remove_hashtags($description);
-    $description = $descriptionData['text'];
+    $description = esc_html($descriptionData['text']);
     $tags = $descriptionData['tags'];
 
     $startDate = '';
@@ -263,16 +273,16 @@ function egj_render_calendar_events($arrayOfEvents)
     $renderedDateTimeInfo = '';
     if ($endDate === $startDate) {
       $renderedDateTimeInfo = egj_load_and_render_template('template_same_day.html', array(
-        'startDate' => esc_html($startDate),
-        'startTime' => esc_html($startTime),
-        'endTime' => esc_html($endTime),
+        'startDate' => $startDate,
+        'startTime' => $startTime,
+        'endTime' => $endTime,
       ));
     } else {
       $renderedDateTimeInfo = egj_load_and_render_template('template_several_days.html', array(
-        'startDate' => esc_html($startDate),
-        'startTime' => esc_html($startTime),
-        'endDate' => esc_html($endDate),
-        'endTime' => esc_html($endTime),
+        'startDate' => $startDate,
+        'startTime' => $startTime,
+        'endDate' => $endDate,
+        'endTime' => $endTime,
       ));
     }
 
@@ -280,7 +290,7 @@ function egj_render_calendar_events($arrayOfEvents)
     if (!empty($tags)) {
       foreach ($tags as $tag) {
         $renderedTag = egj_load_and_render_template('template_tag.html', array(
-          'tag' => esc_html($tag),
+          'tag' => $tag,
         ));
         array_push($renderedTags, $renderedTag);
 
@@ -289,9 +299,10 @@ function egj_render_calendar_events($arrayOfEvents)
     }
 
     $renderedAppointment = egj_load_and_render_template('template_appointment.html', array(
-      'summary' => esc_html($summary),
+      'summary' => $summary,
       'description' => $description,
-      'location' => esc_html($location),
+      'location' => $location,
+      'locationUrl' => urlencode($location),
       'dateTimeInfo' => $renderedDateTimeInfo,
       'tags' => join(' ', $renderedTags),
     ));
@@ -322,7 +333,8 @@ function egj_calendar_display_shortcode($raw_attributes)
   $attributes = shortcode_atts(array(
     'max_events' => 20,
     'view' => 'normal',
-    'tag_filter' => ''
+    'tag_filter' => '',
+    'test_ics' => ''
   ), $raw_attributes);
 
   // Validation: max_events
@@ -351,7 +363,22 @@ function egj_calendar_display_shortcode($raw_attributes)
   }
 
   try {
-    $ics = get_ics_internal();
+    $ics = null;
+
+    // test_ics: Load a local .ics file from the plugin's test/ directory (admin-only)
+    if (!empty($attributes['test_ics']) && current_user_can('manage_options')) {
+      $filename = sanitize_file_name($attributes['test_ics']);
+      $test_path = plugin_dir_path(__FILE__) . 'test/' . $filename;
+
+      if (file_exists($test_path) && pathinfo($test_path, PATHINFO_EXTENSION) === 'ics') {
+        $ics = file_get_contents($test_path);
+      }
+    }
+
+    if (!$ics) {
+      $ics = get_ics_internal();
+    }
+
     $iCal = new ICal();
     $iCal->initString($ics);
     $arrayOfEvents = $iCal->eventsFromRange(null, null);
@@ -475,14 +502,14 @@ function egj_calendar_settings_page()
             $iCal = new ICal();
             $iCal->initString($ics_cache);
             $arrayOfEvents = $iCal->eventsFromRange(null, null);
-            echo json_encode($arrayOfEvents, JSON_PRETTY_PRINT);
+            echo json_encode($arrayOfEvents, JSON_PRETTY_PRINT | JSON_HEX_TAG | JSON_HEX_AMP);
           }
           ?>
         </pre>
     </span>
 
     <br>
-    <div><?php echo $ics_cache ? $ics_cache : 'No ics cache available'; ?></div>
+    <div><?php echo $ics_cache ? esc_html($ics_cache) : 'No ics cache available'; ?></div>
 
 
     </p>

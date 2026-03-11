@@ -42,13 +42,16 @@ function get_ics_from_url($ics_url): string|null
       }
     }
 
-    $context = stream_context_create(array(
-      'http' => array(
-        'timeout' => 7
-      )
+    $response = wp_remote_get($ics_url, array(
+      'timeout' => 7,
     ));
-    
-    $ics = file_get_contents($ics_url, false, $context);
+
+    if (is_wp_error($response)) {
+      egj_send_notification_to_admins("Error fetching ICS: " . $response->get_error_message());
+      return null;
+    }
+
+    $ics = wp_remote_retrieve_body($response);
 
     return $ics;
   } catch (\Exception $e) {
@@ -154,7 +157,7 @@ function get_events()
     return $response;
   } catch (\Exception $e) {
     egj_send_notification_to_admins("Error parsing ICS data");
-    return new WP_Error('rest_custom_error', 'Error parsing ICS data: ' . $e->getMessage(), array('status' => 500));
+    return new WP_Error('rest_custom_error', 'Error parsing ICS data', array('status' => 500));
   }
 }
 

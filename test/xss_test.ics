@@ -1,0 +1,20 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//Security Test//EN
+BEGIN:VEVENT
+DTSTART:20270312T100000Z
+DTEND:20270312T120000Z
+SUMMARY:<script>alert('XSS-summary')</script>Testevent
+DESCRIPTION:<img src=x onerror=alert('XSS-desc')> Normaler Text #Repaircafe
+LOCATION:<script>alert('XSS-location')</script>Jülich
+UID:security-test-1@erfindergeist.org
+END:VEVENT
+BEGIN:VEVENT
+DTSTART:20270313T140000Z
+DTEND:20270314T160000Z
+SUMMARY:Mehrtägig "Anführungszeichen" & Sonderzeichen
+DESCRIPTION:Text mit <b>HTML</b> und &amp; Entities #OffeneWerkstatt
+LOCATION:Räume mit Ümlauten & "Quotes"
+UID:security-test-2@erfindergeist.org
+END:VEVENT
+END:VCALENDAR
