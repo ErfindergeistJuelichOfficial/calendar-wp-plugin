@@ -119,19 +119,18 @@ function egj_extend_description_by_tag($description, $tag)
  */
 function egj_link_text_by_tag($summary, $tag)
 {
-  $safe_summary = esc_html($summary);
-  $tagHtmlMap = array(
-    '#Repaircafe' => '<a href="https://repaircafe.erfindergeist.org">' . $safe_summary . '</a>',
-    '#OffeneWerkstatt' => '<a href="https://werkstatt.erfindergeist.org">' . $safe_summary . '</a>',
-    '#KreativTag' => '<a href="https://kreativ-tag.erfindergeist.org">' . $safe_summary . '</a>',
-    '#Mobilitaetstag' => '<a href="/mobilitaetstag">' . $safe_summary . '</a>',
+  $tagLinkMap = array(
+    '#Repaircafe' => 'https://repaircafe.erfindergeist.org',
+    '#OffeneWerkstatt' => 'https://werkstatt.erfindergeist.org',
+    '#KreativTag' => 'https://kreativ-tag.erfindergeist.org',
+    '#Mobilitaetstag' => '/mobilitaetstag',
   );
 
-  if (array_key_exists($tag, $tagHtmlMap)) {
-    return $tagHtmlMap[$tag];
+  if (array_key_exists($tag, $tagLinkMap)) {
+    return '<a href="' . esc_url($tagLinkMap[$tag]) . '">' . esc_html($summary) . '</a>';
   }
 
-  return $safe_summary;
+  return $summary;
 }
 
 /**
@@ -186,11 +185,18 @@ function egj_render_compact_calendar_events($arrayOfEvents, $tag_filter)
       ));
     }
 
+    $linkedSummary = null;
     if (!empty($tags)) {
       foreach ($tags as $tag) {
-        $summary = egj_link_text_by_tag($summary, $tag);
+        if ($linkedSummary === null) {
+          $result = egj_link_text_by_tag($summary, $tag);
+          if ($result !== $summary) {
+            $linkedSummary = $result;
+          }
+        }
       }
     }
+    $summary = $linkedSummary ?? esc_html($summary);
 
     $hasFilterTag = false;
     if ($tag_filter !== '') {
