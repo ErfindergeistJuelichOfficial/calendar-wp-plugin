@@ -101,6 +101,7 @@ function egj_extend_description_by_tag($description, $tag)
     '#Mobilitaetstag' => '<p>Alle Informationen zum Mobilitätstag findest du auf der <a href="/mobilitaetstag">Mobilitätstag Seite</a>.</p>',
     '#Stadtbücherei' => '<div class="bd-callout">Achtung! heute findest du uns in der <a href="https://buecherei.juelich.de/" target="_blank" rel="noopener noreferrer">Stadtbücherei Jülich</a>.</div>',
     '#Extern' => '<div class="bd-callout">Achtung! Dieser Termin findet nicht in unseren Räumlichkeiten statt. Achte auf die Adresse im Standortfeld.</div>',
+    '#Stammtisch' => '<p>Lockerer Austausch für Mitglieder, bringt eure aktuellen Ideen oder Prototypen mit und lasst uns in entspannter Runde fachsimpeln.</p>',
   );
 
   if (array_key_exists($tag, $tagHtmlMap)) {
