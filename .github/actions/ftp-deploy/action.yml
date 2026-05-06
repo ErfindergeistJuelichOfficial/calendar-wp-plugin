@@ -24,7 +24,9 @@ runs:
           **/.git*
           **/.git*/**
           **/.github*
+          **/.github*/**
           **/.claude*
+          **/.claude*/**
           **/test*
           **/test*/**
           **/docs*

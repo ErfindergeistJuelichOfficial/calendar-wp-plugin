@@ -60,6 +60,8 @@ jobs:
           rsync -a \
             --exclude='.git' \
             --exclude='.github' \
+            --exclude='.claude' \
+            --exclude='.gitattributes' \
             --exclude='phpcs.xml' \
             --exclude='phpstan.neon' \
             --exclude='phpstan-bootstrap.php' \
@@ -68,6 +70,8 @@ jobs:
             --exclude='Dockerfile' \
             --exclude='compose.yml' \
             --exclude='composer.json' \
+            --exclude='composer.lock' \
+            --exclude='CLAUDE.md' \
             ./ /tmp/zip-stage/calendar-wp-plugin/
           cd /tmp/zip-stage
           zip -r "${GITHUB_WORKSPACE}/${ZIP_NAME}" calendar-wp-plugin/
