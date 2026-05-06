@@ -1,162 +1,143 @@
-# Erfindergeist Calendar - WordPress Plugin
+# Erfindergeist Calendar — WordPress Plugin
 
-A WordPress plugin for displaying calendar events from ICS (iCalendar) feeds with support for hashtags, custom templates, and multiple display modes.
+A WordPress plugin for displaying calendar events from an ICS (iCalendar) feed with hashtag support, multiple display modes, and a REST API.
+
+## Requirements
+
+- WordPress 6.4 or higher (tested up to 6.8)
+- PHP 8.3 or higher
 
 ## Features
 
-- 📅 Import events from ICS/iCalendar URLs (NextCloud, Google Calendar, etc.)
-- 🏷️ Hashtag support for event categorization and filtering (needs developer to expand )
-- 🎨 Multiple display modes (normal and compact views) (needs developer to add or change templates)
-- ⚡ Built-in caching system (1-hour cache lifetime)
-- 🔌 Easy integration via WordPress shortcode
-- Distribute ICS with wrapper url
+- Import events from any ICS/iCalendar URL (Nextcloud, Google Calendar, etc.)
+- Hashtag support for event categorization and filtering
+- Multiple display modes: normal and compact
+- 1-hour cache via the WordPress Options API
+- WordPress shortcode for easy embedding
+- REST API endpoints for external integrations (e.g. Home Assistant)
 
 ## Installation
 
-1. **Download the Plugin**
-   - Download all files
-
-2. **Upload to WordPress**
-   - Upload all files folder to `/wp-content/plugins/egj-calendar-plugin`
+1. Upload the plugin folder to `/wp-content/plugins/egj-calendar-plugin`
+2. Activate the plugin in **WordPress Admin → Plugins**
+3. Go to **Erfindergeist → Calendar Settings** and enter your ICS URL
 
 ## Configuration
 
-### Step 1: Configure ICS URL
+### ICS URL
 
-1. Navigate to WordPress Admin
-2. Go to **Erfindergeist** → **Calendar Settings**
-3. Enter your ICS calendar URL in the "ICS URL" field
-   - Example: `https://calendar.google.com/calendar/ical/your-calendar-id/public/basic.ics`
-4. Click "Save Settings"
+Navigate to **Erfindergeist → Calendar Settings**, enter your ICS calendar URL and save.
 
-### Step 2: Clear Cache (Optional)
+Example URLs:
 
-The plugin caches calendar data for 1 hour to improve performance. To force an immediate update:
+- Google Calendar: `https://calendar.google.com/calendar/ical/<id>/public/basic.ics`
+- Nextcloud: `https://your-instance/remote.php/dav/public-calendars/<token>/`
 
-1. Go to **Erfindergeist** → **Calendar Settings**
-2. Click "Clear Cache"
-3. The next calendar request will fetch fresh data
+### Cache
 
-### Getting Your ICS URL
+Calendar data is cached for 1 hour. To force a refresh, check **Clear Cache** in the settings and save.
 
-**For Google Calendar:**
-1. Open Google Calendar
-2. Click the three dots next to your calendar
-3. Select "Settings and sharing"
-4. Scroll to "Integrate calendar"
-5. Copy the "Public URL to this calendar" (iCal format)
-
-**For Other Calendar Services:**
-- Most calendar applications provide an ICS export or sharing URL
-- Look for "Share", "Export", or "Subscribe" options
-
-## Usage
-
-### Basic Shortcode
-
-Add the following shortcode to any WordPress page or post:
+## Shortcode
 
 ```
 [egj_calendar]
 ```
 
-This displays the next 20 upcoming events in normal view.
+Displays the next 20 upcoming events in normal view. All parameters are optional.
 
-### Shortcode Parameters
+| Parameter | Default | Description |
+| --- | --- | --- |
+| `max_events` | `20` | Number of events to display (1–100) |
+| `view` | `normal` | Display mode: `normal` or `compact` |
+| `tag_filter` | _(none)_ | Only show events with this hashtag, e.g. `#Repaircafe` |
 
-Customize the calendar display with these parameters:
+**Examples:**
 
-#### `max_events` (default: 20)
-Number of events to display (1-100)
-
-```
-[egj_calendar max_events="10"]
-```
-
-#### `view` (default: "normal")
-Display mode for events
-- `normal` - Full event details with description
-- `compact` - Condensed view with essential information
-
-```
-[egj_calendar view="compact"]
-```
-
-#### `tag_filter` (default: "")
-Filter events by hashtag (must start with #)
-
-```
-[egj_calendar tag_filter="#Repaircafe"]
-```
-
-### Combined Examples
-
-**Show 5 compact events:**
 ```
 [egj_calendar max_events="5" view="compact"]
-```
-
-**Show only 10 Repair Cafe events:**
-```
 [egj_calendar tag_filter="#Repaircafe" max_events="10"]
-```
-
-**Compact view with tag filter:**
-```
 [egj_calendar view="compact" tag_filter="#OffeneWerkstatt"]
 ```
 
-## Using Hashtags
+## Hashtags
 
-### Adding Hashtags to Events
+Add hashtags directly in your calendar event descriptions. The plugin extracts them, displays them as badges, and optionally enriches them with links or callouts.
 
-Add hashtags directly in your calendar event descriptions:
+Built-in hashtags:
 
-### Supported Hashtags (Default Configuration)
+| Hashtag | Effect |
+| --- | --- |
+| `#Repaircafe` | Link to Repair Café info page |
+| `#OffeneWerkstatt` | Link to Open Workshop page |
+| `#KreativTag` | Link to Creative Day page |
+| `#Mobilitaetstag` | Link to Mobility Day page |
+| `#Stammtisch` | Link to Stammtisch page |
+| `#Stadtbücherei` | Callout for city library location |
+| `#Extern` | Callout for external locations |
 
-The plugin has built-in support for these hashtags with extended descriptions:
+## REST API
 
-- `#Repaircafe` - Links to Repair Cafe information page
-- `#OffeneWerkstatt` - Links to Open Workshop page
-- `#KreativTag` - Links to Creative Day page
-- `#Mobilitaetstag` - Links to Mobility Day page
-- `#Stadtbücherei` - Shows callout for city library location
-- `#Extern` - Shows callout for external locations
+| Endpoint | Description |
+| --- | --- |
+| `GET /wp-json/erfindergeist/v2/events` | All events as JSON |
+| `GET /wp-json/erfindergeist/v2/tomorrow` | First event of tomorrow as JSON |
+| `GET /wp-json/erfindergeist/v2/ics` | Raw ICS feed (as `erfindergeist.ics`) |
 
-## API Endpoints
+## Home Assistant
 
-The plugin provides REST API endpoints for external integrations:
+The `/tomorrow` endpoint can be used to push next-day event notifications to Discord or other services. See the `homeassistant/` folder for a configuration example.
 
-### Get Events as json
-```
-GET /wp-json/erfindergeist/v2/events
-```
+## Dependencies
 
-### Get tomorrow Event
-```
-GET /wp-json/erfindergeist/v2/tomorrow
-```
-
-### Get ics file Event
-```
-GET /wp-json/erfindergeist/v2/ics
-```
-Returns ics as erfindergeist.ics
-
-## Requirements
-
-- WordPress 6.0 or higher (tested up to 6.8)
-- Valid ICS calendar URL
-
-## homeassistant
-
-we use the tomorrow api to easy access events in the future and send a notification to discord.
-there is a configuration example in the "homeassistant" folder.
+- [johngrogg/ics-parser](https://github.com/johngrogg/ics-parser) — ICS parsing
+- [Bootstrap 5.3](https://getbootstrap.com/) — bundled CSS
 
 ## License
 
 See LICENSE file for details.
 
-## Dependencies
+Run all checks locally before making a commit.
 
-[u01jmg3 / ics-parser](https://github.com/u01jmg3/ics-parser)
+## Develop
+
+### Prerequisites
+
+Podman or Docker (no local PHP required).
+
+### Setup
+
+The included `compose.yml` + `Dockerfile` build a container with PHP 8.3 + Composer.
+Build the image once, it will be cached afterwards:
+
+```bash
+podman compose build
+```
+
+Then install dependencies:
+
+```bash
+# Development (incl. analysis tools):
+podman compose run --rm composer install
+
+# Production (runtime dependencies only):
+podman compose run --rm composer install --no-dev --optimize-autoloader
+```
+
+### Individual Checks
+
+| Command | Podman equivalent | Checks |
+| --- | --- | --- |
+| `composer phpcs` | `podman compose run --rm composer phpcs` | Code style (WordPress Coding Standards + PHP compatibility) |
+| `composer phpstan` | `podman compose run --rm composer phpstan` | Static analysis — types, undefined variables, logic errors |
+| `composer psalm` | `podman compose run --rm composer psalm` | Security — taint analysis (XSS, SQL injection, path traversal) |
+| `composer phpmd` | `podman compose run --rm composer phpmd` | Code quality — complexity, naming, unused code |
+| `composer audit` | `podman compose run --rm composer audit` | Known CVEs in dependencies |
+
+### All Checks at Once
+
+```bash
+podman compose run --rm composer analyse
+```
+
+Runs phpcs → phpstan → psalm → phpmd sequentially.
+Run `composer audit` separately afterwards.

@@ -24,6 +24,9 @@ runs:
           **/.git*
           **/.git*/**
           **/.github*
+          **/.github*/**
+          **/.claude*
+          **/.claude*/**
           **/test*
           **/test*/**
           **/docs*
@@ -34,5 +37,10 @@ runs:
           **/psalm.xml
           **/.phpmd.xml
           **/composer.json
+          **/composer.lock
+          **/CLAUDE.md
+          **/.gitattributes
           **/Dockerfile
           **/compose.yml
+          **/homeassistant/**
+          **/examples/**

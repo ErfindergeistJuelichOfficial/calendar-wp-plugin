@@ -7,6 +7,9 @@ on:
         description: 'New version (e.g. 1.2.3)'
         required: true
         type: string
+  workflow_run:
+    workflows: ['🚀 Deploy PROD Stage calendar-wp-plugin']
+    types: [completed]
 
 permissions:
   contents: write
@@ -15,6 +18,7 @@ jobs:
   release:
     name: 🏷️ Bump, tag, release & deploy
     runs-on: ubuntu-latest
+    if: ${{ github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success' }}
 
     steps:
       - name: 🚚 Checkout main
@@ -23,26 +27,47 @@ jobs:
           ref: main
           token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: ✏️ Version in Plugin-Dateien aktualisieren
+      - name: 📌 Version ermitteln
+        id: version
         run: |
-          VERSION="${{ github.event.inputs.version }}"
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            echo "value=${{ github.event.inputs.version }}" >> "$GITHUB_OUTPUT"
+          else
+            VERSION=$(grep -oP "(?<=EGJ_CALENDAR_VERSION', ')[^']+" vars.php)
+            echo "value=${VERSION}" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: ✏️ Version in Plugin-Dateien aktualisieren
+        if: github.event_name == 'workflow_dispatch'
+        run: |
+          VERSION="${{ steps.version.outputs.value }}"
           sed -i "s/^ \* Version:.*/ * Version:     ${VERSION}/" index.php
           sed -i "s/define( 'EGJ_CALENDAR_VERSION', '[^']*' )/define( 'EGJ_CALENDAR_VERSION', '${VERSION}' )/" vars.php
 
       - name: 📝 Version committen und pushen
+        if: github.event_name == 'workflow_dispatch'
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add index.php vars.php
-          git diff --cached --quiet || git commit -m "chore: bump version to ${{ github.event.inputs.version }}"
+          git diff --cached --quiet || git commit -m "chore: bump version to ${{ steps.version.outputs.value }}"
           git push
 
-      - name: 🏷️ Tag erstellen und pushen
+      - name: 🏷️ Tag prüfen und erstellen
+        id: tag
         run: |
-          git tag "v${{ github.event.inputs.version }}"
-          git push origin "v${{ github.event.inputs.version }}"
+          VERSION="${{ steps.version.outputs.value }}"
+          if git ls-remote --tags origin "refs/tags/v${VERSION}" | grep -q "v${VERSION}"; then
+            echo "Tag v${VERSION} existiert bereits – überspringe Release."
+            echo "exists=true" >> "$GITHUB_OUTPUT"
+          else
+            git tag "v${VERSION}"
+            git push origin "v${VERSION}"
+            echo "exists=false" >> "$GITHUB_OUTPUT"
+          fi
 
       - name: 🐘 PHP & Composer einrichten
+        if: steps.tag.outputs.exists != 'true'
         uses: shivammathur/setup-php@v2
         with:
           php-version: '8.3'
@@ -50,16 +75,20 @@ jobs:
           coverage: none
 
       - name: 📦 Produktions-Abhängigkeiten installieren
+        if: steps.tag.outputs.exists != 'true'
         run: composer install --no-dev --no-interaction --prefer-dist --optimize-autoloader
 
       - name: 📁 Release-ZIP erstellen
+        if: steps.tag.outputs.exists != 'true'
         run: |
-          VERSION="${{ github.event.inputs.version }}"
+          VERSION="${{ steps.version.outputs.value }}"
           ZIP_NAME="calendar-wp-plugin-v${VERSION}.zip"
           mkdir -p /tmp/zip-stage/calendar-wp-plugin
           rsync -a \
             --exclude='.git' \
             --exclude='.github' \
+            --exclude='.claude' \
+            --exclude='.gitattributes' \
             --exclude='phpcs.xml' \
             --exclude='phpstan.neon' \
             --exclude='phpstan-bootstrap.php' \
@@ -67,22 +96,28 @@ jobs:
             --exclude='.phpmd.xml' \
             --exclude='Dockerfile' \
             --exclude='compose.yml' \
+            --exclude='homeassistant' \
+            --exclude='examples' \
             --exclude='composer.json' \
+            --exclude='composer.lock' \
+            --exclude='CLAUDE.md' \
             ./ /tmp/zip-stage/calendar-wp-plugin/
           cd /tmp/zip-stage
           zip -r "${GITHUB_WORKSPACE}/${ZIP_NAME}" calendar-wp-plugin/
           echo "ZIP_NAME=${ZIP_NAME}" >> "$GITHUB_ENV"
 
       - name: 🎁 GitHub Release erstellen
+        if: steps.tag.outputs.exists != 'true'
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          gh release create "v${{ github.event.inputs.version }}" \
+          gh release create "v${{ steps.version.outputs.value }}" \
             "${ZIP_NAME}" \
-            --title "v${{ github.event.inputs.version }}" \
+            --title "v${{ steps.version.outputs.value }}" \
             --generate-notes
 
       - name: 📂 In Produktion deployen
+        if: steps.tag.outputs.exists != 'true'
         uses: ./.github/actions/ftp-deploy
         with:
           username: ${{ secrets.FTP_USERNAME_PROD }}
