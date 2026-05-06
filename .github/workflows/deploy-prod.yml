@@ -1,33 +1,35 @@
 name: 🚀 Deploy PROD Stage calendar-wp-plugin
 
 on:
-  push:
-    branches:    
-      - 'main' 
+  workflow_run:
+    workflows: ['🧪 CI calendar-wp-plugin']
+    types: [completed]
+    branches: [main]
 
 jobs:
   web-deploy:
     name: 🎉 Deploy at https://erfindergeist.org/
     runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
 
     steps:
-    - name: 🚚 Get latest code
-      uses: actions/checkout@v4
+      - name: 🚚 Get latest code
+        uses: actions/checkout@v4
 
-    - name: 📂 Sync files
-      uses: SamKirkland/FTP-Deploy-Action@v4.3.5
-      with:
-        server: erfindergeist.org
-        username: ${{ secrets.FTP_USERNAME_PROD }}
-        password: ${{ secrets.FTP_PASSWORD_PROD }}
-        local-dir: ./
-        protocol: ftps
-        state-name: .ftp-deploy-prod-stage-calendar-wp-plugin-state.json
-        exclude: |
-          **/.git*
-          **/.git*/**
-          **/.github*
-          **/test*
-          **/test*/**
-          **/docs*
-          **/docs*/**
+      - name: 📂 Sync files
+        uses: SamKirkland/FTP-Deploy-Action@v4.4.0
+        with:
+          server: erfindergeist.org
+          username: ${{ secrets.FTP_USERNAME_PROD }}
+          password: ${{ secrets.FTP_PASSWORD_PROD }}
+          local-dir: ./
+          protocol: ftps
+          state-name: .ftp-deploy-prod-stage-calendar-wp-plugin-state.json
+          exclude: |
+            **/.git*
+            **/.git*/**
+            **/.github*
+            **/test*
+            **/test*/**
+            **/docs*
+            **/docs*/**

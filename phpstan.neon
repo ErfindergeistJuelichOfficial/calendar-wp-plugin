@@ -1,0 +1,18 @@
+parameters:
+    level: 6
+    paths:
+        - .
+    excludePaths:
+        - vendor
+        - .github
+        - templates
+        - admin/partials
+    bootstrapFiles:
+        - phpstan-bootstrap.php
+    dynamicConstantNames:
+        - DB_HOST
+        - DB_USER
+        - DB_PASSWORD
+        - DB_NAME
+    ignoreErrors:
+        - identifier: missingType.iterableValue

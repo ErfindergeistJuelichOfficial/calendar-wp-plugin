@@ -1,0 +1,62 @@
+name: 🧪 CI calendar-wp-plugin
+
+on:
+  push:
+  pull_request:
+  schedule:
+    - cron: '0 6 * * 1'
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  analyse:
+    name: 🔍 Analyse PHP ${{ matrix.php-version }}
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        php-version: ['8.3', '8.4']
+
+    steps:
+      - name: 🚚 Code auschecken
+        uses: actions/checkout@v4
+
+      - name: 🐘 PHP ${{ matrix.php-version }} einrichten
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php-version }}
+          coverage: none
+
+      - name: 📦 Composer-Cache wiederherstellen
+        uses: actions/cache@v4
+        with:
+          path: vendor
+          key: ${{ runner.os }}-composer-${{ hashFiles('composer.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-composer-
+
+      - name: ✅ composer.json validieren
+        run: composer validate
+
+      - name: 🔒 Sicherheits-Audit
+        run: composer audit
+
+      - name: 📥 Abhängigkeiten installieren
+        run: composer install --no-progress --prefer-dist
+
+      - name: 📐 PHPCS – WordPress Coding Standards
+        run: composer phpcs
+
+      - name: 🔬 PHPStan – Statische Typenanalyse
+        run: composer phpstan
+
+      - name: 🛡️ Psalm – Taint-Analyse
+        run: composer psalm
+
+      - name: 📊 PHPMD – Code-Qualitätsmetriken
+        run: composer phpmd

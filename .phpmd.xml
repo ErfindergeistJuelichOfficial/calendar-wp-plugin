@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ruleset name="Erfindergeist Calendar PHPMD Ruleset"
+         xmlns="http://pmd.sf.net/ruleset/1.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://pmd.sf.net/ruleset/1.0.0 http://pmd.sf.net/ruleset_xml_schema.xsd"
+         xsi:noNamespaceSchemaLocation="http://pmd.sf.net/ruleset_xml_schema.xsd">
+    <description>PHPMD ruleset for Erfindergeist Calendar Plugin.</description>
+
+    <rule ref="rulesets/cleancode.xml">
+        <!-- WordPress uses else-clauses idiomatically; removing them reduces readability here. -->
+        <exclude name="ElseExpression"/>
+        <!-- use statements instead of FQN are required by MissingImport, but cleancode itself conflicts. -->
+        <exclude name="MissingImport"/>
+    </rule>
+    <rule ref="rulesets/codesize.xml"/>
+    <rule ref="rulesets/controversial.xml">
+        <!-- WordPress Coding Standards require snake_case; these rules conflict with WPCS. -->
+        <exclude name="CamelCaseVariableName"/>
+        <exclude name="CamelCaseFunctionName"/>
+        <exclude name="CamelCaseClassName"/>
+        <exclude name="CamelCaseMethodName"/>
+        <exclude name="CamelCasePropertyName"/>
+        <exclude name="CamelCaseParameterName"/>
+        <!-- WordPress plugins access $_POST, $_GET, $GLOBALS idiomatically. -->
+        <exclude name="Superglobals"/>
+    </rule>
+    <rule ref="rulesets/design.xml">
+        <!-- WordPress REST API handlers use exit() via wp_send_json(); this is idiomatic. -->
+        <exclude name="ExitExpression"/>
+    </rule>
+    <rule ref="rulesets/naming.xml">
+        <exclude name="ShortVariable"/>
+        <exclude name="LongVariable"/>
+    </rule>
+    <rule ref="rulesets/unusedcode.xml"/>
+</ruleset>
