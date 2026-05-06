@@ -11,7 +11,7 @@ jobs:
   web-deploy:
     name: 🎉 Deploy at https://spielwiese.erfindergeist.org/
     runs-on: ubuntu-latest
-    if: github.event.workflow_run.conclusion == 'success'
+    if: github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success'
 
     steps:
       - name: 🚚 Get latest code
