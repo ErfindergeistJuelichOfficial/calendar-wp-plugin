@@ -1,33 +1,36 @@
 name: 🚀 Deploy TEST Stage calendar-wp-plugin
 
 on:
-  push:
-    branches:  
-      - "feature/**"
+  workflow_dispatch:
+  workflow_run:
+    workflows: ['🧪 CI calendar-wp-plugin']
+    branches: ['feature/**']
+    types: [completed]
 
 jobs:
   web-deploy:
     name: 🎉 Deploy at https://spielwiese.erfindergeist.org/
     runs-on: ubuntu-latest
+    if: github.event.workflow_run.conclusion == 'success'
 
     steps:
-    - name: 🚚 Get latest code
-      uses: actions/checkout@v4
+      - name: 🚚 Get latest code
+        uses: actions/checkout@v6
+        with:
+          ref: ${{ github.event.workflow_run.head_sha }}
 
-    - name: 📂 Sync files
-      uses: SamKirkland/FTP-Deploy-Action@v4.4.0
-      with:
-        server: erfindergeist.org
-        username: ${{ secrets.FTP_USERNAME_TEST }}
-        password: ${{ secrets.FTP_PASSWORD_TEST }}
-        local-dir: ./
-        protocol: ftps
-        state-name: .ftp-deploy-test-stage-calendar-wp-plugin-state.json
-        exclude: |
-          **/.git*
-          **/.git*/**
-          **/.github*
-          **/test*
-          **/test*/**
-          **/docs*
-          **/docs*/**
+      - name: 🐘 PHP & Composer einrichten
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          tools: composer
+          coverage: none
+
+      - name: 📦 Produktions-Abhängigkeiten installieren
+        run: composer install --no-dev --no-interaction --prefer-dist --optimize-autoloader
+
+      - name: 📂 Sync files
+        uses: ./.github/actions/ftp-deploy
+        with:
+          username: ${{ secrets.FTP_USERNAME_TEST }}
+          password: ${{ secrets.FTP_PASSWORD_TEST }}
