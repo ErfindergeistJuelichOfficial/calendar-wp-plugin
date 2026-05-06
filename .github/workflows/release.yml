@@ -69,6 +69,8 @@ jobs:
             --exclude='.phpmd.xml' \
             --exclude='Dockerfile' \
             --exclude='compose.yml' \
+            --exclude='homeassistant' \
+            --exclude='examples' \
             --exclude='composer.json' \
             --exclude='composer.lock' \
             --exclude='CLAUDE.md' \

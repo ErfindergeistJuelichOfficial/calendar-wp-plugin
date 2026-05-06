@@ -42,3 +42,5 @@ runs:
           **/.gitattributes
           **/Dockerfile
           **/compose.yml
+          **/homeassistant/**
+          **/examples/**

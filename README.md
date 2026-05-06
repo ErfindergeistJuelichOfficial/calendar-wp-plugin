@@ -2,6 +2,11 @@
 
 A WordPress plugin for displaying calendar events from an ICS (iCalendar) feed with hashtag support, multiple display modes, and a REST API.
 
+## Requirements
+
+- WordPress 6.4 or higher (tested up to 6.8)
+- PHP 8.3 or higher
+
 ## Features
 
 - Import events from any ICS/iCalendar URL (Nextcloud, Google Calendar, etc.)
@@ -82,11 +87,6 @@ Built-in hashtags:
 
 The `/tomorrow` endpoint can be used to push next-day event notifications to Discord or other services. See the `homeassistant/` folder for a configuration example.
 
-## Requirements
-
-- WordPress 6.4 or higher (tested up to 6.8)
-- PHP 8.3 or higher
-
 ## Dependencies
 
 - [johngrogg/ics-parser](https://github.com/johngrogg/ics-parser) — ICS parsing
@@ -95,3 +95,49 @@ The `/tomorrow` endpoint can be used to push next-day event notifications to Dis
 ## License
 
 See LICENSE file for details.
+
+Run all checks locally before making a commit.
+
+## Develop
+
+### Prerequisites
+
+Podman or Docker (no local PHP required).
+
+### Setup
+
+The included `compose.yml` + `Dockerfile` build a container with PHP 8.3 + Composer.
+Build the image once, it will be cached afterwards:
+
+```bash
+podman compose build
+```
+
+Then install dependencies:
+
+```bash
+# Development (incl. analysis tools):
+podman compose run --rm composer install
+
+# Production (runtime dependencies only):
+podman compose run --rm composer install --no-dev --optimize-autoloader
+```
+
+### Individual Checks
+
+| Command | Podman equivalent | Checks |
+| --- | --- | --- |
+| `composer phpcs` | `podman compose run --rm composer phpcs` | Code style (WordPress Coding Standards + PHP compatibility) |
+| `composer phpstan` | `podman compose run --rm composer phpstan` | Static analysis — types, undefined variables, logic errors |
+| `composer psalm` | `podman compose run --rm composer psalm` | Security — taint analysis (XSS, SQL injection, path traversal) |
+| `composer phpmd` | `podman compose run --rm composer phpmd` | Code quality — complexity, naming, unused code |
+| `composer audit` | `podman compose run --rm composer audit` | Known CVEs in dependencies |
+
+### All Checks at Once
+
+```bash
+podman compose run --rm composer analyse
+```
+
+Runs phpcs → phpstan → psalm → phpmd sequentially.
+Run `composer audit` separately afterwards.
