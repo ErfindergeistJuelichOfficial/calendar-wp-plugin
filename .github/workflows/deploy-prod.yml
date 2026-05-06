@@ -14,22 +14,20 @@ jobs:
 
     steps:
       - name: 🚚 Get latest code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
+
+      - name: 🐘 PHP & Composer einrichten
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          tools: composer
+          coverage: none
+
+      - name: 📦 Produktions-Abhängigkeiten installieren
+        run: composer install --no-dev --no-interaction --prefer-dist --optimize-autoloader
 
       - name: 📂 Sync files
-        uses: SamKirkland/FTP-Deploy-Action@v4.4.0
+        uses: ./.github/actions/ftp-deploy
         with:
-          server: erfindergeist.org
           username: ${{ secrets.FTP_USERNAME_PROD }}
           password: ${{ secrets.FTP_PASSWORD_PROD }}
-          local-dir: ./
-          protocol: ftps
-          state-name: .ftp-deploy-prod-stage-calendar-wp-plugin-state.json
-          exclude: |
-            **/.git*
-            **/.git*/**
-            **/.github*
-            **/test*
-            **/test*/**
-            **/docs*
-            **/docs*/**

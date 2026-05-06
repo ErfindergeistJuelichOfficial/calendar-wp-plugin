@@ -1,0 +1,89 @@
+name: 🏷️ Release calendar-wp-plugin
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'New version (e.g. 1.2.3)'
+        required: true
+        type: string
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    name: 🏷️ Bump, tag, release & deploy
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 🚚 Checkout main
+        uses: actions/checkout@v6
+        with:
+          ref: main
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: ✏️ Version in Plugin-Dateien aktualisieren
+        run: |
+          VERSION="${{ github.event.inputs.version }}"
+          sed -i "s/^ \* Version:.*/ * Version:     ${VERSION}/" index.php
+          sed -i "s/define( 'EGJ_CALENDAR_VERSION', '[^']*' )/define( 'EGJ_CALENDAR_VERSION', '${VERSION}' )/" vars.php
+
+      - name: 📝 Version committen und pushen
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add index.php vars.php
+          git diff --cached --quiet || git commit -m "chore: bump version to ${{ github.event.inputs.version }}"
+          git push
+
+      - name: 🏷️ Tag erstellen und pushen
+        run: |
+          git tag "v${{ github.event.inputs.version }}"
+          git push origin "v${{ github.event.inputs.version }}"
+
+      - name: 🐘 PHP & Composer einrichten
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          tools: composer
+          coverage: none
+
+      - name: 📦 Produktions-Abhängigkeiten installieren
+        run: composer install --no-dev --no-interaction --prefer-dist --optimize-autoloader
+
+      - name: 📁 Release-ZIP erstellen
+        run: |
+          VERSION="${{ github.event.inputs.version }}"
+          ZIP_NAME="calendar-wp-plugin-v${VERSION}.zip"
+          mkdir -p /tmp/zip-stage/calendar-wp-plugin
+          rsync -a \
+            --exclude='.git' \
+            --exclude='.github' \
+            --exclude='phpcs.xml' \
+            --exclude='phpstan.neon' \
+            --exclude='phpstan-bootstrap.php' \
+            --exclude='psalm.xml' \
+            --exclude='.phpmd.xml' \
+            --exclude='Dockerfile' \
+            --exclude='compose.yml' \
+            --exclude='composer.json' \
+            ./ /tmp/zip-stage/calendar-wp-plugin/
+          cd /tmp/zip-stage
+          zip -r "${GITHUB_WORKSPACE}/${ZIP_NAME}" calendar-wp-plugin/
+          echo "ZIP_NAME=${ZIP_NAME}" >> "$GITHUB_ENV"
+
+      - name: 🎁 GitHub Release erstellen
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh release create "v${{ github.event.inputs.version }}" \
+            "${ZIP_NAME}" \
+            --title "v${{ github.event.inputs.version }}" \
+            --generate-notes
+
+      - name: 📂 In Produktion deployen
+        uses: ./.github/actions/ftp-deploy
+        with:
+          username: ${{ secrets.FTP_USERNAME_PROD }}
+          password: ${{ secrets.FTP_PASSWORD_PROD }}
