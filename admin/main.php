@@ -41,6 +41,8 @@ function egj_calendar_settings_page(): void {
 	$ics_url             = get_option( 'egj_ics_url', '' );
 	$ics_cache           = get_option( 'egj_ics_cache', '' );
 	$ics_cache_timestamp = get_option( 'egj_ics_cache_timestamp', '' );
+	$ics_last_error      = get_option( 'egj_ics_last_error', [] );
+	$notify_on_error     = get_option( 'egj_notify_on_error', '1' );
 	$settings_saved      = false;
 
 	if ( ! empty( $_POST ) && isset( $_POST['egj_calendar_nonce_field'] ) && wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['egj_calendar_nonce_field'] ) ), 'egj_calendar_action' ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Missing -- Nonce wird direkt in dieser Zeile geprüft.
@@ -48,6 +50,12 @@ function egj_calendar_settings_page(): void {
 			$ics_url = esc_url_raw( wp_unslash( $_POST[ $ics_url_field_name ] ) );
 			update_option( 'egj_ics_url', $ics_url );
 		}
+
+		$notify_on_error = isset( $_POST['egj_notify_on_error'] ) ? '1' : '0';
+		update_option( 'egj_notify_on_error', $notify_on_error );
+
+		// Erlaubt nach dem Speichern sofort einen neuen Abrufversuch.
+		delete_transient( 'egj_ics_fetch_failed' );
 
 		if ( isset( $_POST['clear_cache'] ) ) {
 			delete_option( 'egj_ics_cache' );

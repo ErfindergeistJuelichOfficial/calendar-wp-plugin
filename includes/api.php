@@ -15,83 +15,89 @@ use ICal\ICal;
  * Lädt ICS-Daten von einer URL.
  *
  * @param string $ics_url Die URL des ICS-Feeds.
- * @return string|null ICS-Inhalt als String, oder null bei Fehler.
+ * @return string|\WP_Error ICS-Inhalt als String, oder WP_Error bei Fehler.
  */
-function egj_calendar_get_ics_from_url( string $ics_url ): string|null {
-	try {
-		if ( ! filter_var( $ics_url, FILTER_VALIDATE_URL ) ) {
-			egj_send_notification_to_admins( 'Ungültiges ICS-URL-Format' );
-			return null;
-		}
-
-		$scheme = wp_parse_url( $ics_url, PHP_URL_SCHEME );
-		if ( ! in_array( $scheme, array( 'http', 'https' ), true ) ) {
-			egj_send_notification_to_admins( 'ICS-URL muss HTTP oder HTTPS verwenden' );
-			return null;
-		}
-
-		// SSRF-Schutz: Private und reservierte IP-Bereiche sperren.
-		$host = wp_parse_url( $ics_url, PHP_URL_HOST );
-		if ( $host ) {
-			$ip = gethostbyname( $host );
-			if ( filter_var( $ip, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE ) === false ) {
-				egj_send_notification_to_admins( 'ICS-URL zeigt auf private/lokale IP-Adresse' );
-				return null;
-			}
-		}
-
-		$response = wp_remote_get(
-			$ics_url,
-			array( 'timeout' => 7 )
-		);
-
-		if ( is_wp_error( $response ) ) {
-			egj_send_notification_to_admins( 'Fehler beim Abrufen der ICS-Datei: ' . $response->get_error_message() );
-			return null;
-		}
-
-		return wp_remote_retrieve_body( $response );
-	} catch ( \Exception $e ) {
-		egj_send_notification_to_admins( 'Fehler beim ICS-Abruf: ' . $e->getMessage() );
-		return null;
+function egj_calendar_get_ics_from_url( string $ics_url ): string|\WP_Error {
+	if ( ! filter_var( $ics_url, FILTER_VALIDATE_URL ) ) {
+		return new \WP_Error( 'egj_ics_invalid_url', 'Ungültiges ICS-URL-Format' );
 	}
+
+	$scheme = wp_parse_url( $ics_url, PHP_URL_SCHEME );
+	if ( ! in_array( $scheme, array( 'http', 'https' ), true ) ) {
+		return new \WP_Error( 'egj_ics_invalid_scheme', 'ICS-URL muss HTTP oder HTTPS verwenden' );
+	}
+
+	// SSRF-Schutz: wp_safe_remote_get() sperrt private/lokale Adressen, auch nach Redirects.
+	$response = wp_safe_remote_get(
+		$ics_url,
+		array(
+			'timeout'             => 7,
+			'limit_response_size' => 5 * MB_IN_BYTES,
+		)
+	);
+
+	if ( is_wp_error( $response ) ) {
+		return $response;
+	}
+
+	$status_code = wp_remote_retrieve_response_code( $response );
+	if ( 200 !== $status_code ) {
+		return new \WP_Error( 'egj_ics_http_status', 'ICS-URL antwortet mit HTTP-Status ' . $status_code );
+	}
+
+	$body = wp_remote_retrieve_body( $response );
+	// Nur gültige ICS-Daten akzeptieren, damit Fehlerseiten nicht den Cache überschreiben.
+	if ( ! str_starts_with( ltrim( $body, "\xEF\xBB\xBF \t\r\n" ), 'BEGIN:VCALENDAR' ) ) {
+		return new \WP_Error( 'egj_ics_invalid_content', 'Antwort der ICS-URL ist keine gültige ICS-Datei' );
+	}
+
+	return $body;
 }
 
 /**
  * Gibt ICS-Daten mit Caching zurück (Cache-Lebensdauer: 1 Stunde).
  *
+ * Der Cache wird nie zeitbasiert gelöscht: Schlägt der Abruf fehl, wird der letzte
+ * gültige Stand weiter ausgeliefert. Nach einem Fehler wird 10 Minuten lang kein
+ * neuer Abruf versucht.
+ *
  * @return string|null ICS-Inhalt als String, oder null bei Fehler.
  */
 function egj_calendar_get_ics_cached(): string|null {
-	$cache_lifetime      = 3600;
-	$ics_url             = get_option( 'egj_ics_url' );
-	$ics_cache           = get_option( 'egj_ics_cache' );
-	$ics_cache_timestamp = get_option( 'egj_ics_cache_timestamp' );
+	$cache_lifetime      = HOUR_IN_SECONDS;
+	$ics_url             = (string) get_option( 'egj_ics_url', '' );
+	$ics_cache           = (string) get_option( 'egj_ics_cache', '' );
+	$ics_cache_timestamp = (int) get_option( 'egj_ics_cache_timestamp', 0 );
 	$current_time        = time();
 
-	$is_cache_valid    = $ics_cache && '' !== $ics_cache;
-	$has_cache_expired = $ics_cache_timestamp && ( $current_time - $ics_cache_timestamp ) > $cache_lifetime;
+	$cached_ics        = '' !== $ics_cache ? $ics_cache : null;
+	$has_cache_expired = ( $current_time - $ics_cache_timestamp ) > $cache_lifetime;
 
-	$ics = null;
-	if ( ! $ics_cache_timestamp || $has_cache_expired ) {
-		try {
-			$ics = egj_calendar_get_ics_from_url( $ics_url );
-		} catch ( \Exception $e ) {
-			egj_send_notification_to_admins( "Fehler beim ICS-Abruf: $ics_url" );
-			$ics = null;
-		}
+	if ( ! $has_cache_expired || get_transient( 'egj_ics_fetch_failed' ) ) {
+		return $cached_ics;
 	}
 
-	if ( ! $ics ) {
-		if ( $is_cache_valid ) {
-			$ics = $ics_cache;
-		} else {
-			egj_send_notification_to_admins( "ICS-Abruf fehlgeschlagen, kein Cache vorhanden. ICS_URL: $ics_url" );
-		}
-	} else {
-		update_option( 'egj_ics_cache', $ics );
-		update_option( 'egj_ics_cache_timestamp', $current_time );
+	$ics = egj_calendar_get_ics_from_url( $ics_url );
+
+	if ( is_wp_error( $ics ) ) {
+		set_transient( 'egj_ics_fetch_failed', 1, 10 * MINUTE_IN_SECONDS );
+		update_option(
+			'egj_ics_last_error',
+			array(
+				'time'    => $current_time,
+				'message' => $ics->get_error_message(),
+			),
+			false
+		);
+
+		$cache_info = $cached_ics ? 'Es wird weiterhin der vorhandene Cache ausgeliefert.' : 'Es ist kein Cache vorhanden!';
+		egj_send_notification_to_admins( "ICS-Abruf fehlgeschlagen. $cache_info \n ICS_URL: $ics_url \n Details siehe Einstellungsseite des Plugins." );
+		return $cached_ics;
 	}
+
+	update_option( 'egj_ics_cache', $ics, false );
+	update_option( 'egj_ics_cache_timestamp', $current_time, false );
+	delete_option( 'egj_ics_last_error' );
 
 	return $ics;
 }
