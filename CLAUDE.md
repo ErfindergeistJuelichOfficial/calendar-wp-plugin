@@ -56,6 +56,8 @@ podman compose run --rm composer phpstan
 podman compose run --rm composer psalm
 podman compose run --rm composer phpmd
 podman compose run --rm composer analyse   # all four
+podman compose run --rm composer validate  # composer.json/composer.lock
+podman compose run --rm composer audit     # known vulnerabilities in dependencies
 
 # alternatively Docker
 docker compose run --rm composer analyse
@@ -63,7 +65,9 @@ docker compose run --rm composer analyse
 
 Configs: `phpcs.xml`, `phpstan.neon`, `psalm.xml`, `.phpmd.xml`
 
-`composer analyse` must pass cleanly before every commit.
+`composer validate`, `composer audit` and `composer analyse` must pass cleanly before every commit
+(same checks as CI). If `audit` reports a vulnerable package, update it via
+`composer update <package> --with-dependencies` and commit the updated `composer.lock`.
 
 **Important:** Changes to quality tools or their configuration must also be reflected in
 `.github/workflows/calendar-plugin.yml`.
