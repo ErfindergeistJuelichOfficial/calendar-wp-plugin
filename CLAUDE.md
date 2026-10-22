@@ -4,6 +4,10 @@ WordPress plugin for displaying calendar events from an ICS feed.
 PHP 8.3+, WordPress 6.4+, proprietary license.
 Language: UI, error messages and comments in **German**.
 
+# Git
+
+- no pushes!
+
 # Architecture
 
 Functional approach — no classes except `TomorrowEvent` (custom data model).
