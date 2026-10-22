@@ -15,85 +15,128 @@ use ICal\ICal;
  * Lädt ICS-Daten von einer URL.
  *
  * @param string $ics_url Die URL des ICS-Feeds.
- * @return string|null ICS-Inhalt als String, oder null bei Fehler.
+ * @return string|\WP_Error ICS-Inhalt als String, oder WP_Error bei Fehler.
  */
-function egj_calendar_get_ics_from_url( string $ics_url ): string|null {
-	try {
-		if ( ! filter_var( $ics_url, FILTER_VALIDATE_URL ) ) {
-			egj_send_notification_to_admins( 'Ungültiges ICS-URL-Format' );
-			return null;
-		}
-
-		$scheme = wp_parse_url( $ics_url, PHP_URL_SCHEME );
-		if ( ! in_array( $scheme, array( 'http', 'https' ), true ) ) {
-			egj_send_notification_to_admins( 'ICS-URL muss HTTP oder HTTPS verwenden' );
-			return null;
-		}
-
-		// SSRF-Schutz: Private und reservierte IP-Bereiche sperren.
-		$host = wp_parse_url( $ics_url, PHP_URL_HOST );
-		if ( $host ) {
-			$ip = gethostbyname( $host );
-			if ( filter_var( $ip, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE ) === false ) {
-				egj_send_notification_to_admins( 'ICS-URL zeigt auf private/lokale IP-Adresse' );
-				return null;
-			}
-		}
-
-		$response = wp_remote_get(
-			$ics_url,
-			array( 'timeout' => 7 )
-		);
-
-		if ( is_wp_error( $response ) ) {
-			egj_send_notification_to_admins( 'Fehler beim Abrufen der ICS-Datei: ' . $response->get_error_message() );
-			return null;
-		}
-
-		return wp_remote_retrieve_body( $response );
-	} catch ( \Exception $e ) {
-		egj_send_notification_to_admins( 'Fehler beim ICS-Abruf: ' . $e->getMessage() );
-		return null;
+function egj_calendar_get_ics_from_url( string $ics_url ): string|\WP_Error {
+	if ( ! filter_var( $ics_url, FILTER_VALIDATE_URL ) ) {
+		return new \WP_Error( 'egj_ics_invalid_url', 'Ungültiges ICS-URL-Format' );
 	}
+
+	$scheme = wp_parse_url( $ics_url, PHP_URL_SCHEME );
+	if ( ! in_array( $scheme, array( 'http', 'https' ), true ) ) {
+		return new \WP_Error( 'egj_ics_invalid_scheme', 'ICS-URL muss HTTP oder HTTPS verwenden' );
+	}
+
+	// SSRF-Schutz: wp_safe_remote_get() sperrt private/lokale Adressen, auch nach Redirects.
+	$response = wp_safe_remote_get(
+		$ics_url,
+		array(
+			'timeout'             => 7,
+			'limit_response_size' => 5 * MB_IN_BYTES,
+		)
+	);
+
+	if ( is_wp_error( $response ) ) {
+		return $response;
+	}
+
+	$status_code = wp_remote_retrieve_response_code( $response );
+	if ( 200 !== $status_code ) {
+		return new \WP_Error( 'egj_ics_http_status', 'ICS-URL antwortet mit HTTP-Status ' . $status_code );
+	}
+
+	$body = wp_remote_retrieve_body( $response );
+	// Nur gültige ICS-Daten akzeptieren, damit Fehlerseiten nicht den Cache überschreiben.
+	if ( ! str_starts_with( ltrim( $body, "\xEF\xBB\xBF \t\r\n" ), 'BEGIN:VCALENDAR' ) ) {
+		return new \WP_Error( 'egj_ics_invalid_content', 'Antwort der ICS-URL ist keine gültige ICS-Datei' );
+	}
+
+	return $body;
 }
 
 /**
  * Gibt ICS-Daten mit Caching zurück (Cache-Lebensdauer: 1 Stunde).
  *
+ * Der Cache wird nie zeitbasiert gelöscht: Schlägt der Abruf fehl, wird der letzte
+ * gültige Stand weiter ausgeliefert. Nach einem Fehler wird 10 Minuten lang kein
+ * neuer Abruf versucht.
+ *
  * @return string|null ICS-Inhalt als String, oder null bei Fehler.
  */
 function egj_calendar_get_ics_cached(): string|null {
-	$cache_lifetime      = 3600;
-	$ics_url             = get_option( 'egj_ics_url' );
-	$ics_cache           = get_option( 'egj_ics_cache' );
-	$ics_cache_timestamp = get_option( 'egj_ics_cache_timestamp' );
+	$cache_lifetime      = HOUR_IN_SECONDS;
+	$ics_url             = (string) get_option( 'egj_ics_url', '' );
+	$ics_cache           = (string) get_option( 'egj_ics_cache', '' );
+	$ics_cache_timestamp = (int) get_option( 'egj_ics_cache_timestamp', 0 );
 	$current_time        = time();
 
-	$is_cache_valid    = $ics_cache && '' !== $ics_cache;
-	$has_cache_expired = $ics_cache_timestamp && ( $current_time - $ics_cache_timestamp ) > $cache_lifetime;
+	$cached_ics        = '' !== $ics_cache ? $ics_cache : null;
+	$has_cache_expired = ( $current_time - $ics_cache_timestamp ) > $cache_lifetime;
 
-	$ics = null;
-	if ( ! $ics_cache_timestamp || $has_cache_expired ) {
-		try {
-			$ics = egj_calendar_get_ics_from_url( $ics_url );
-		} catch ( \Exception $e ) {
-			egj_send_notification_to_admins( "Fehler beim ICS-Abruf: $ics_url" );
-			$ics = null;
-		}
+	if ( ! $has_cache_expired || get_transient( 'egj_ics_fetch_failed' ) ) {
+		return $cached_ics;
 	}
 
-	if ( ! $ics ) {
-		if ( $is_cache_valid ) {
-			$ics = $ics_cache;
-		} else {
-			egj_send_notification_to_admins( "ICS-Abruf fehlgeschlagen, kein Cache vorhanden. ICS_URL: $ics_url" );
-		}
-	} else {
-		update_option( 'egj_ics_cache', $ics );
-		update_option( 'egj_ics_cache_timestamp', $current_time );
+	$ics = egj_calendar_get_ics_from_url( $ics_url );
+
+	if ( is_wp_error( $ics ) ) {
+		set_transient( 'egj_ics_fetch_failed', 1, 10 * MINUTE_IN_SECONDS );
+		update_option(
+			'egj_ics_last_error',
+			array(
+				'time'    => $current_time,
+				'message' => $ics->get_error_message(),
+			),
+			false
+		);
+
+		$cache_info = $cached_ics ? 'Es wird weiterhin der vorhandene Cache ausgeliefert.' : 'Es ist kein Cache vorhanden!';
+		egj_send_notification_to_admins( "ICS-Abruf fehlgeschlagen. $cache_info \n ICS_URL: $ics_url \n Details siehe Einstellungsseite des Plugins." );
+		return $cached_ics;
 	}
+
+	update_option( 'egj_ics_cache', $ics, false );
+	update_option( 'egj_ics_cache_timestamp', $current_time, false );
+	delete_option( 'egj_ics_last_error' );
 
 	return $ics;
+}
+
+/**
+ * Parst ICS-Daten und gibt die Events im angegebenen Zeitraum zurück.
+ *
+ * @param string      $ics         ICS-Inhalt.
+ * @param string|null $range_start Beginn des Zeitraums (null = jetzt).
+ * @param string|null $range_end   Ende des Zeitraums (null = +20 Jahre).
+ * @return array Liste der Kalender-Event-Objekte.
+ */
+function egj_calendar_parse_ics( string $ics, string|null $range_start = null, string|null $range_end = null ): array {
+	$i_cal = new ICal( false, [ 'defaultTimeZone' => wp_timezone_string() ] );
+	$i_cal->initString( $ics );
+	return $i_cal->eventsFromRange( $range_start, $range_end );
+}
+
+/**
+ * Gibt Start- oder Endzeit eines Events in der Kalender-Zeitzone zurück.
+ *
+ * Nutzt die bereits umgerechneten *_tz-Felder des Parsers, damit UTC-Zeiten
+ * (z. B. 20251215T122300Z) in Ortszeit angezeigt werden.
+ *
+ * @param object $event Kalender-Event-Objekt.
+ * @param string $field 'dtstart' oder 'dtend'.
+ * @return \DateTimeImmutable|null Datum/Uhrzeit, oder null wenn nicht vorhanden.
+ */
+function egj_calendar_event_datetime( object $event, string $field ): \DateTimeImmutable|null {
+	$value = $event->{ $field . '_tz' } ?? $event->{ $field } ?? null;
+	if ( empty( $value ) ) {
+		return null;
+	}
+
+	try {
+		return new \DateTimeImmutable( (string) $value, wp_timezone() );
+	} catch ( \Exception $e ) {
+		return null;
+	}
 }
 
 /**
@@ -105,7 +148,7 @@ function egj_calendar_api_ics(): void {
 	$ics = egj_calendar_get_ics_cached();
 
 	if ( ! $ics ) {
-		status_header( 500 );
+		status_header( 503 );
 		echo 'Fehler: Kalenderdaten konnten nicht abgerufen werden';
 		exit;
 	}
@@ -124,52 +167,55 @@ function egj_calendar_api_ics(): void {
  * @return \WP_REST_Response|\WP_Error
  */
 function egj_calendar_api_events(): \WP_REST_Response|\WP_Error {
-	try {
-		$ics   = egj_calendar_get_ics_cached();
-		$i_cal = new ICal();
-		$i_cal->initString( $ics );
-		$events = $i_cal->eventsFromRange( null, null );
+	$ics = egj_calendar_get_ics_cached();
+	if ( null === $ics ) {
+		return new \WP_Error( 'egj_ics_unavailable', 'Kalenderdaten konnten nicht abgerufen werden', array( 'status' => 503 ) );
+	}
 
-		$response = new \WP_REST_Response( $events );
-		$response->set_status( 200 );
-		return $response;
-	} catch ( \Exception $e ) {
+	try {
+		$events = egj_calendar_parse_ics( $ics );
+	} catch ( \Throwable $e ) {
 		egj_send_notification_to_admins( 'Fehler beim Parsen der ICS-Daten' );
 		return new \WP_Error( 'rest_custom_error', 'Fehler beim Parsen der ICS-Daten', array( 'status' => 500 ) );
 	}
+
+	$response = new \WP_REST_Response( $events );
+	$response->set_status( 200 );
+	return $response;
 }
 
 /**
  * REST-API-Endpunkt: Gibt das erste Ereignis von morgen zurück.
  *
- * @return \WP_REST_Response
+ * @return \WP_REST_Response|\WP_Error
  */
-function egj_calendar_api_tomorrow(): \WP_REST_Response {
-	$ics   = egj_calendar_get_ics_cached();
-	$i_cal = new ICal();
-	$i_cal->initString( $ics );
-	$events = $i_cal->eventsFromRange(
-		wp_date( 'Y-m-d 00:00:00', strtotime( 'tomorrow' ) ),
-		wp_date( 'Y-m-d 23:59:59', strtotime( 'tomorrow' ) )
-	);
+function egj_calendar_api_tomorrow(): \WP_REST_Response|\WP_Error {
+	$ics = egj_calendar_get_ics_cached();
+	if ( null === $ics ) {
+		return new \WP_Error( 'egj_ics_unavailable', 'Kalenderdaten konnten nicht abgerufen werden', array( 'status' => 503 ) );
+	}
 
-	if ( is_array( $events ) && count( $events ) > 0 ) {
+	try {
+		$tomorrow = new \DateTimeImmutable( 'tomorrow', wp_timezone() );
+		$events   = egj_calendar_parse_ics(
+			$ics,
+			$tomorrow->format( 'Y-m-d 00:00:00' ),
+			$tomorrow->format( 'Y-m-d 23:59:59' )
+		);
+	} catch ( \Throwable $e ) {
+		egj_send_notification_to_admins( 'Fehler beim Parsen der ICS-Daten' );
+		return new \WP_Error( 'rest_custom_error', 'Fehler beim Parsen der ICS-Daten', array( 'status' => 500 ) );
+	}
+
+	if ( count( $events ) > 0 ) {
 		$event          = $events[0];
 		$tomorrow_event = new TomorrowEvent();
 
 		$tomorrow_event->summary     = $event->summary ?? '';
 		$tomorrow_event->description = $event->description ?? '';
 		$tomorrow_event->location    = $event->location ?? '';
-
-		if ( isset( $event->dtstart ) ) {
-			$start_date_time           = new \DateTime( $event->dtstart );
-			$tomorrow_event->starttime = $start_date_time->format( 'd.m.Y H:i' );
-		}
-
-		if ( isset( $event->dtend ) ) {
-			$end_date_time           = new \DateTime( $event->dtend );
-			$tomorrow_event->endtime = $end_date_time->format( 'd.m.Y H:i' );
-		}
+		$tomorrow_event->starttime   = egj_calendar_event_datetime( $event, 'dtstart' )?->format( 'd.m.Y H:i' ) ?? '';
+		$tomorrow_event->endtime     = egj_calendar_event_datetime( $event, 'dtend' )?->format( 'd.m.Y H:i' ) ?? '';
 
 		$response = new \WP_REST_Response( $tomorrow_event );
 		$response->set_status( 200 );

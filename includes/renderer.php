@@ -17,7 +17,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @return string Der gerenderte HTML-Code.
  */
 function egj_calendar_render_template( string $template, array $vars = [] ): string {
-	$template_path = plugin_dir_path( __DIR__ ) . 'templates/' . $template;
+	$template_path = plugin_dir_path( __DIR__ ) . 'templates/' . basename( $template );
 
 	if ( ! file_exists( $template_path ) ) {
 		return '<div class="error">Template nicht gefunden: ' . esc_html( $template ) . '</div>';
@@ -37,16 +37,52 @@ function egj_calendar_render_template( string $template, array $vars = [] ): str
  * @return array{text: string, tags: string[]} Array mit 'text' (bereinigt) und 'tags' (gefundene Hashtags).
  */
 function egj_extract_and_remove_hashtags( string $text ): array {
-	preg_match_all( '/#\w+/u', $text, $matches );
+	// Kein Treffer bei HTML-Entities (&#39;) oder URL-Fragmenten (href="...#abschnitt").
+	$hashtag_pattern = '/(?<![&\w\/"=])#\w+/u';
+	preg_match_all( $hashtag_pattern, $text, $matches );
 	$tags         = $matches[0];
-	$cleaned_text = preg_replace( '/#\w+/u', '', $text );
-	$cleaned_text = preg_replace( '/\s+/', ' ', $cleaned_text );
+	$cleaned_text = preg_replace( $hashtag_pattern, '', $text );
+	$cleaned_text = preg_replace( '/[ \t]+/', ' ', $cleaned_text );
 	$cleaned_text = trim( $cleaned_text );
 
 	return array(
 		'text' => $cleaned_text,
 		'tags' => $tags,
 	);
+}
+
+/**
+ * Bereinigt eine Event-Beschreibung und erlaubt nur einfache Formatierungen und Links.
+ *
+ * @param string $text Die Beschreibung aus dem ICS-Feed.
+ * @return string Sicheres HTML.
+ */
+function egj_sanitize_description( string $text ): string {
+	$allowed_html = array(
+		'a'      => array(
+			'href'  => true,
+			'title' => true,
+		),
+		'br'     => array(),
+		'p'      => array(),
+		'b'      => array(),
+		'strong' => array(),
+		'i'      => array(),
+		'em'     => array(),
+		'ul'     => array(),
+		'ol'     => array(),
+		'li'     => array(),
+	);
+
+	// Reiner Text: Zeilenumbrüche erhalten.
+	if ( wp_strip_all_tags( $text ) === $text ) {
+		$text = nl2br( $text );
+	}
+
+	$html = wp_kses( $text, $allowed_html );
+
+	// Nach wp_kses haben Links nur noch href/title, daher können die Attribute sicher ergänzt werden.
+	return (string) preg_replace( '/<a\s/i', '<a target="_blank" rel="noopener noreferrer" ', $html );
 }
 
 /**
@@ -117,21 +153,12 @@ function egj_render_compact_calendar_events( array $array_of_events, string $tag
 		$description_data = egj_extract_and_remove_hashtags( $description );
 		$tags             = $description_data['tags'];
 
-		$start_date = '';
-		$start_time = '';
-		if ( isset( $event->dtstart ) ) {
-			$start_date_time = new \DateTime( $event->dtstart );
-			$start_date      = $start_date_time->format( 'd.m.Y' );
-			$start_time      = $start_date_time->format( 'H:i' );
-		}
-
-		$end_date = '';
-		$end_time = '';
-		if ( isset( $event->dtend ) ) {
-			$end_date_time = new \DateTime( $event->dtend );
-			$end_date      = $end_date_time->format( 'd.m.Y' );
-			$end_time      = $end_date_time->format( 'H:i' );
-		}
+		$start_date_time = egj_calendar_event_datetime( $event, 'dtstart' );
+		$end_date_time   = egj_calendar_event_datetime( $event, 'dtend' );
+		$start_date      = $start_date_time?->format( 'd.m.Y' ) ?? '';
+		$start_time      = $start_date_time?->format( 'H:i' ) ?? '';
+		$end_date        = $end_date_time?->format( 'd.m.Y' ) ?? '';
+		$end_time        = $end_date_time?->format( 'H:i' ) ?? '';
 
 		if ( $end_date === $start_date ) {
 			$rendered_date_time_info = egj_calendar_render_template(
@@ -224,24 +251,15 @@ function egj_render_calendar_events( array $array_of_events ): void {
 		$location    = $event->location ?? '';
 
 		$description_data = egj_extract_and_remove_hashtags( $description );
-		$description      = esc_html( $description_data['text'] );
+		$description      = egj_sanitize_description( $description_data['text'] );
 		$tags             = $description_data['tags'];
 
-		$start_date = '';
-		$start_time = '';
-		if ( isset( $event->dtstart ) ) {
-			$start_date_time = new \DateTime( $event->dtstart );
-			$start_date      = $start_date_time->format( 'd.m.Y' );
-			$start_time      = $start_date_time->format( 'H:i' );
-		}
-
-		$end_date = '';
-		$end_time = '';
-		if ( isset( $event->dtend ) ) {
-			$end_date_time = new \DateTime( $event->dtend );
-			$end_date      = $end_date_time->format( 'd.m.Y' );
-			$end_time      = $end_date_time->format( 'H:i' );
-		}
+		$start_date_time = egj_calendar_event_datetime( $event, 'dtstart' );
+		$end_date_time   = egj_calendar_event_datetime( $event, 'dtend' );
+		$start_date      = $start_date_time?->format( 'd.m.Y' ) ?? '';
+		$start_time      = $start_date_time?->format( 'H:i' ) ?? '';
+		$end_date        = $end_date_time?->format( 'd.m.Y' ) ?? '';
+		$end_time        = $end_date_time?->format( 'H:i' ) ?? '';
 
 		if ( $end_date === $start_date ) {
 			$rendered_date_time_info = egj_calendar_render_template(

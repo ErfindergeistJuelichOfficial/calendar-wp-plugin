@@ -4,6 +4,10 @@ WordPress plugin for displaying calendar events from an ICS feed.
 PHP 8.3+, WordPress 6.4+, proprietary license.
 Language: UI, error messages and comments in **German**.
 
+# Git
+
+- no pushes!
+
 # Architecture
 
 Functional approach — no classes except `TomorrowEvent` (custom data model).
@@ -20,6 +24,7 @@ All functions prefixed with `egj_calendar_*` or `egj_*`.
 | `includes/shortcode.php` | `[egj_calendar]` shortcode |
 | `admin/main.php` | Admin menu, settings handler |
 | `admin/partials/tab-settings.php` | Settings form partial |
+| `uninstall.php` | Deletes plugin options when the plugin is deleted in WP admin |
 | `templates/` | PHP partials for event display |
 
 ICS data is cached for 1 hour via the WordPress Options API. Library `johngrogg/ics-parser` is provided via Composer.

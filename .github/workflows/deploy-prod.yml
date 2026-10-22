@@ -6,15 +6,24 @@ on:
     types: [completed]
     branches: [main]
 
+permissions:
+  contents: read
+
 jobs:
   web-deploy:
     name: 🎉 Deploy at https://erfindergeist.org/
     runs-on: ubuntu-latest
-    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    # Nur eigene Pushes deployen – CI-Läufe aus (Fork-)PRs dürfen nicht an die FTP-Secrets.
+    if: >-
+      github.event.workflow_run.conclusion == 'success' &&
+      github.event.workflow_run.event == 'push' &&
+      github.event.workflow_run.head_repository.full_name == github.repository
 
     steps:
       - name: 🚚 Get latest code
         uses: actions/checkout@v6
+        with:
+          ref: ${{ github.event.workflow_run.head_sha }}
 
       - name: 🐘 PHP & Composer einrichten
         uses: shivammathur/setup-php@v2

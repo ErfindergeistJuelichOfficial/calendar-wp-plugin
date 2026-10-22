@@ -17,4 +17,20 @@ DESCRIPTION:Text mit <b>HTML</b> und &amp; Entities #OffeneWerkstatt
 LOCATION:Räume mit Ümlauten & "Quotes"
 UID:security-test-2@erfindergeist.org
 END:VEVENT
+BEGIN:VEVENT
+DTSTART:20270315T170000Z
+DTEND:20270315T190000Z
+SUMMARY:Erlaubtes HTML in der Beschreibung
+DESCRIPTION:<a href="javascript:alert('XSS-link')">JS-Link (href entfernt)</a> <a href="https://erfindergeist.org" onclick="alert('XSS-onclick')">Sicherer Link</a><br><script>alert('XSS-script')</script><iframe src="https://example.com"></iframe>Mit &#39;Entity&#39; und <a href="https://erfindergeist.org/#kontakt">Fragment-Link</a> #KreativTag
+LOCATION:Jülich
+UID:security-test-3@erfindergeist.org
+END:VEVENT
+BEGIN:VEVENT
+DTSTART:20270316T170000Z
+DTEND:20270316T190000Z
+SUMMARY:Reiner Text mit Zeilenumbrüchen
+DESCRIPTION:Zeile 1\nZeile 2\nZeile 3 #Stammtisch
+LOCATION:Jülich
+UID:security-test-4@erfindergeist.org
+END:VEVENT
 END:VCALENDAR

@@ -18,6 +18,10 @@ if ( ! function_exists( 'egj_send_notification_to_admins' ) ) {
 	 * @return bool True wenn mindestens eine Mail gesendet wurde, sonst false.
 	 */
 	function egj_send_notification_to_admins( string $message, string $subject = 'Erfindergeist Calendar Notification' ): bool {
+		if ( '1' !== get_option( 'egj_notify_on_error', '1' ) ) {
+			return false;
+		}
+
 		$transient_key = 'egj_notify_' . md5( $message );
 		if ( get_transient( $transient_key ) ) {
 			return false;
