@@ -103,6 +103,43 @@ function egj_calendar_get_ics_cached(): string|null {
 }
 
 /**
+ * Parst ICS-Daten und gibt die Events im angegebenen Zeitraum zurück.
+ *
+ * @param string      $ics         ICS-Inhalt.
+ * @param string|null $range_start Beginn des Zeitraums (null = jetzt).
+ * @param string|null $range_end   Ende des Zeitraums (null = +20 Jahre).
+ * @return array Liste der Kalender-Event-Objekte.
+ */
+function egj_calendar_parse_ics( string $ics, string|null $range_start = null, string|null $range_end = null ): array {
+	$i_cal = new ICal( false, [ 'defaultTimeZone' => wp_timezone_string() ] );
+	$i_cal->initString( $ics );
+	return $i_cal->eventsFromRange( $range_start, $range_end );
+}
+
+/**
+ * Gibt Start- oder Endzeit eines Events in der Kalender-Zeitzone zurück.
+ *
+ * Nutzt die bereits umgerechneten *_tz-Felder des Parsers, damit UTC-Zeiten
+ * (z. B. 20251215T122300Z) in Ortszeit angezeigt werden.
+ *
+ * @param object $event Kalender-Event-Objekt.
+ * @param string $field 'dtstart' oder 'dtend'.
+ * @return \DateTimeImmutable|null Datum/Uhrzeit, oder null wenn nicht vorhanden.
+ */
+function egj_calendar_event_datetime( object $event, string $field ): \DateTimeImmutable|null {
+	$value = $event->{ $field . '_tz' } ?? $event->{ $field } ?? null;
+	if ( empty( $value ) ) {
+		return null;
+	}
+
+	try {
+		return new \DateTimeImmutable( (string) $value, wp_timezone() );
+	} catch ( \Exception $e ) {
+		return null;
+	}
+}
+
+/**
  * REST-API-Endpunkt: Gibt den rohen ICS-Feed zurück.
  *
  * @return void
@@ -111,7 +148,7 @@ function egj_calendar_api_ics(): void {
 	$ics = egj_calendar_get_ics_cached();
 
 	if ( ! $ics ) {
-		status_header( 500 );
+		status_header( 503 );
 		echo 'Fehler: Kalenderdaten konnten nicht abgerufen werden';
 		exit;
 	}
@@ -130,52 +167,55 @@ function egj_calendar_api_ics(): void {
  * @return \WP_REST_Response|\WP_Error
  */
 function egj_calendar_api_events(): \WP_REST_Response|\WP_Error {
-	try {
-		$ics   = egj_calendar_get_ics_cached();
-		$i_cal = new ICal();
-		$i_cal->initString( $ics );
-		$events = $i_cal->eventsFromRange( null, null );
+	$ics = egj_calendar_get_ics_cached();
+	if ( null === $ics ) {
+		return new \WP_Error( 'egj_ics_unavailable', 'Kalenderdaten konnten nicht abgerufen werden', array( 'status' => 503 ) );
+	}
 
-		$response = new \WP_REST_Response( $events );
-		$response->set_status( 200 );
-		return $response;
-	} catch ( \Exception $e ) {
+	try {
+		$events = egj_calendar_parse_ics( $ics );
+	} catch ( \Throwable $e ) {
 		egj_send_notification_to_admins( 'Fehler beim Parsen der ICS-Daten' );
 		return new \WP_Error( 'rest_custom_error', 'Fehler beim Parsen der ICS-Daten', array( 'status' => 500 ) );
 	}
+
+	$response = new \WP_REST_Response( $events );
+	$response->set_status( 200 );
+	return $response;
 }
 
 /**
  * REST-API-Endpunkt: Gibt das erste Ereignis von morgen zurück.
  *
- * @return \WP_REST_Response
+ * @return \WP_REST_Response|\WP_Error
  */
-function egj_calendar_api_tomorrow(): \WP_REST_Response {
-	$ics   = egj_calendar_get_ics_cached();
-	$i_cal = new ICal();
-	$i_cal->initString( $ics );
-	$events = $i_cal->eventsFromRange(
-		wp_date( 'Y-m-d 00:00:00', strtotime( 'tomorrow' ) ),
-		wp_date( 'Y-m-d 23:59:59', strtotime( 'tomorrow' ) )
-	);
+function egj_calendar_api_tomorrow(): \WP_REST_Response|\WP_Error {
+	$ics = egj_calendar_get_ics_cached();
+	if ( null === $ics ) {
+		return new \WP_Error( 'egj_ics_unavailable', 'Kalenderdaten konnten nicht abgerufen werden', array( 'status' => 503 ) );
+	}
 
-	if ( is_array( $events ) && count( $events ) > 0 ) {
+	try {
+		$tomorrow = new \DateTimeImmutable( 'tomorrow', wp_timezone() );
+		$events   = egj_calendar_parse_ics(
+			$ics,
+			$tomorrow->format( 'Y-m-d 00:00:00' ),
+			$tomorrow->format( 'Y-m-d 23:59:59' )
+		);
+	} catch ( \Throwable $e ) {
+		egj_send_notification_to_admins( 'Fehler beim Parsen der ICS-Daten' );
+		return new \WP_Error( 'rest_custom_error', 'Fehler beim Parsen der ICS-Daten', array( 'status' => 500 ) );
+	}
+
+	if ( count( $events ) > 0 ) {
 		$event          = $events[0];
 		$tomorrow_event = new TomorrowEvent();
 
 		$tomorrow_event->summary     = $event->summary ?? '';
 		$tomorrow_event->description = $event->description ?? '';
 		$tomorrow_event->location    = $event->location ?? '';
-
-		if ( isset( $event->dtstart ) ) {
-			$start_date_time           = new \DateTime( $event->dtstart );
-			$tomorrow_event->starttime = $start_date_time->format( 'd.m.Y H:i' );
-		}
-
-		if ( isset( $event->dtend ) ) {
-			$end_date_time           = new \DateTime( $event->dtend );
-			$tomorrow_event->endtime = $end_date_time->format( 'd.m.Y H:i' );
-		}
+		$tomorrow_event->starttime   = egj_calendar_event_datetime( $event, 'dtstart' )?->format( 'd.m.Y H:i' ) ?? '';
+		$tomorrow_event->endtime     = egj_calendar_event_datetime( $event, 'dtend' )?->format( 'd.m.Y H:i' ) ?? '';
 
 		$response = new \WP_REST_Response( $tomorrow_event );
 		$response->set_status( 200 );

@@ -117,21 +117,12 @@ function egj_render_compact_calendar_events( array $array_of_events, string $tag
 		$description_data = egj_extract_and_remove_hashtags( $description );
 		$tags             = $description_data['tags'];
 
-		$start_date = '';
-		$start_time = '';
-		if ( isset( $event->dtstart ) ) {
-			$start_date_time = new \DateTime( $event->dtstart );
-			$start_date      = $start_date_time->format( 'd.m.Y' );
-			$start_time      = $start_date_time->format( 'H:i' );
-		}
-
-		$end_date = '';
-		$end_time = '';
-		if ( isset( $event->dtend ) ) {
-			$end_date_time = new \DateTime( $event->dtend );
-			$end_date      = $end_date_time->format( 'd.m.Y' );
-			$end_time      = $end_date_time->format( 'H:i' );
-		}
+		$start_date_time = egj_calendar_event_datetime( $event, 'dtstart' );
+		$end_date_time   = egj_calendar_event_datetime( $event, 'dtend' );
+		$start_date      = $start_date_time?->format( 'd.m.Y' ) ?? '';
+		$start_time      = $start_date_time?->format( 'H:i' ) ?? '';
+		$end_date        = $end_date_time?->format( 'd.m.Y' ) ?? '';
+		$end_time        = $end_date_time?->format( 'H:i' ) ?? '';
 
 		if ( $end_date === $start_date ) {
 			$rendered_date_time_info = egj_calendar_render_template(
@@ -227,21 +218,12 @@ function egj_render_calendar_events( array $array_of_events ): void {
 		$description      = esc_html( $description_data['text'] );
 		$tags             = $description_data['tags'];
 
-		$start_date = '';
-		$start_time = '';
-		if ( isset( $event->dtstart ) ) {
-			$start_date_time = new \DateTime( $event->dtstart );
-			$start_date      = $start_date_time->format( 'd.m.Y' );
-			$start_time      = $start_date_time->format( 'H:i' );
-		}
-
-		$end_date = '';
-		$end_time = '';
-		if ( isset( $event->dtend ) ) {
-			$end_date_time = new \DateTime( $event->dtend );
-			$end_date      = $end_date_time->format( 'd.m.Y' );
-			$end_time      = $end_date_time->format( 'H:i' );
-		}
+		$start_date_time = egj_calendar_event_datetime( $event, 'dtstart' );
+		$end_date_time   = egj_calendar_event_datetime( $event, 'dtend' );
+		$start_date      = $start_date_time?->format( 'd.m.Y' ) ?? '';
+		$start_time      = $start_date_time?->format( 'H:i' ) ?? '';
+		$end_date        = $end_date_time?->format( 'd.m.Y' ) ?? '';
+		$end_time        = $end_date_time?->format( 'H:i' ) ?? '';
 
 		if ( $end_date === $start_date ) {
 			$rendered_date_time_info = egj_calendar_render_template(

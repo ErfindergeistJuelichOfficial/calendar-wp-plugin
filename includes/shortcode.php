@@ -11,8 +11,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-use ICal\ICal;
-
 /**
  * Shortcode-Handler für die Kalenderanzeige.
  *
@@ -67,10 +65,12 @@ function egj_calendar_display_shortcode( array $raw_attributes ): string {
 			$ics = egj_calendar_get_ics_cached();
 		}
 
-		$i_cal = new ICal();
-		$i_cal->initString( $ics );
-		$array_of_events = $i_cal->eventsFromRange( null, null );
-	} catch ( \Exception $e ) {
+		if ( ! $ics ) {
+			return '<div class="egj-calendar-error">Termine konnten nicht geladen werden</div>';
+		}
+
+		$array_of_events = egj_calendar_parse_ics( $ics );
+	} catch ( \Throwable $e ) {
 		return '<div class="egj-calendar-error">Termine konnten nicht geladen werden</div>';
 	}
 

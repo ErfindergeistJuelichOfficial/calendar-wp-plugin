@@ -18,8 +18,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-use ICal\ICal;
-
 ?>
 <div class="wrap">
 	<h2><?php esc_html_e( 'Erfindergeist Calendar Einstellungen', 'erfindergeist' ); ?></h2>
@@ -92,11 +90,9 @@ use ICal\ICal;
 				<pre>
 				<?php
 				try {
-					$i_cal = new ICal();
-					$i_cal->initString( $ics_cache );
-					$events = $i_cal->eventsFromRange( null, null );
+					$events = egj_calendar_parse_ics( $ics_cache );
 					echo esc_html( (string) wp_json_encode( $events, JSON_PRETTY_PRINT | JSON_HEX_TAG | JSON_HEX_AMP ) );
-				} catch ( \Exception $e ) {
+				} catch ( \Throwable $e ) {
 					echo esc_html__( 'Fehler beim Parsen des Caches.', 'erfindergeist' );
 				}
 				?>
