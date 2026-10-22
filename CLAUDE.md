@@ -57,7 +57,7 @@ podman compose run --rm composer psalm
 podman compose run --rm composer phpmd
 podman compose run --rm composer analyse   # all four
 podman compose run --rm composer validate  # composer.json/composer.lock
-podman compose run --rm composer audit     # known vulnerabilities in dependencies
+podman compose run --rm composer audit --locked  # known vulnerabilities in composer.lock
 
 # alternatively Docker
 docker compose run --rm composer analyse
