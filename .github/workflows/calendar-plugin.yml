@@ -3,6 +3,7 @@ name: 🧪 CI calendar-wp-plugin
 on:
   push:
   pull_request:
+  workflow_dispatch:
   schedule:
     - cron: '0 6 * * 1'
 
@@ -43,11 +44,12 @@ jobs:
       - name: ✅ composer.json validieren
         run: composer validate
 
-      - name: 🔒 Sicherheits-Audit
-        run: composer audit
-
       - name: 📥 Abhängigkeiten installieren
         run: composer install --no-progress --prefer-dist
+
+      # Nach install und gegen composer.lock prüfen – vendor/ aus dem Cache kann veraltet sein.
+      - name: 🔒 Sicherheits-Audit
+        run: composer audit --locked
 
       - name: 📐 PHPCS – WordPress Coding Standards
         run: composer phpcs

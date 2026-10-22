@@ -13,10 +13,10 @@ jobs:
   web-deploy:
     name: 🎉 Deploy at https://erfindergeist.org/
     runs-on: ubuntu-latest
-    # Nur eigene Pushes deployen – CI-Läufe aus (Fork-)PRs dürfen nicht an die FTP-Secrets.
+    # Nur eigene Pushes/manuelle CI-Läufe deployen – CI-Läufe aus (Fork-)PRs dürfen nicht an die FTP-Secrets.
     if: >-
       github.event.workflow_run.conclusion == 'success' &&
-      github.event.workflow_run.event == 'push' &&
+      (github.event.workflow_run.event == 'push' || github.event.workflow_run.event == 'workflow_dispatch') &&
       github.event.workflow_run.head_repository.full_name == github.repository
 
     steps:

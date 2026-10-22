@@ -3,4 +3,4 @@ services:
     build: .
     working_dir: /app
     volumes:
-      - .:/app
+      - .:/app:Z

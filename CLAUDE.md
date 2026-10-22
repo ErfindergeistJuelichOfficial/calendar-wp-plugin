@@ -56,6 +56,8 @@ podman compose run --rm composer phpstan
 podman compose run --rm composer psalm
 podman compose run --rm composer phpmd
 podman compose run --rm composer analyse   # all four
+podman compose run --rm composer validate  # composer.json/composer.lock
+podman compose run --rm composer audit --locked  # known vulnerabilities in composer.lock
 
 # alternatively Docker
 docker compose run --rm composer analyse
@@ -63,7 +65,9 @@ docker compose run --rm composer analyse
 
 Configs: `phpcs.xml`, `phpstan.neon`, `psalm.xml`, `.phpmd.xml`
 
-`composer analyse` must pass cleanly before every commit.
+`composer validate`, `composer audit` and `composer analyse` must pass cleanly before every commit
+(same checks as CI). If `audit` reports a vulnerable package, update it via
+`composer update <package> --with-dependencies` and commit the updated `composer.lock`.
 
 **Important:** Changes to quality tools or their configuration must also be reflected in
 `.github/workflows/calendar-plugin.yml`.
@@ -74,7 +78,7 @@ Pipelines: `.github/workflows/`
 
 | Workflow | Trigger | Target |
 | --- | --- | --- |
-| `calendar-plugin.yml` | Push, PR, Mondays 06:00 UTC | CI (phpcs, phpstan, psalm, phpmd) on PHP 8.3 & 8.4 |
+| `calendar-plugin.yml` | Push, PR, manual (`workflow_dispatch`), Mondays 06:00 UTC | CI (phpcs, phpstan, psalm, phpmd) on PHP 8.3 & 8.4 |
 | `deploy-test.yml` | Manual (`workflow_dispatch`) or after CI success on `feature/**` | <https://spielwiese.erfindergeist.org/> |
 | `deploy-prod.yml` | After CI success on `main` | <https://erfindergeist.org/> |
 | `release.yml` | Manual (`workflow_dispatch`) with version input | Bump version, Git tag, GitHub Release (ZIP), deploy prod |
