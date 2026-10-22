@@ -29,13 +29,19 @@ jobs:
 
       - name: 📌 Version ermitteln
         id: version
+        env:
+          INPUT_VERSION: ${{ github.event.inputs.version }}
         run: |
-          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
-            echo "value=${{ github.event.inputs.version }}" >> "$GITHUB_OUTPUT"
+          if [ "${GITHUB_EVENT_NAME}" = "workflow_dispatch" ]; then
+            VERSION="${INPUT_VERSION}"
           else
             VERSION=$(grep -oP "(?<=EGJ_CALENDAR_VERSION', ')[^']+" vars.php)
-            echo "value=${VERSION}" >> "$GITHUB_OUTPUT"
           fi
+          if [[ ! "${VERSION}" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "Ungültige Version: ${VERSION}" >&2
+            exit 1
+          fi
+          echo "value=${VERSION}" >> "$GITHUB_OUTPUT"
 
       - name: ✏️ Version in Plugin-Dateien aktualisieren
         if: github.event_name == 'workflow_dispatch'
@@ -101,6 +107,8 @@ jobs:
             --exclude='composer.json' \
             --exclude='composer.lock' \
             --exclude='CLAUDE.md' \
+            --exclude='test' \
+            --exclude='docs' \
             ./ /tmp/zip-stage/calendar-wp-plugin/
           cd /tmp/zip-stage
           zip -r "${GITHUB_WORKSPACE}/${ZIP_NAME}" calendar-wp-plugin/
