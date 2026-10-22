@@ -10,6 +10,7 @@
  *   array   $ics_last_error       Letzter fehlgeschlagener Abruf (time, message) oder leer
  *   string  $notify_on_error      '1' wenn Admins bei Fehlern per E-Mail benachrichtigt werden
  *   bool    $settings_saved       Ob gerade gespeichert wurde
+ *   string  $settings_error       Fehlermeldung beim Speichern oder leer
  *
  * @package Erfindergeist-Calendar
  */
@@ -25,6 +26,12 @@ if ( ! defined( 'ABSPATH' ) ) {
 	<?php if ( $settings_saved ) : ?>
 		<div class="updated">
 			<p><strong><?php esc_html_e( 'Einstellungen gespeichert.', 'erfindergeist' ); ?></strong></p>
+		</div>
+	<?php endif; ?>
+
+	<?php if ( '' !== $settings_error ) : ?>
+		<div class="notice notice-error">
+			<p><strong><?php echo esc_html( $settings_error ); ?></strong></p>
 		</div>
 	<?php endif; ?>
 

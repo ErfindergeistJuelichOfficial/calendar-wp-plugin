@@ -20,6 +20,8 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @SuppressWarnings(PHPMD.NPathComplexity)
  */
 function egj_calendar_display_shortcode( array $raw_attributes ): string {
+	wp_enqueue_style( 'egj-calendar-style' );
+
 	$attributes = shortcode_atts(
 		array(
 			'max_events' => 20,

@@ -27,7 +27,7 @@
     "scripts": {
         "phpcbf":   "phpcbf",
         "phpcs":    "phpcs",
-        "phpstan":  "phpstan analyse --no-progress --memory-limit 512M",
+        "phpstan":  "phpstan analyse --no-progress --memory-limit 1G",
         "psalm":    "psalm --taint-analysis --no-progress",
         "phpmd":    "phpmd . text .phpmd.xml --exclude vendor/,templates/",
         "analyse": ["@phpcs", "@phpstan", "@psalm", "@phpmd"]

@@ -27,6 +27,31 @@ function egj_calendar_plugin_options(): void {
 }
 
 /**
+ * Speichert die ICS-URL aus dem Settings-Formular.
+ *
+ * Kalender-Apps bieten häufig webcal:// an, das ein Alias für https:// ist.
+ * Bei einer geänderten URL bleibt der alte Cache bis zum ersten erfolgreichen Abruf erhalten.
+ *
+ * @param string $ics_url Mit esc_url_raw() bereinigte URL.
+ * @return string Fehlermeldung, oder leerer String bei Erfolg.
+ */
+function egj_calendar_save_ics_url( string $ics_url ): string {
+	$ics_url = (string) preg_replace( '#^webcal://#i', 'https://', $ics_url );
+
+	if ( ! in_array( wp_parse_url( $ics_url, PHP_URL_SCHEME ), [ 'http', 'https' ], true ) ) {
+		return __( 'Ungültige ICS-URL: Erlaubt sind nur http://, https:// oder webcal://. Die URL wurde nicht gespeichert.', 'erfindergeist' );
+	}
+
+	if ( get_option( 'egj_ics_url', '' ) !== $ics_url ) {
+		update_option( 'egj_ics_url', $ics_url );
+		// Neue URL beim nächsten Request sofort abrufen.
+		delete_option( 'egj_ics_cache_timestamp' );
+	}
+
+	return '';
+}
+
+/**
  * Verarbeitet das Settings-Formular und zeigt die Einstellungsseite an.
  *
  * @return void
@@ -37,22 +62,16 @@ function egj_calendar_settings_page(): void {
 		wp_die( esc_html__( 'Sie haben keine ausreichenden Berechtigungen für diese Seite.', 'erfindergeist' ) );
 	}
 
-	$ics_url_field_name  = 'erfindergeist_ics_url_field';
-	$ics_url             = get_option( 'egj_ics_url', '' );
-	$ics_cache           = get_option( 'egj_ics_cache', '' );
-	$ics_cache_timestamp = get_option( 'egj_ics_cache_timestamp', '' );
-	$ics_last_error      = get_option( 'egj_ics_last_error', [] );
-	$notify_on_error     = get_option( 'egj_notify_on_error', '1' );
-	$settings_saved      = false;
+	$ics_url_field_name = 'erfindergeist_ics_url_field';
+	$settings_saved     = false;
+	$settings_error     = '';
 
 	if ( ! empty( $_POST ) && isset( $_POST['egj_calendar_nonce_field'] ) && wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['egj_calendar_nonce_field'] ) ), 'egj_calendar_action' ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Missing -- Nonce wird direkt in dieser Zeile geprüft.
 		if ( isset( $_POST[ $ics_url_field_name ] ) ) {
-			$ics_url = esc_url_raw( wp_unslash( $_POST[ $ics_url_field_name ] ) );
-			update_option( 'egj_ics_url', $ics_url );
+			$settings_error = egj_calendar_save_ics_url( esc_url_raw( wp_unslash( $_POST[ $ics_url_field_name ] ), [ 'http', 'https', 'webcal' ] ) );
 		}
 
-		$notify_on_error = isset( $_POST['egj_notify_on_error'] ) ? '1' : '0';
-		update_option( 'egj_notify_on_error', $notify_on_error );
+		update_option( 'egj_notify_on_error', isset( $_POST['egj_notify_on_error'] ) ? '1' : '0' );
 
 		// Erlaubt nach dem Speichern sofort einen neuen Abrufversuch.
 		delete_transient( 'egj_ics_fetch_failed' );
@@ -60,12 +79,16 @@ function egj_calendar_settings_page(): void {
 		if ( isset( $_POST['clear_cache'] ) ) {
 			delete_option( 'egj_ics_cache' );
 			delete_option( 'egj_ics_cache_timestamp' );
-			$ics_cache           = '';
-			$ics_cache_timestamp = '';
 		}
 
 		$settings_saved = true;
 	}
+
+	$ics_url             = get_option( 'egj_ics_url', '' );
+	$ics_cache           = get_option( 'egj_ics_cache', '' );
+	$ics_cache_timestamp = get_option( 'egj_ics_cache_timestamp', '' );
+	$ics_last_error      = get_option( 'egj_ics_last_error', [] );
+	$notify_on_error     = get_option( 'egj_notify_on_error', '1' );
 
 	include plugin_dir_path( __FILE__ ) . 'partials/tab-settings.php';
 }
