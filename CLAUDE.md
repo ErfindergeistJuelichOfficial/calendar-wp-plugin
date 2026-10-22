@@ -74,7 +74,7 @@ Pipelines: `.github/workflows/`
 
 | Workflow | Trigger | Target |
 | --- | --- | --- |
-| `calendar-plugin.yml` | Push, PR, Mondays 06:00 UTC | CI (phpcs, phpstan, psalm, phpmd) on PHP 8.3 & 8.4 |
+| `calendar-plugin.yml` | Push, PR, manual (`workflow_dispatch`), Mondays 06:00 UTC | CI (phpcs, phpstan, psalm, phpmd) on PHP 8.3 & 8.4 |
 | `deploy-test.yml` | Manual (`workflow_dispatch`) or after CI success on `feature/**` | <https://spielwiese.erfindergeist.org/> |
 | `deploy-prod.yml` | After CI success on `main` | <https://erfindergeist.org/> |
 | `release.yml` | Manual (`workflow_dispatch`) with version input | Bump version, Git tag, GitHub Release (ZIP), deploy prod |
